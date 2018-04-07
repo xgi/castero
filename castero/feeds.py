@@ -10,11 +10,6 @@ class FeedsError(Exception):
     """
 
 
-class FeedsLoadError(FeedsError):
-    """An error occurred while loading the feeds file.
-    """
-
-
 class Feeds(DataFile):
     """The Feeds class.
 
@@ -40,6 +35,8 @@ class Feeds(DataFile):
         assert os.path.exists(self._path)
 
         with open(self._path, 'r') as f:
+            # any case of duplicate feed keys will be replaced with the first
+            # occurrence of that key
             content = json.loads(f.read())
 
         for key in content:
@@ -81,11 +78,8 @@ class Feeds(DataFile):
                     episodes=episodes,
                 )
 
-            # add feed to data, disallowing duplicate keys
-            if key not in self.data:
-                self.data[key] = feed
-            else:
-                raise FeedsLoadError("Found duplicate feed path in feeds file")
+            # add feed to data
+            self.data[key] = feed
 
     def write(self) -> None:
         """Writes to the data file.
