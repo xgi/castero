@@ -1,0 +1,8 @@
+venv/
+dist/
+build/
+castero.egg-info/
+.vscode/
+.idea/
+.pytest_cache/
+__pycache__/

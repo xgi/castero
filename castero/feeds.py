@@ -1,0 +1,148 @@
+import os
+import json
+from castero.datafile import DataFile
+from castero.feed import Feed
+from castero.episode import Episode
+
+
+class FeedsError(Exception):
+    """An ambiguous error while handling the feeds.
+    """
+
+
+class FeedsLoadError(FeedsError):
+    """An error occurred while loading the feeds file.
+    """
+
+
+class Feeds(DataFile):
+    """The Feeds class.
+
+    Reads and stores information about the user's feeds. Instances of this
+    class can generally be treated like dictionaries, accessing a feed with
+    feeds_instance[feed_key].
+
+    The feed_key for a feed is either the feed's file path or URL, which each
+    feed object is ensured to have exactly one of.
+    """
+    PATH = os.path.join(DataFile.XDG_DATA_HOME, 'castero', 'feeds')
+    DEFAULT_PATH = os.path.join(DataFile.PACKAGE, 'templates/feeds')
+
+    def __init__(self) -> None:
+        """Initializes the object.
+        """
+        super().__init__(self.PATH, self.DEFAULT_PATH)
+        self.load()
+
+    def load(self) -> None:
+        """Loads the feeds file.
+        """
+        assert os.path.exists(self._path)
+
+        with open(self._path, 'r') as f:
+            content = json.loads(f.read())
+
+        for key in content:
+            feed_dict = content[key]
+
+            episodes = [
+                Episode(
+                    title=episode_dict["title"],
+                    description=episode_dict["description"],
+                    link=episode_dict["link"],
+                    pubdate=episode_dict["pubdate"],
+                    copyright=episode_dict["copyright"],
+                    enclosure=episode_dict["enclosure"]
+                )
+                for episode_dict in feed_dict["episodes"]
+            ]
+
+            # assume urls start with http (change later?)
+            if feed_dict["link"].startswith('http'):
+                # create feed from url
+                feed = Feed(
+                    url=key,
+                    title=feed_dict["title"],
+                    description=feed_dict["description"],
+                    link=feed_dict["link"],
+                    last_build_date=feed_dict["last_build_date"],
+                    copyright=feed_dict["copyright"],
+                    episodes=episodes,
+                )
+            else:
+                # create feed from file
+                feed = Feed(
+                    file=key,
+                    title=feed_dict["title"],
+                    description=feed_dict["description"],
+                    link=feed_dict["link"],
+                    last_build_date=feed_dict["last_build_date"],
+                    copyright=feed_dict["copyright"],
+                    episodes=episodes,
+                )
+
+            # add feed to data, disallowing duplicate keys
+            if key not in self.data:
+                self.data[key] = feed
+            else:
+                raise FeedsLoadError("Found duplicate feed path in feeds file")
+
+    def write(self) -> None:
+        """Writes to the data file.
+        """
+        assert os.path.exists(self._path)
+
+        output_dict = dict(self.data)  # make a copy of self.data
+        for key in output_dict:
+            feed = output_dict[key]
+            output_dict[key] = {
+                "title": feed.title,
+                "description": feed.description,
+                "link": feed.link,
+                "last_build_date": feed.last_build_date,
+                "copyright": feed.copyright,
+                "episodes": [
+                    {
+                        "title": episode.title,
+                        "description": episode.description,
+                        "link": episode.link,
+                        "pubdate": episode.pubdate,
+                        "copyright": episode.copyright,
+                        "enclosure": episode.enclosure
+                    }
+                    for episode in feed.episodes
+                ]
+            }
+
+        output = json.dumps(output_dict, indent=4)
+        with open(self._path, 'w') as f:
+            f.write(output)
+
+    def at(self, index) -> Feed:
+        """Return the Feed at index.
+
+        Args:
+            index: the index of the Feed to retrieve
+
+        Returns:
+            Feed: the feed at the index
+        """
+        result = None
+        if len(list(self.data)) > 0:
+            result = self.data[list(self.data)[index]]
+        return result
+
+    def del_at(self, index) -> bool:
+        """Deletes the Feed at index.
+
+        Args:
+            index: the index of the Feed to delete
+
+        Returns:
+            bool: whether a Feed was deleted
+        """
+        result = False
+        if index < len(list(self.data)) > 0:
+            result = True
+            del self.data[list(self.data)[index]]
+        return result
