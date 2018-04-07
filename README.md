@@ -53,11 +53,11 @@ Additionally, a file containing your list of feeds is located at `{HOME}/.local/
 
 This project uses [PyTest](https://pytest.org) for testing. To run tests, run the following command in the project's root directory:
 ```bash
-pytest
+python -m pytest tests
 ```
 You can also run tests for an individual unit, i.e.:
 ```bash
-pytest tests/test_feed.py
+python -m pytest tests/test_feed.py
 ```
 
 ## License
