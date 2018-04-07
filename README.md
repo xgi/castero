@@ -18,7 +18,7 @@ $ sudo python setup.py install
 
 ## Usage
 
-After installing castero, it can be called with simply:
+After installing castero, it can be run with simply:
 ```bash
 $ castero
 ```
@@ -53,11 +53,11 @@ Additionally, a file containing your list of feeds is located at `{HOME}/.local/
 
 This project uses [PyTest](https://pytest.org) for testing. To run tests, run the following command in the project's root directory:
 ```bash
-python -m pytest tests
+pytest
 ```
 You can also run tests for an individual unit, i.e.:
 ```bash
-python -m pytest tests/test_feed.py
+pytest tests/test_feed.py
 ```
 
 ## License
