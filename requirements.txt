@@ -1,0 +1,2 @@
+python-vlc==3.0.102
+requests==2.18.4
