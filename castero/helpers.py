@@ -1,6 +1,3 @@
-import os
-
-
 def third(n) -> int:
     """Calculates one-third of a given value.
 
