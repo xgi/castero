@@ -1,6 +1,5 @@
 import os
 from shutil import copyfile
-from castero import helpers
 
 
 class DataFile:
@@ -60,7 +59,7 @@ class DataFile:
 
     @staticmethod
     def ensure_path(filename):
-        """Ensure that the path to the filename exists, creating it if necessary.
+        """Ensure that the path to the filename exists, creating it if needed.
         """
         path = os.path.dirname(filename)
         if not os.path.exists(path):

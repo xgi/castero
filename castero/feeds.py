@@ -55,7 +55,7 @@ class Feeds(DataFile):
             ]
 
             # assume urls start with http (change later?)
-            if feed_dict["link"].startswith('http'):
+            if key.startswith('http'):
                 # create feed from url
                 feed = Feed(
                     url=key,
@@ -122,7 +122,7 @@ class Feeds(DataFile):
             Feed: the feed at the index
         """
         result = None
-        if len(list(self.data)) > 0:
+        if index < len(list(self.data)) > 0:
             result = self.data[list(self.data)[index]]
         return result
 

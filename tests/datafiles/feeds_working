@@ -1,0 +1,36 @@
+{
+    "feed key": {
+        "title": "feed title",
+        "description": "feed description",
+        "link": "feed link",
+        "last_build_date": "feed last_build_date",
+        "copyright": "feed copyright",
+        "episodes": [
+            {
+                "title": "episode title",
+                "description": "episode description",
+                "link": "episode link",
+                "pubdate": "episode pubdate",
+                "copyright": "episode copyright",
+                "enclosure": "episode enclosure"
+            }
+        ]
+    },
+    "http://feed2_url": {
+        "title": "feed2 title",
+        "description": "feed2 description",
+        "link": "feed2 link",
+        "last_build_date": "feed2 last_build_date",
+        "copyright": "feed2 copyright",
+        "episodes": [
+            {
+                "title": "episode title",
+                "description": "episode description",
+                "link": "episode link",
+                "pubdate": "episode pubdate",
+                "copyright": "episode copyright",
+                "enclosure": "episode enclosure"
+            }
+        ]
+    }
+}
