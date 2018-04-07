@@ -9,3 +9,6 @@ install:
 
 script:
   - python -m pytest tests
+
+notifications:
+  email: false
