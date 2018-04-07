@@ -2,7 +2,8 @@ import setuptools
 import castero
 
 install_requires = [
-    'requests'
+    'requests',
+    'python-vlc'
 ]
 
 tests_require = [
