@@ -1,5 +1,7 @@
 # castero
 
+[![Build Status](https://travis-ci.org/xgi/castero.svg?branch=master)](https://travis-ci.org/xgi/castero)
+
 castero is a podcast client for the command line.
 
 ![client_example](res/client_example.png)
