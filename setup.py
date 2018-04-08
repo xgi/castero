@@ -7,10 +7,13 @@ install_requires = [
 ]
 
 tests_require = [
-
+    'pytest',
+    'coverage',
+    'codecov'
 ]
 
 extras_require = {
+    'test': tests_require
 }
 
 setuptools.setup(
