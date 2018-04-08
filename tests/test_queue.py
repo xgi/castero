@@ -103,12 +103,3 @@ def test_queue_seek():
     myqueue.seek(1)
     assert player1.time == int(config["seek_distance"]) * 1000
     myqueue.stop()
-
-
-def test_queue_update():
-    myqueue = Queue(config)
-    myqueue.add(player1)
-    myqueue.play()
-    player1._player.set_time(100000)
-    myqueue.update()
-    assert myqueue.length == 0

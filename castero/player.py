@@ -59,14 +59,11 @@ class Player:
         self._media.parse()  # may output some junk into the console
         self._player.set_media(self._media)
 
-        if self._media.get_parsed_status() == vlc.MediaParsedStatus.failed:
+        if self._media.get_parsed_status == vlc.MediaParsedStatus.failed:
             raise PlayerCreateError(
                 "Media object failed while parsing (is the path valid?)")
-        else:
-            if self._media.get_duration() == 0:
-                raise PlayerCreateError("Media object had a duration of 0")
-            else:
-                self._duration = self._media.get_duration()
+
+        self._duration = self._media.get_duration()
 
     def play(self) -> None:
         """Plays the media.

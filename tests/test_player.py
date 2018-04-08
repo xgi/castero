@@ -10,11 +10,6 @@ def test_player_init():
     assert isinstance(myplayer, player.Player)
 
 
-def test_player_create_error():
-    with pytest.raises(player.PlayerCreateError):
-        myplayer = player.Player("fake", my_dir + "/feeds/valid_basic.xml")
-
-
 def test_player_play():
     myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
     myplayer.play()
