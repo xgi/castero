@@ -59,11 +59,11 @@ class Player:
         self._media.parse()  # may output some junk into the console
         self._player.set_media(self._media)
 
-        if self._media.get_parsed_status == vlc.MediaParsedStatus.failed:
+        if self._media.get_parsed_status() == vlc.MediaParsedStatus.failed:
             raise PlayerCreateError(
                 "Media object failed while parsing (is the path valid?)")
         else:
-            if self._media.get_duration == 0:
+            if self._media.get_duration() == 0:
                 raise PlayerCreateError("Media object had a duration of 0")
             else:
                 self._duration = self._media.get_duration()
@@ -121,9 +121,9 @@ class Player:
 
     @property
     def duration(self) -> int:
-        assert self._player is not None
+        assert self._media is not None
 
-        self._duration = self._player.get_length()
+        self._duration = self._media.get_duration()
         return self._duration
 
     @property
