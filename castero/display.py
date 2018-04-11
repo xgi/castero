@@ -26,6 +26,7 @@ class Display:
         """Initializes the object.
 
         Args:
+            stdscr: a stdscr from curses.initscr()
             config: a loaded castero.Config object
             feeds: a loaded castero.Feeds object
         """
