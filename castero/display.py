@@ -22,14 +22,14 @@ class Display:
     MIN_HEIGHT = 0
     INPUT_TIMEOUT = 1000  # 1 second
 
-    def __init__(self, config, feeds) -> None:
+    def __init__(self, stdscr, config, feeds) -> None:
         """Initializes the object.
 
         Args:
             config: a loaded castero.Config object
             feeds: a loaded castero.Feeds object
         """
-        self._stdscr = curses.initscr()
+        self._stdscr = stdscr
         self._config = config
         self._feeds = feeds
         self._parent_x = -1
@@ -171,7 +171,7 @@ class Display:
 
         self.clear()
 
-    def _display(self) -> None:
+    def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
         """
         # add header
@@ -284,8 +284,7 @@ class Display:
 
         return result.decode("utf-8")
 
-
-    def _handle_input(self, c) -> bool:
+    def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
 
         Args:
@@ -379,9 +378,10 @@ class Display:
             feed_index = self._feed_menu.selected_index
             episode_index = self._episode_menu.selected_index
             feed = self._feeds.at(feed_index)
-            episode = feed.episodes[episode_index]
-            player = Player(str(episode), episode.enclosure)
-            self._queue.add(player)
+            if feed is not None:
+                episode = feed.episodes[episode_index]
+                player = Player(str(episode), episode.enclosure)
+                self._queue.add(player)
 
     def _change_active_window(self, direction) -> None:
         """Changes _active_window to the next or previous window, if available.
@@ -556,23 +556,16 @@ class Display:
     def update_parent_dimensions(self) -> None:
         """Update _parent_x and _parent_y to the size of the console.
         """
-        self._parent_x = curses.COLS
-        self._parent_y = curses.LINES
+        self._parent_y, self._parent_x = self._stdscr.getmaxyx()
 
-    def loop(self) -> None:
-        """Continually update the display in response to user input.
+    def getch(self) -> int:
+        """Gets an input character from the user.
 
-        This method is the core part of the Display object and is the main
-        loop of the application as a whole.
+        This method returns after at most INPUT_TIMEOUT ms.
+
+        Returns:
+            int: the character entered by the user, or -1
         """
-        self.clear()
-        self.update_parent_dimensions()
+        c = self._stdscr.getch()
+        return c
 
-        running = True
-        while running:
-            self._display()
-            self._queue.update()
-            self.refresh()
-
-            c = self._stdscr.getch()
-            running = self._handle_input(c)
