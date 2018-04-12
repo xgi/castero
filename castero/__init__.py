@@ -22,6 +22,7 @@ Commands
     q            - exit the client
     a            - add a feed
     d            - delete the selected feed
+    r            - reload/refresh feeds
     arrows       - navigate menus
     page up/down - scroll menus
     enter        - play selected feed/episode

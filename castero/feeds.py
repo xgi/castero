@@ -112,6 +112,20 @@ class Feeds(DataFile):
         with open(self._path, 'w') as f:
             f.write(output)
 
+    def reload(self) -> None:
+        """Reloads feeds from their source to update properties/episodes.
+
+        The caller of this method will probably want to write() to the feeds
+        file after this runs, but that is not done automatically.
+        """
+        for key in self.data:
+            # assume urls start with http (change later?)
+            if key.startswith('http'):
+                feed = Feed(url=key)
+            else:
+                feed = Feed(file=key)
+            self.data[key] = feed
+
     def at(self, index) -> Feed:
         """Return the Feed at index.
 

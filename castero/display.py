@@ -362,6 +362,10 @@ class Display:
                 if deleted:
                     self._create_menus()
                     self._feeds.write()
+        elif c == ord('r'):
+            self._feeds.reload()
+            self._create_menus()
+            self._feeds.write()
         return keep_running
 
     def _create_player_from_selected(self) -> None:
