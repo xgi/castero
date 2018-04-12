@@ -32,7 +32,7 @@ class Menu:
         self._parent_selected = 0
         self._display_start_y = 2
         self._top_index = 0
-        self._max_displayed_items = self._window.getmaxyx()[0] - self._window.getyx()[0] - 4
+        self._max_displayed_items = self._window.getmaxyx()[0] - 4
 
     def _pad_item_str(self, item) -> str:
         """Pads an item string with spaces to be the full length of the menu.
