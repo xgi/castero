@@ -5,7 +5,8 @@ from castero import helpers
 from castero.menu import Menu
 from castero.player import Player
 from castero.queue import Queue
-from castero.feed import Feed, FeedError
+from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
+    FeedParseError, FeedStructureError
 
 
 class Display:
@@ -358,20 +359,41 @@ class Display:
                     self._feeds[path] = feed
                 self._create_menus()
                 self._feeds.write()
-            except FeedError:
-                # this should probably show some message in the footer window,
-                # but that isn't yet configured to show status messages
-                pass
+                self.update_status("Feed '%s\' successfully added" % str(feed))
+            except FeedError as e:
+                if type(e) == FeedLoadError:
+                    self.update_status(
+                        "Error: An error occurred while loading the file"
+                    )
+                elif type(e) == FeedDownloadError:
+                    self.update_status(
+                        "Error: An error occurred while downloading the feed"
+                    )
+                elif type(e) == FeedParseError:
+                    self.update_status(
+                        "Error: An error occurred while parsing the feed"
+                    )
+                elif type(e) == FeedStructureError:
+                    self.update_status(
+                        "Error: The provided feed is not a valid RSS document"
+                    )
+                else:
+                    self.update_status(
+                        "Error: An ambiguous error occurred while handling the"
+                        " feed"
+                    )
         elif c == ord('d'):
             if self._active_window == 0:
                 deleted = self._feeds.del_at(self._feed_menu.selected_index)
                 if deleted:
                     self._create_menus()
                     self._feeds.write()
+                    self.update_status("Feed successfully deleted")
         elif c == ord('r'):
             self._feeds.reload()
             self._create_menus()
             self._feeds.write()
+            self.update_status("Feeds successfully reloaded")
         return keep_running
 
     def _create_player_from_selected(self) -> None:
