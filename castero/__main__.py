@@ -18,7 +18,7 @@ def main():
     running = True
     while running:
         display.display()
-        display._queue.update()  # TODO: refactor
+        display.update()
         display.refresh()
         c = display.getch()
         if c != -1:

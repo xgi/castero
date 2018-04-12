@@ -21,6 +21,7 @@ class Display:
     MIN_WIDTH = 0  # TODO: raise error if not met
     MIN_HEIGHT = 0
     INPUT_TIMEOUT = 1000  # 1 second
+    STATUS_TIMEOUT = 4  # multiple of INPUT_TIMEOUT
 
     def __init__(self, stdscr, config, feeds) -> None:
         """Initializes the object.
@@ -45,6 +46,8 @@ class Display:
         self._episode_menu = None
         self._metadata_updated = False
         self._queue = Queue(config)
+        self._status = ""
+        self._status_timer = self.STATUS_TIMEOUT
 
         # basic preliminary operations
         self._stdscr.timeout(self.INPUT_TIMEOUT)
@@ -195,22 +198,25 @@ class Display:
 
         # add footer
         footer_str = ""
-        if len(self._feeds) > 0:
-            total_feeds = len(self._feeds)
-            lengths_of_feeds = [len(self._feeds[key].episodes) for key in
-                                self._feeds]
-            total_episodes = sum(lengths_of_feeds)
-            median_episodes = helpers.median(lengths_of_feeds)
+        if self._status == "":  # always display the status instead if needed
+            if len(self._feeds) > 0:
+                total_feeds = len(self._feeds)
+                lengths_of_feeds = [len(self._feeds[key].episodes) for key in
+                                    self._feeds]
+                total_episodes = sum(lengths_of_feeds)
+                median_episodes = helpers.median(lengths_of_feeds)
 
-            footer_str += "Processed %d feeds with %d total episodes (avg." \
-                          " %d episodes, med. %d)" % (
-                              total_feeds,
-                              total_episodes,
-                              total_episodes / total_feeds,
-                              median_episodes
-                          )
+                footer_str += "Processed %d feeds with %d total episodes (av" \
+                              "g. %d episodes, med. %d)" % (
+                                  total_feeds,
+                                  total_episodes,
+                                  total_episodes / total_feeds,
+                                  median_episodes
+                              )
+            else:
+                footer_str += "No feeds added"
         else:
-            footer_str += "No feeds added"
+            footer_str = self._status
 
         footer_str += " -- Press h for help"
         self._footer_window.attron(curses.A_BOLD)
@@ -574,3 +580,35 @@ class Display:
         c = self._stdscr.getch()
         return c
 
+    def update_status(self, status) -> None:
+        """Updates the status message displayed in the footer.
+
+        Args:
+            status: the status message to display
+        """
+        assert type(status) == str
+
+        self._status = status
+        self._status_timer = self.STATUS_TIMEOUT
+
+    def update(self) -> None:
+        """Updates all actively tracked components of this object.
+
+        Should be called by the main loop after every input or input timeout.
+        """
+        # have the queue check if it needs to go to the next player
+        self._queue.update()
+
+        # update the status timer
+        # If the user is not doing anything, the status message will take
+        # INPUT_TIMEOUT * STATUS_TIMEOUT ms to be cleared. However, if the user
+        # is performing inputs (i.e. traversing a menu) the message may be
+        # cleared much quicker, since it will go away in STATUS_TIMEOUT
+        # keypresses. However, this seems reasonable, since if the user is
+        # actively controlling the client and not pausing to read the message,
+        # they probably don't care about it anyway.
+        if self._status_timer > 0:
+            self._status_timer -= 1
+            if self._status_timer <= 0:
+                # status_timer should be reset during the next update_status()
+                self._status = ""

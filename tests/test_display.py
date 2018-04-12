@@ -139,3 +139,19 @@ def test_display_get_active_menu(display):
     assert display.get_active_menu() == display._feed_menu
     display._active_window = 1
     assert display.get_active_menu() == display._episode_menu
+
+
+def test_display_update_status(display):
+    display._status = ""
+    display._status_timer = 0
+    display.update_status("test status")
+    assert display._status == "test status"
+    assert display._status_timer == display.STATUS_TIMEOUT
+
+
+def test_display_update(display):
+    display._status = "test status"
+    display._status_timer = 1
+    display.update()
+    assert display._status_timer == 0
+    assert display._status == ""
