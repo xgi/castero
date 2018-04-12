@@ -112,19 +112,34 @@ class Feeds(DataFile):
         with open(self._path, 'w') as f:
             f.write(output)
 
-    def reload(self) -> None:
+    def reload(self, display=None) -> None:
         """Reloads feeds from their source to update properties/episodes.
 
-        The caller of this method will probably want to write() to the feeds
-        file after this runs, but that is not done automatically.
+        This method automatically calls write() after reloading the feeds.
+
+        Args:
+            display: (optional) the display to write status updates to
         """
+        total_feeds = len(self.data)
+        current_feed = 1
         for key in self.data:
+            if display is not None:
+                display.update_status(
+                    "Reloading feeds (%d/%d)" % (current_feed, total_feeds)
+                )
+
             # assume urls start with http (change later?)
             if key.startswith('http'):
                 feed = Feed(url=key)
             else:
                 feed = Feed(file=key)
             self.data[key] = feed
+            current_feed += 1
+        self.write()
+
+        if display is not None:
+            display.update_status("Feeds successfully reloaded")
+            display.create_menus()
 
     def at(self, index) -> Feed:
         """Return the Feed at index.

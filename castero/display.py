@@ -1,5 +1,6 @@
 import curses
 import textwrap
+import threading
 import castero
 from castero import helpers
 from castero.menu import Menu
@@ -60,7 +61,7 @@ class Display:
 
         self.create_color_pairs()
         self._create_windows()
-        self._create_menus()
+        self.create_menus()
 
     @staticmethod
     def create_color_pairs() -> None:
@@ -107,7 +108,7 @@ class Display:
         self._header_window.attron(curses.color_pair(4))
         self._footer_window.attron(curses.color_pair(4))
 
-    def _create_menus(self) -> None:
+    def create_menus(self) -> None:
         """Creates the menus used in each window.
 
         Windows which have menus should be created prior to running this method
@@ -357,7 +358,7 @@ class Display:
                     feed = Feed(file=path)
                 if feed.validated:
                     self._feeds[path] = feed
-                self._create_menus()
+                self.create_menus()
                 self._feeds.write()
                 self.update_status("Feed '%s\' successfully added" % str(feed))
             except FeedError as e:
@@ -386,14 +387,12 @@ class Display:
             if self._active_window == 0:
                 deleted = self._feeds.del_at(self._feed_menu.selected_index)
                 if deleted:
-                    self._create_menus()
+                    self.create_menus()
                     self._feeds.write()
                     self.update_status("Feed successfully deleted")
         elif c == ord('r'):
-            self._feeds.reload()
-            self._create_menus()
-            self._feeds.write()
-            self.update_status("Feeds successfully reloaded")
+            t = threading.Thread(target=self._feeds.reload, args=[self])
+            t.start()
         return keep_running
 
     def _create_player_from_selected(self) -> None:
