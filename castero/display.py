@@ -148,6 +148,9 @@ class Display:
         self._feed_menu = Menu(self._feed_window, feed_items,
                                child=self._episode_menu, active=True)
 
+        # force reset active window to prevent starting in the episodes menu
+        self._active_window = 0
+
     def _show_help(self) -> None:
         """Show the help screen.
 
