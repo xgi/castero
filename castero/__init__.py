@@ -1,19 +1,21 @@
-__title__       = "castero"
-__description__ = "Command line podcast client"
-__author__      = "Jake Robertson <jake@faltro.com>"
-__version__     = "0.1.1"
-__date__        = "2018-04-12"
-__copyright__   = "Copyright (c) 2018 Jake Robertson"
-__license__     = "MIT License"
-__url__         = "https://github.com/xgi/castero"
+__title__        = "castero"
+__description__  = "Command line podcast client"
+__keywords__     = "podcast commandline terminal curses"
+__author__       = "Jake Robertson"
+__author_email__ = "jake@faltro.com"
+__version__      = "0.1.1"
+__date__         = "2018-04-12"
+__copyright__    = "Copyright (c) 2018 Jake Robertson"
+__license__      = "MIT License"
+__url__          = "https://github.com/xgi/castero"
 
 __help__ = """\
-%s Help
+%s help
 ============
 
 Version: %s
 Updated: %s
-Maintainer: %s
+Maintainer: %s <%s>
 License: %s
 URL: %s
 
@@ -40,6 +42,7 @@ Press any key to exit this screen.
     __version__,
     __date__,
     __author__,
+    __author_email__,
     __license__,
     __url__
 )
