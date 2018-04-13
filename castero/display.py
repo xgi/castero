@@ -10,6 +10,16 @@ from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
 
 
+class DisplayError(Exception):
+    """An ambiguous error while handling the display.
+    """
+
+
+class DisplaySizeError(FeedError):
+    """The display does not have acceptable dimensions.
+    """
+
+
 class Display:
     """The Display class.
 
@@ -20,8 +30,8 @@ class Display:
     This class also includes the core input loop of the application, contained
     in the loop() method.
     """
-    MIN_WIDTH = 0  # TODO: raise error if not met
-    MIN_HEIGHT = 0
+    MIN_WIDTH = 20
+    MIN_HEIGHT = 8
     INPUT_TIMEOUT = 1000  # 1 second
     STATUS_TIMEOUT = 4  # multiple of INPUT_TIMEOUT
 
@@ -592,6 +602,11 @@ class Display:
         """Update _parent_x and _parent_y to the size of the console.
         """
         self._parent_y, self._parent_x = self._stdscr.getmaxyx()
+
+        if self._parent_y < self.MIN_HEIGHT:
+            raise DisplaySizeError("Display height is too small")
+        if self._parent_x < self.MIN_WIDTH:
+            raise DisplaySizeError("Display width is too small")
 
     def getch(self) -> int:
         """Gets an input character from the user.
