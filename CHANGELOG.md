@@ -15,6 +15,7 @@ See also <https://github.com/xgi/castero/releases>.
 ## Unreleased
 **Added**
 * Added config options for client colors.
+* Handle -h or --help flag to display help text instead of starting the client.
 
 ## 0.1.2 - 2018-04-13
 **Added**

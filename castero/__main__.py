@@ -1,11 +1,18 @@
 from castero.display import Display
 from castero.config import Config
 from castero.feeds import Feeds
+import castero
 import sys
 import curses
 
 
 def main():
+    # check if user is running the client with -h or --help flag
+    help_flags = ['-h', '--help']
+    if sys.argv[len(sys.argv) - 1] in help_flags:
+        print(castero.__help__)
+        sys.exit(0)
+
     config = Config()
     feeds = Feeds()
 

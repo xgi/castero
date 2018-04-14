@@ -208,9 +208,9 @@ class Display:
 
         # display lines from __help__
         help_lines = castero.__help__.split('\n')
+        help_lines.append("Press any key to exit this screen.")
         for i in range(len(help_lines)):
             help_window.addstr(i + padding_xy[0], padding_xy[1], help_lines[i])
-
         help_window.refresh()
 
         # simply wait until any key is pressed (temporarily disable timeout)

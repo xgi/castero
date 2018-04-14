@@ -34,9 +34,6 @@ Commands
     n            - go to the next episode in the queue
     f            - seek forward
     b            - seek backward
-    
-
-Press any key to exit this screen.
 """ % (
     __title__,
     __version__,
