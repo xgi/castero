@@ -155,3 +155,28 @@ def test_display_update(display):
     display.update()
     assert display._status_timer == 0
     assert display._status == ""
+
+
+def test_display_create_player(display):
+    episode = Episode(title="episode title",
+                      description="episode description",
+                      link="episode link",
+                      pubdate="episode pubdate",
+                      copyright="episode copyright",
+                      enclosure="episode enclosure")
+    feed = Feed(url="feed url",
+                title="feed title",
+                description="feed description",
+                link="feed link",
+                last_build_date="feed last_build_date",
+                copyright="feed copyright",
+                episodes=[episode, episode, episode])
+    display._feeds["feed url"] = feed
+    display._active_window = 0
+    display._create_player_from_selected()
+    assert display._queue.length == 3
+    display._queue.clear()
+    assert display._queue.length == 0
+    display._active_window = 1
+    display._create_player_from_selected()
+    assert display._queue.length == 1

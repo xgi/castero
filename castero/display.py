@@ -235,6 +235,9 @@ class Display:
 
         footer_str += " -- Press h for help"
         self._footer_window.attron(curses.A_BOLD)
+        self._footer_window.addstr(
+            1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
+        )
         self._footer_window.addstr(1, 0, footer_str)
 
         # add window titles
@@ -418,9 +421,12 @@ class Display:
         This method will not clear the queue prior to adding the new player(s),
         nor will it play the episodes after running.
         """
-        # TODO: if active_window == 0 (feed), add all episodes to queue
-        if self._active_window == 1:
-            feed_index = self._feed_menu.selected_index
+        feed_index = self._feed_menu.selected_index
+        if self._active_window == 0:
+            for episode in self._feeds.at(feed_index).episodes:
+                player = Player(str(episode), episode.enclosure)
+                self._queue.add(player)
+        elif self._active_window == 1:
             episode_index = self._episode_menu.selected_index
             feed = self._feeds.at(feed_index)
             if feed is not None:
