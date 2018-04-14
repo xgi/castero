@@ -145,8 +145,8 @@ class Display:
         self._feed_window.attron(curses.color_pair(1))
         self._episode_window.attron(curses.color_pair(1))
         self._metadata_window.attron(curses.color_pair(1))
-        self._header_window.attron(curses.color_pair(1))
-        self._footer_window.attron(curses.color_pair(1))
+        self._header_window.attron(curses.color_pair(4))
+        self._footer_window.attron(curses.color_pair(4))
 
     def create_menus(self) -> None:
         """Creates the menus used in each window.
