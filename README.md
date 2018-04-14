@@ -8,7 +8,10 @@ castero is a podcast client for the command line.
 
 ## Installation
 
-castero is not yet available on PyPi.
+Install from [PyPi](https://pypi.org/project/castero) with pip:
+```bash
+pip install castero
+```
 
 ### Manual Installation
 
