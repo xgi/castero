@@ -12,6 +12,10 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## Unreleased
+**Added**
+* Added config options for client colors.
+
 ## 0.1.2 - 2018-04-13
 **Added**
 * You can now add entire feeds to the queue.

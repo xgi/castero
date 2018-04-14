@@ -34,6 +34,16 @@ class Display:
     MIN_HEIGHT = 8
     INPUT_TIMEOUT = 1000  # 1 second
     STATUS_TIMEOUT = 4  # multiple of INPUT_TIMEOUT
+    AVAILABLE_COLORS = {
+        'black': curses.COLOR_BLACK,
+        'blue': curses.COLOR_BLUE,
+        'cyan': curses.COLOR_CYAN,
+        'green': curses.COLOR_GREEN,
+        'magenta': curses.COLOR_MAGENTA,
+        'red': curses.COLOR_RED,
+        'white': curses.COLOR_WHITE,
+        'yellow': curses.COLOR_YELLOW
+    }
 
     def __init__(self, stdscr, config, feeds) -> None:
         """Initializes the object.
@@ -73,20 +83,40 @@ class Display:
         self._create_windows()
         self.create_menus()
 
-    @staticmethod
-    def create_color_pairs() -> None:
+    def create_color_pairs(self) -> None:
         """Initializes color pairs used for the display.
 
         Creates the following color pairs (foreground, background):
-            - 1: yellow, black
-            - 2: black, yellow
-            - 3: black, white
-            - 4: white, black
+            - 1: foreground, background
+            - 2: background, foreground
+            - 3: background_alt, foreground_alt
+            - 4: foreground_alt, background_alt
         """
-        curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)
-        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_YELLOW)
-        curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
-        curses.init_pair(4, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        assert self._config["color_foreground"] in self.AVAILABLE_COLORS
+        assert self._config["color_background"] in self.AVAILABLE_COLORS
+        assert self._config["color_foreground_alt"] in self.AVAILABLE_COLORS
+        assert self._config["color_background_alt"] in self.AVAILABLE_COLORS
+
+        curses.init_pair(
+            1,
+            self.AVAILABLE_COLORS[self._config["color_foreground"]],
+            self.AVAILABLE_COLORS[self._config["color_background"]]
+        )
+        curses.init_pair(
+            2,
+            self.AVAILABLE_COLORS[self._config["color_background"]],
+            self.AVAILABLE_COLORS[self._config["color_foreground"]]
+        )
+        curses.init_pair(
+            3,
+            self.AVAILABLE_COLORS[self._config["color_background_alt"]],
+            self.AVAILABLE_COLORS[self._config["color_foreground_alt"]]
+        )
+        curses.init_pair(
+            4,
+            self.AVAILABLE_COLORS[self._config["color_foreground_alt"]],
+            self.AVAILABLE_COLORS[self._config["color_background_alt"]]
+        )
 
     def _create_windows(self) -> None:
         """Creates and sets basic parameters for the windows.
@@ -115,8 +145,8 @@ class Display:
         self._feed_window.attron(curses.color_pair(1))
         self._episode_window.attron(curses.color_pair(1))
         self._metadata_window.attron(curses.color_pair(1))
-        self._header_window.attron(curses.color_pair(4))
-        self._footer_window.attron(curses.color_pair(4))
+        self._header_window.attron(curses.color_pair(1))
+        self._footer_window.attron(curses.color_pair(1))
 
     def create_menus(self) -> None:
         """Creates the menus used in each window.
