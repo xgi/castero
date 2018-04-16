@@ -1,9 +1,10 @@
+import sys
+import curses
+import threading
+import castero
 from castero.display import Display
 from castero.config import Config
 from castero.feeds import Feeds
-import castero
-import sys
-import curses
 
 
 def main():
@@ -21,6 +22,10 @@ def main():
 
     display.clear()
     display.update_parent_dimensions()
+
+    if bool(config['reload_on_start']):
+        t = threading.Thread(target=feeds.reload, args=[display])
+        t.start()
 
     running = True
     while running:
