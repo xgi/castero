@@ -23,7 +23,7 @@ def main():
     display.clear()
     display.update_parent_dimensions()
 
-    if bool(config['reload_on_start']):
+    if config['reload_on_start'] in ['True', 'true', '1']:
         t = threading.Thread(target=feeds.reload, args=[display])
         t.start()
 

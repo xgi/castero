@@ -16,6 +16,11 @@ See also <https://github.com/xgi/castero/releases>.
 **Added**
 * Added support for playing local media files (downloading not yet supported).
 
+**Fixed**
+* Fixed the description of some fields in the default config file.
+* Fixed an issue where the client would not properly obey the reload_on_start 
+config option.
+
 ## 0.1.3 - 2018-04-19
 **Added**
 * Added config options for client colors.
