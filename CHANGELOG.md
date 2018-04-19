@@ -12,7 +12,7 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
-## Unreleased
+## 0.1.3 - 2018-04-19
 **Added**
 * Added config options for client colors.
 * Added config option to automatically reload feeds on startup.
