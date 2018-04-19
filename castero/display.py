@@ -452,16 +452,16 @@ class Display:
         nor will it play the episodes after running.
         """
         feed_index = self._feed_menu.selected_index
+        feed = self._feeds.at(feed_index)
         if self._active_window == 0:
-            for episode in self._feeds.at(feed_index).episodes:
-                player = Player(str(episode), episode.enclosure)
+            for episode in feed.episodes:
+                player = Player(str(episode), episode.get_playable(feed))
                 self._queue.add(player)
         elif self._active_window == 1:
             episode_index = self._episode_menu.selected_index
-            feed = self._feeds.at(feed_index)
             if feed is not None:
                 episode = feed.episodes[episode_index]
-                player = Player(str(episode), episode.enclosure)
+                player = Player(str(episode), episode.get_playable(feed))
                 self._queue.add(player)
 
     def _change_active_window(self, direction) -> None:

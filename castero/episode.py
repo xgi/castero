@@ -1,3 +1,8 @@
+import os
+from castero import helpers
+from castero.datafile import DataFile
+
+
 class Episode:
     """The Episode class.
 
@@ -37,6 +42,32 @@ class Episode:
         else:
             representation = self._description
         return representation.split('\n')[0]
+
+    def get_playable(self, feed) -> str:
+        """Gets a playable path for this episode.
+
+        This method checks whether the episode is available on the disk, giving
+        the path to that file if so. Otherwise, simply return the episode's
+        enclosure, which is probably a URL.
+
+        Args:
+            feed: the castero.Feed that this episode is from
+
+        Returns:
+            str: a path to a playable file for this episode
+        """
+        playable = self.enclosure
+
+        feed_dirname = helpers.sanitize_path(str(feed))
+        episode_partial_filename = helpers.sanitize_path(str(self))
+        feed_directory = os.path.join(DataFile.DOWNLOADED_DIR, feed_dirname)
+
+        if os.path.exists(feed_directory):
+            for File in os.listdir(feed_directory):
+                if File.startswith(episode_partial_filename + '.'):
+                    playable = os.path.join(feed_directory, File)
+
+        return playable
 
     @property
     def title(self) -> str:

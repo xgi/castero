@@ -12,6 +12,10 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## Unreleased
+**Added**
+* Added support for playing local media files (downloading not yet supported).
+
 ## 0.1.3 - 2018-04-19
 **Added**
 * Added config options for client colors.

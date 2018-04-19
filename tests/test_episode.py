@@ -1,4 +1,7 @@
+import os
 from castero.episode import Episode
+from castero.feed import Feed
+from castero.datafile import DataFile
 
 title = "episode title"
 description = "episode description"
@@ -6,6 +9,8 @@ link = "episode link"
 pubdate = "episode pubdate"
 copyright = "episode copyright"
 enclosure = "episode enclosure"
+
+my_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def test_episode_init():
@@ -81,3 +86,18 @@ def test_episode_missing_property_copyright():
 def test_episode_missing_property_enclosure():
     myepisode = Episode(title=title)
     assert myepisode.enclosure == "Enclosure not available."
+
+
+def test_episode_playable_remote():
+    myfeed = Feed(file=my_dir+"/feeds/valid_enclosures.xml")
+    playable = myfeed.episodes[0].get_playable(myfeed)
+    assert playable == "http://example.com/myfeed_item1_title.mp3"
+
+
+def test_episode_playable_local():
+    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    myfeed = Feed(file=my_dir+"/feeds/valid_enclosures.xml")
+
+    playable = myfeed.episodes[0].get_playable(myfeed)
+    assert playable == os.path.join(DataFile.DOWNLOADED_DIR, "myfeed_title",
+                                    "myfeed_item1_title.mp3")

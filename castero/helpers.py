@@ -1,3 +1,6 @@
+import re
+
+
 def third(n) -> int:
     """Calculates one-third of a given value.
 
@@ -31,3 +34,20 @@ def median(arr):
     else:
         result = arr_sorted[midpoint]
     return result
+
+
+def sanitize_path(path) -> str:
+    """Replaces any characters in path that the file system may not support.
+
+    This method replaces any non-alphanumeric characters with an underscore,
+    with the exception of hyphens.
+
+    Args:
+        path: the original path
+
+    Returns:
+        str: the given path with potentially unsafe characters replaced
+    """
+    # adapted from https://stackoverflow.com/a/13593932
+    path = re.sub('[^\w\-]', '_', path)
+    return path

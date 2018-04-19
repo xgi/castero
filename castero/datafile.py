@@ -1,5 +1,6 @@
 import os
 from shutil import copyfile
+import castero
 
 
 class DataFile:
@@ -16,6 +17,9 @@ class DataFile:
                                 os.path.join(HOME, '.config'))
     XDG_DATA_HOME = os.getenv('XDG_DATA_HOME',
                               os.path.join(HOME, '.local', 'share'))
+    CONFIG_DIR = os.path.join(XDG_CONFIG_HOME, castero.__title__)
+    DATA_DIR = os.path.join(XDG_DATA_HOME, castero.__title__)
+    DOWNLOADED_DIR = os.path.join(DATA_DIR, "downloaded")
 
     def __init__(self, path, default_path) -> None:
         """Initializes the object.

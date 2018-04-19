@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+    <channel>
+        <title>myfeed title</title>
+        <description>myfeed description</description>
+        <link>myfeed link</link>
+        <item>
+            <title>myfeed item1 title</title>
+            <description>myfeed item1 description</description>
+            <enclosure url="http://example.com/myfeed_item1_title.mp3"/>
+        </item>
+        <item>
+            <title>myfeed item2 title</title>
+            <enclosure url="http://example.com/myfeed_item2_title.mp3"/>
+        </item>
+        <item>
+            <description>myfeed item3 description</description>
+            <enclosure url="http://example.com/myfeed_item3_title.mp3"/>
+        </item>
+    </channel>
+</rss>
