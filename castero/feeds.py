@@ -20,7 +20,7 @@ class Feeds(DataFile):
     The feed_key for a feed is either the feed's file path or URL, which each
     feed object is ensured to have exactly one of.
     """
-    PATH = os.path.join(DataFile.XDG_DATA_HOME, 'castero', 'feeds')
+    PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
     DEFAULT_PATH = os.path.join(DataFile.PACKAGE, 'templates/feeds')
 
     def __init__(self) -> None:

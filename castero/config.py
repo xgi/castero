@@ -37,7 +37,7 @@ class Config(DataFile):
     Modifying config variables inside the application is not supported; config
     changes must be made to the config file itself.
     """
-    PATH = os.path.join(DataFile.XDG_CONFIG_HOME, 'castero', 'castero.conf')
+    PATH = os.path.join(DataFile.CONFIG_DIR, 'castero.conf')
     DEFAULT_PATH = os.path.join(DataFile.PACKAGE, 'templates/castero.conf')
 
     def __init__(self) -> None:
