@@ -64,11 +64,10 @@ class Queue:
     def update(self) -> None:
         """Checks the status of the current player.
         """
-        #self.next()
         if self.first is not None:
             # sanity check the player's current time
             if self.first.duration > 0:
-                if self.first.time >= self.first.duration:
+                if (self.first.time / 1000) + 1 >= (self.first.duration / 1000):
                     self.next()
 
     @property

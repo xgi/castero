@@ -12,6 +12,11 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## Unreleased
+**Fixed**
+* Fixed an issue where the queue would not properly recognize that the current
+episode had finished.
+
 ## 0.2.0 - 2018-04-20
 **Added**
 * Added support for downloading episodes for offline playback.
