@@ -1,0 +1,19 @@
+{
+    "feeds/valid_basic.xml": {
+        "title": "feed title",
+        "description": "feed description",
+        "link": "feed link",
+        "last_build_date": "feed last_build_date",
+        "copyright": "feed copyright",
+        "episodes": [
+            {
+                "title": "episode title",
+                "description": "episode description",
+                "link": "episode link",
+                "pubdate": "episode pubdate",
+                "copyright": "episode copyright",
+                "enclosure": "episode enclosure"
+            }
+        ]
+    }
+}

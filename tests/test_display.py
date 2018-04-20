@@ -189,3 +189,10 @@ def test_display_create_player(display):
     display._active_window = 1
     display._create_player_from_selected()
     assert display._queue.length == 1
+
+
+def test_display_nonempty(display):
+    myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    display._feeds[myfeed._file] = myfeed
+    display.create_menus()
+    display.display()

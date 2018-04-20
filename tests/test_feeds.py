@@ -1,4 +1,4 @@
-import pytest
+import copy
 import os
 from shutil import copyfile
 import castero.feeds as feeds
@@ -134,3 +134,14 @@ def test_feeds_del_at_2():
     restore_user_feeds()
     deleted = myfeeds.del_at(2)
     assert not deleted
+
+
+def test_feeds_reload_1():
+    hide_user_feeds()
+    copyfile(my_dir + "/datafiles/feeds_working2", feeds.Feeds.PATH)
+    myfeeds = feeds.Feeds()
+    myfeeds2 = copy.copy(myfeeds)
+    myfeeds2.reload()
+    restore_user_feeds()
+    for feed in myfeeds:
+        assert feed in myfeeds2

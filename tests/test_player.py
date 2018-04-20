@@ -53,3 +53,9 @@ def test_player_time():
     myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
     myplayer.play()
     assert myplayer.time == 0
+
+
+def test_player_time_str():
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer.play()
+    assert myplayer.time_str == "00:00:00/00:00:05"
