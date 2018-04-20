@@ -42,6 +42,7 @@ Commands
     a            - add a feed
     d            - delete the selected feed
     r            - reload/refresh feeds
+    s            - save episode for offline playback
     arrows       - navigate menus
     page up/down - scroll menus
     enter        - play selected feed/episode
