@@ -39,7 +39,7 @@ def stdscr():
          mock.patch('curses.has_colors'), \
          mock.patch('curses.start_color'), \
          mock.patch('curses.use_default_colors'):
-        result = MockStdscr(nlines=24, ncols=80, x=0, y=0)
+        result = MockStdscr(nlines=24, ncols=100, x=0, y=0)
         curses.initscr.return_value = result
         curses.newwin.side_effect = lambda *args: result.derwin(*args)
         curses.color_pair.return_value = 1
