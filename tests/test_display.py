@@ -1,8 +1,11 @@
+import os
 import curses
 import castero
 from castero.display import Display
 from castero.feed import Feed
 from castero.episode import Episode
+
+my_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def test_display_init(display):
@@ -99,19 +102,21 @@ def test_display_input_keys(display):
 
 
 def test_display_draw_metadata(display):
-    episode = Episode(title="episode title",
-                      description="episode description",
-                      link="episode link",
-                      pubdate="episode pubdate",
-                      copyright="episode copyright",
-                      enclosure="episode enclosure")
     feed = Feed(url="feed url",
                 title="feed title",
                 description="feed description",
                 link="feed link",
                 last_build_date="feed last_build_date",
                 copyright="feed copyright",
-                episodes=[episode])
+                episodes=[])
+    episode = Episode(feed,
+                      title="episode title",
+                      description="episode description",
+                      link="episode link",
+                      pubdate="episode pubdate",
+                      copyright="episode copyright",
+                      enclosure="episode enclosure")
+    feed.episodes.append(episode)
     display._feeds["feed url"] = feed
     display._active_window = 0
     display._draw_metadata()
@@ -158,19 +163,23 @@ def test_display_update(display):
 
 
 def test_display_create_player(display):
-    episode = Episode(title="episode title",
-                      description="episode description",
-                      link="episode link",
-                      pubdate="episode pubdate",
-                      copyright="episode copyright",
-                      enclosure="episode enclosure")
     feed = Feed(url="feed url",
                 title="feed title",
                 description="feed description",
                 link="feed link",
                 last_build_date="feed last_build_date",
                 copyright="feed copyright",
-                episodes=[episode, episode, episode])
+                episodes=[])
+    episode = Episode(feed,
+                      title="episode title",
+                      description="episode description",
+                      link="episode link",
+                      pubdate="episode pubdate",
+                      copyright="episode copyright",
+                      enclosure="episode enclosure")
+    feed.episodes.append(episode)
+    feed.episodes.append(episode)
+    feed.episodes.append(episode)
     display._feeds["feed url"] = feed
     display._active_window = 0
     display._create_player_from_selected()

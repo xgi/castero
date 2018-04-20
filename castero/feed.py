@@ -290,7 +290,8 @@ class Feed:
                 if 'url' in item_enclosure.attrib.keys():
                     item_enclosure_str = item_enclosure.attrib['url']
 
-            episode = Episode(title=item_title_str,
+            episode = Episode(self,
+                              title=item_title_str,
                               description=item_description_str,
                               link=item_link_str,
                               pubdate=item_pubdate_str,

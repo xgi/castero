@@ -42,18 +42,6 @@ class Feeds(DataFile):
         for key in content:
             feed_dict = content[key]
 
-            episodes = [
-                Episode(
-                    title=episode_dict["title"],
-                    description=episode_dict["description"],
-                    link=episode_dict["link"],
-                    pubdate=episode_dict["pubdate"],
-                    copyright=episode_dict["copyright"],
-                    enclosure=episode_dict["enclosure"]
-                )
-                for episode_dict in feed_dict["episodes"]
-            ]
-
             # assume urls start with http (change later?)
             if key.startswith('http'):
                 # create feed from url
@@ -64,7 +52,7 @@ class Feeds(DataFile):
                     link=feed_dict["link"],
                     last_build_date=feed_dict["last_build_date"],
                     copyright=feed_dict["copyright"],
-                    episodes=episodes,
+                    episodes=[],
                 )
             else:
                 # create feed from file
@@ -75,8 +63,24 @@ class Feeds(DataFile):
                     link=feed_dict["link"],
                     last_build_date=feed_dict["last_build_date"],
                     copyright=feed_dict["copyright"],
-                    episodes=episodes,
+                    episodes=[],
                 )
+
+            episodes = [
+                Episode(
+                    feed,
+                    title=episode_dict["title"],
+                    description=episode_dict["description"],
+                    link=episode_dict["link"],
+                    pubdate=episode_dict["pubdate"],
+                    copyright=episode_dict["copyright"],
+                    enclosure=episode_dict["enclosure"]
+                )
+                for episode_dict in feed_dict["episodes"]
+            ]
+
+            for episode in episodes:
+                feed.episodes.append(episode)
 
             # add feed to data
             self.data[key] = feed

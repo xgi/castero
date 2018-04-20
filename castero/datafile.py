@@ -1,4 +1,5 @@
 import os
+import requests
 from shutil import copyfile
 import castero
 
@@ -68,6 +69,34 @@ class DataFile:
         path = os.path.dirname(filename)
         if not os.path.exists(path):
             os.makedirs(path)
+
+    @staticmethod
+    def download_to_file(url, file, display=None):
+        """Downloads a URL to a local file.
+
+        Args:
+            url: the source url
+            file: the destination path
+            display: (optional) the display to write status updates to
+        """
+        chunk_size = 1024
+        chuck_size_label = "KB"
+
+        response = requests.get(url, stream=True)
+        handle = open(file, "wb")
+        downloaded = 0
+        for chunk in response.iter_content(chunk_size=chunk_size):
+            if display is not None:
+                display.update_status(
+                    "Downloading episode: %d%s" %
+                    (downloaded / chunk_size, chuck_size_label)
+                )
+            if chunk:
+                handle.write(chunk)
+            downloaded += len(chunk)
+
+        if display is not None:
+            display.update_status("Episode successfully downloaded.")
 
     def load(self) -> None:
         """Loads the data file.

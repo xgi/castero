@@ -439,6 +439,14 @@ class Display:
         elif c == ord('r'):
             t = threading.Thread(target=self._feeds.reload, args=[self])
             t.start()
+        elif c == ord('s'):
+            if self._active_window == 1:
+                feed_index = self._feed_menu.selected_index
+                feed = self._feeds.at(feed_index)
+                episode_index = self._episode_menu.selected_index
+                if feed is not None:
+                    episode = feed.episodes[episode_index]
+                    episode.download(self)
         return keep_running
 
     def _create_player_from_selected(self) -> None:
@@ -455,13 +463,13 @@ class Display:
         feed = self._feeds.at(feed_index)
         if self._active_window == 0:
             for episode in feed.episodes:
-                player = Player(str(episode), episode.get_playable(feed))
+                player = Player(str(episode), episode.get_playable())
                 self._queue.add(player)
         elif self._active_window == 1:
             episode_index = self._episode_menu.selected_index
             if feed is not None:
                 episode = feed.episodes[episode_index]
-                player = Player(str(episode), episode.get_playable(feed))
+                player = Player(str(episode), episode.get_playable())
                 self._queue.add(player)
 
     def _change_active_window(self, direction) -> None:
@@ -569,7 +577,13 @@ class Display:
                 # draw episode copyright
                 self._append_metadata_lines("Copyright:", output_lines,
                                             attr=curses.A_BOLD)
-                self._append_metadata_lines(episode.copyright, output_lines)
+                self._append_metadata_lines(episode.copyright, output_lines,
+                                            add_blank=True)
+
+                # draw episode downloaded
+                self._append_metadata_lines("Downloaded:", output_lines,
+                                            attr=curses.A_BOLD)
+                self._append_metadata_lines(episode.downloaded, output_lines)
 
         y = 2
         for line in output_lines[:max_lines]:

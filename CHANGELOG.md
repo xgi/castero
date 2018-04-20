@@ -14,7 +14,7 @@ See also <https://github.com/xgi/castero/releases>.
 
 ## Unreleased
 **Added**
-* Added support for playing local media files (downloading not yet supported).
+* Added support for downloading episodes for offline playback.
 
 **Fixed**
 * Fixed the description of some fields in the default config file.

@@ -14,7 +14,9 @@ my_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def test_episode_init():
-    myepisode = Episode(title=title,
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed,
+                        title=title,
                         description=description,
                         link=link,
                         pubdate=pubdate,
@@ -24,7 +26,9 @@ def test_episode_init():
 
 
 def test_episode_properties():
-    myepisode = Episode(title=title,
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed,
+                        title=title,
                         description=description,
                         link=link,
                         pubdate=pubdate,
@@ -39,58 +43,68 @@ def test_episode_properties():
 
 
 def test_episode_only_title():
-    myepisode = Episode(title=title)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
     assert isinstance(myepisode, Episode)
 
 
 def test_episode_only_description():
-    myepisode = Episode(description=description)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, description=description)
     assert isinstance(myepisode, Episode)
 
 
 def test_episode_str_title():
-    myepisode = Episode(title=title)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
     assert str(myepisode) == title
 
 
 def test_episode_str_description():
-    myepisode = Episode(description=description)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, description=description)
     assert str(myepisode) == description
 
 
 def test_episode_missing_property_title():
-    myepisode = Episode(description=description)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, description=description)
     assert myepisode.title == "Title not available."
 
 
 def test_episode_missing_property_description():
-    myepisode = Episode(title=title)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
     assert myepisode.description == "Description not available."
 
 
 def test_episode_missing_property_link():
-    myepisode = Episode(title=title)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
     assert myepisode.link == "Link not available."
 
 
 def test_episode_missing_property_pubdate():
-    myepisode = Episode(title=title)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
     assert myepisode.pubdate == "Publish date not available."
 
 
 def test_episode_missing_property_copyright():
-    myepisode = Episode(title=title)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
     assert myepisode.copyright == "Copyright not available."
 
 
 def test_episode_missing_property_enclosure():
-    myepisode = Episode(title=title)
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
     assert myepisode.enclosure == "Enclosure not available."
 
 
 def test_episode_playable_remote():
     myfeed = Feed(file=my_dir+"/feeds/valid_enclosures.xml")
-    playable = myfeed.episodes[0].get_playable(myfeed)
+    playable = myfeed.episodes[0].get_playable()
     assert playable == "http://example.com/myfeed_item1_title.mp3"
 
 
@@ -98,6 +112,6 @@ def test_episode_playable_local():
     DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     myfeed = Feed(file=my_dir+"/feeds/valid_enclosures.xml")
 
-    playable = myfeed.episodes[0].get_playable(myfeed)
+    playable = myfeed.episodes[0].get_playable()
     assert playable == os.path.join(DataFile.DOWNLOADED_DIR, "myfeed_title",
                                     "myfeed_item1_title.mp3")
