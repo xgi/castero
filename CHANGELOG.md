@@ -13,9 +13,14 @@ Version listings include the following sections, if applicable:
 See also <https://github.com/xgi/castero/releases>.
 
 ## Unreleased
+**Changed**
+* Metadata window will now properly extend to the right edge of the terminal.
+
 **Fixed**
 * Fixed an issue where the queue would not properly recognize that the current
 episode had finished.
+* Fixed footer text not being truncated, which caused errors if the screen size
+was too small.
 
 ## 0.2.0 - 2018-04-20
 **Added**

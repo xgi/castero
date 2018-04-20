@@ -136,7 +136,8 @@ class Display:
                                           2, 0)
         self._episode_window = curses.newwin(self._parent_y - 2, third_x,
                                              2, third_x)
-        self._metadata_window = curses.newwin(self._parent_y - 2, third_x,
+        metadata_width = self._parent_x - ((third_x * 2) - 1)
+        self._metadata_window = curses.newwin(self._parent_y - 2, metadata_width,
                                               2, 2 * third_x)
         self._footer_window = curses.newwin(2, self._parent_x,
                                             self._parent_y - 2, 0)
@@ -268,6 +269,7 @@ class Display:
         self._footer_window.addstr(
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
         )
+        footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
         self._footer_window.addstr(1, 0, footer_str)
 
         # add window titles
