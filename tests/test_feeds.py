@@ -136,7 +136,8 @@ def test_feeds_del_at_2():
     assert not deleted
 
 
-def test_feeds_reload_1():
+def test_feeds_reload():
+    os.chdir(my_dir)
     hide_user_feeds()
     copyfile(my_dir + "/datafiles/feeds_working2", feeds.Feeds.PATH)
     myfeeds = feeds.Feeds()
