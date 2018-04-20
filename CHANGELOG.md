@@ -12,7 +12,7 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
-## Unreleased
+## 0.2.0 - 2018-04-20
 **Added**
 * Added support for downloading episodes for offline playback.
 
