@@ -341,6 +341,33 @@ class Display:
 
         return result.decode("utf-8")
 
+    def _get_y_n(self, prompt) -> bool:
+        """Prompts the user for a yes or no (y/n) input.
+
+        Args:
+            prompt: a string to inform the user of what they need to enter
+
+        Returns:
+            bool: true if the user presses y, false otherwise
+        """
+        assert self._footer_window is not None
+        assert type(prompt) == str
+
+        curses.echo()
+        curses.curs_set(1)
+
+        self._footer_window.addstr(
+            1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
+        )
+        self._footer_window.addstr(1, 0, prompt)
+        c = self._footer_window.getch()
+
+        self._footer_window.clear()
+        curses.curs_set(0)
+        curses.noecho()
+
+        return c == ord('y')
+
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
 

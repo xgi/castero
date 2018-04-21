@@ -76,6 +76,14 @@ def test_display_get_input_str(display):
     assert display._footer_window.called_with(1, len("prompt"))
 
 
+def test_display_get_y_n(display):
+    display._get_y_n("prompt")
+    display._footer_window.clear.assert_called_once()
+    assert display._footer_window.addstr.call_count == 2
+    display._footer_window.addstr.assert_any_call(1, 0, "prompt")
+    assert display._footer_window.called_with(1, len("prompt"))
+
+
 def test_display_input_keys(display):
     ret_val = display.handle_input(ord('q'))
     assert not ret_val
