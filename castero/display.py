@@ -466,8 +466,15 @@ class Display:
                     self._feeds.write()
                     self.update_status("Feed successfully deleted")
         elif c == ord('r'):
-            t = threading.Thread(target=self._feeds.reload, args=[self])
-            t.start()
+            should_reload = True
+            if len(self._feeds) >= int(self._config["reload_feeds_threshold"]):
+                should_reload = self._get_y_n(
+                    "Are you sure you want to reload all of your feeds?"
+                    " (y/n): "
+                )
+            if should_reload:
+                t = threading.Thread(target=self._feeds.reload, args=[self])
+                t.start()
         elif c == ord('s'):
             if self._active_window == 1:
                 feed_index = self._feed_menu.selected_index
