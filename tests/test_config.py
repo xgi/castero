@@ -34,19 +34,20 @@ def test_config_parse_error():
     restore_user_config()
 
 
-def test_config_incomplete_error():
+def test_config_incomplete_migrate():
     hide_user_config()
     copyfile(my_dir + "/datafiles/incomplete_error.conf", config.Config.PATH)
-    with pytest.raises(config.ConfigIncompleteError):
-        myconfig = config.Config()
+    myconfig = config.Config()
+    assert len(myconfig) > 0
     restore_user_config()
 
 
-def test_config_excessive_error():
+def test_config_excessive_migrate():
     hide_user_config()
     copyfile(my_dir + "/datafiles/excessive_error.conf", config.Config.PATH)
-    with pytest.raises(config.ConfigExcessiveError):
-        myconfig = config.Config()
+    myconfig = config.Config()
+    assert "this_should_not_be_here" not in myconfig
+    assert "seek_distance" in myconfig
     restore_user_config()
 
 

@@ -13,6 +13,10 @@ Version listings include the following sections, if applicable:
 See also <https://github.com/xgi/castero/releases>.
 
 ## Unreleased
+**Added**
+* Automatically migrate users' config file when the client updates and adds or
+removes a new config option.
+
 **Changed**
 * Metadata window will now properly extend to the right edge of the terminal.
 

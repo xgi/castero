@@ -18,16 +18,6 @@ class ConfigDuplicateError(ConfigError):
     """
 
 
-class ConfigIncompleteError(ConfigError):
-    """The config file did not contain all of the required variables.
-    """
-
-
-class ConfigExcessiveError(ConfigError):
-    """The config file contained more than the default required variables.
-    """
-
-
 class Config(DataFile):
     """The Config class.
 
@@ -74,6 +64,16 @@ class Config(DataFile):
                 " (don't modify that one!)"
             )
 
+        # ensure that all variables in the default_conf are present
+        for section in default_conf:
+            if section not in conf:
+                self.migrate(conf, default_conf)
+                break  # we will only ever need to migrate once
+            for key in default_conf[section]:
+                if key not in conf[section]:
+                    self.migrate(conf, default_conf)
+                    break  # we will only ever need to migrate once
+
         for section in conf:
             for key in conf[section]:
                 if key in default_conf[section]:
@@ -88,15 +88,45 @@ class Config(DataFile):
                     self.data[key] = conf[section][key]
                 else:
                     # disallow keys which are not in the default config
-                    raise ConfigExcessiveError(
-                        "Unrecognized config variable, key: " + key
-                    )
+                    self.migrate(conf, default_conf)
 
-        # ensure that all variables in the default_conf are present
+    def migrate(self, conf, default_conf) -> None:
+        """Migrates the user's config to have the same keys as the default.
+
+        Generally this method will be used when the client is updated to change
+        some parts of the default config.
+
+        The migration process is rather brash -- it simply retains the user's
+        current config in memory, overwrites their file with the default file,
+        and then using basic parsing replaces any variables already defined
+        by the user with their definition.
+
+        Args:
+            conf: ConfigParser of the user's config file
+            default_conf: ConfigParser of the default config file
+        """
+        # convert conf and default_conf to 1-dim dictionaries since they may
+        # not have the same sections
+        conf_dict = {}
+        for section in conf:
+            for key in conf[section]:
+                conf_dict[key] = conf[section][key]
+        default_conf_dict = {}
         for section in default_conf:
             for key in default_conf[section]:
-                if key not in self.data.keys():
-                    raise ConfigIncompleteError(
-                        "Missing a config variable, key: " + key
-                    )
+                default_conf_dict[key] = default_conf[section][key]
 
+        with open(self._default_path, "r") as default_conf_file:
+            lines = default_conf_file.readlines()
+            for line in lines:
+                for section in default_conf_dict:
+                    for key in default_conf_dict[section]:
+                        if line.startswith(key + " "):
+                            if key in conf_dict[section]:
+                                lines[lines.index(line)] = \
+                                    line.split(" = ")[0] + conf_dict[key]
+
+        with open(self._path, "w") as conf_file:
+            for line in lines:
+                conf_file.write(line)
+        conf.read(self._path)
