@@ -464,9 +464,10 @@ class Display:
         feed_index = self._feed_menu.selected_index
         feed = self._feeds.at(feed_index)
         if self._active_window == 0:
-            for episode in feed.episodes:
-                player = Player(str(episode), episode.get_playable())
-                self._queue.add(player)
+            if feed is not None:
+                for episode in feed.episodes:
+                    player = Player(str(episode), episode.get_playable())
+                    self._queue.add(player)
         elif self._active_window == 1:
             episode_index = self._episode_menu.selected_index
             if feed is not None:
