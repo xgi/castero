@@ -12,7 +12,7 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
-## Unreleased
+## 0.2.1 - 2018-04-22
 **Added**
 * Automatically migrate users' config file when the client updates and adds or
 removes a new config option.
