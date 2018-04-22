@@ -7,6 +7,10 @@ class PlayerError(Exception):
     """
 
 
+class PlayerDependencyError(PlayerError):
+    """A dependency for playing the player was not met."""
+
+
 class PlayerCreateError(PlayerError):
     """An error occurred while creating the player.
     """
@@ -38,6 +42,21 @@ class Player:
     def __del__(self) -> None:
         if self._player is not None:
             self.stop()
+
+    @staticmethod
+    def check_dependencies():
+        """Checks whether dependencies are met for playing a player.
+
+        Raises:
+            PlayerDependencyError: a dependency was not met
+        """
+        try:
+            vlc.Instance()
+        except NameError:
+            raise PlayerDependencyError(
+                "Dependency VLC not found, which is required for playing"
+                " media files"
+            )
 
     def _create_player(self) -> None:
         """Creates the VLC player object while making sure it is a valid file.

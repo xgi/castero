@@ -5,6 +5,7 @@ import castero
 from castero.display import Display
 from castero.config import Config
 from castero.feeds import Feeds
+from castero.player import Player
 
 
 def main():
@@ -13,6 +14,9 @@ def main():
     if sys.argv[len(sys.argv) - 1] in help_flags:
         print(castero.__help__)
         sys.exit(0)
+
+    # check whether dependencies are met
+    Player.check_dependencies()
 
     config = Config()
     feeds = Feeds()
