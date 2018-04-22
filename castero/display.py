@@ -506,7 +506,15 @@ class Display:
                 episode_index = self._episode_menu.selected_index
                 if feed is not None:
                     episode = feed.episodes[episode_index]
-                    episode.download(self)
+                    if episode.downloaded:
+                        should_delete = self._get_y_n(
+                            "Are you sure you want to delete the downloaded"
+                            " episode? (y/n): ")
+                        if should_delete:
+                            episode.delete(self)
+                    else:
+                        episode.download(self)
+
         return keep_running
 
     def _create_player_from_selected(self) -> None:
@@ -644,7 +652,8 @@ class Display:
                 # draw episode downloaded
                 self._append_metadata_lines("Downloaded:", output_lines,
                                             attr=curses.A_BOLD)
-                self._append_metadata_lines(episode.downloaded, output_lines)
+                self._append_metadata_lines(episode.downloaded_str,
+                                            output_lines)
 
         y = 2
         for line in output_lines[:max_lines]:

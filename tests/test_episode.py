@@ -103,15 +103,34 @@ def test_episode_missing_property_enclosure():
 
 
 def test_episode_playable_remote():
-    myfeed = Feed(file=my_dir+"/feeds/valid_enclosures.xml")
-    playable = myfeed.episodes[0].get_playable()
+    myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    episode = myfeed.episodes[0]
+    playable = episode.get_playable()
+    assert not episode.downloaded
+    assert episode.downloaded_str == "Episode not downloaded."
     assert playable == "http://example.com/myfeed_item1_title.mp3"
 
 
 def test_episode_playable_local():
     DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
-    myfeed = Feed(file=my_dir+"/feeds/valid_enclosures.xml")
-
-    playable = myfeed.episodes[0].get_playable()
+    myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    episode = myfeed.episodes[0]
+    playable = episode.get_playable()
+    assert episode.downloaded
+    assert episode.downloaded_str == "Episode downloaded and available for" \
+                                     " offline playback."
     assert playable == os.path.join(DataFile.DOWNLOADED_DIR, "myfeed_title",
                                     "myfeed_item1_title.mp3")
+
+
+def test_episode_delete():
+    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    episode_location = os.path.join(DataFile.DOWNLOADED_DIR,
+                                    "myfeed_title/myfeed_item2_title.mp3")
+    with open(episode_location, "w") as file:
+        file.write("temp file for test_episode.test_episode_delete")
+    myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    episode = myfeed.episodes[1]
+    assert episode.downloaded
+    episode.delete()
+    assert not episode.downloaded

@@ -46,6 +46,18 @@ class Episode:
             representation = self._description
         return representation.split('\n')[0]
 
+    def _feed_directory(self) -> str:
+        """Gets the path to the downloaded episode's feed directory.
+
+        This method does not ensure whether the directory exists -- it simply
+        acts as a single definition of where it _should_ be.
+
+        Returns:
+            str: a path to the feed directory
+        """
+        feed_dirname = helpers.sanitize_path(str(self._feed))
+        return os.path.join(DataFile.DOWNLOADED_DIR, feed_dirname)
+
     def get_playable(self) -> str:
         """Gets a playable path for this episode.
 
@@ -58,9 +70,8 @@ class Episode:
         """
         playable = self.enclosure
 
-        feed_dirname = helpers.sanitize_path(str(self._feed))
         episode_partial_filename = helpers.sanitize_path(str(self))
-        feed_directory = os.path.join(DataFile.DOWNLOADED_DIR, feed_dirname)
+        feed_directory = self._feed_directory()
 
         if os.path.exists(feed_directory):
             for File in os.listdir(feed_directory):
@@ -85,9 +96,7 @@ class Episode:
                                       " a valid media source")
             return
 
-        feed_dirname = helpers.sanitize_path(str(self._feed))
-        feed_directory = os.path.join(DataFile.DOWNLOADED_DIR,
-                                      feed_dirname)
+        feed_directory = self._feed_directory()
         episode_partial_filename = helpers.sanitize_path(str(self))
         extension = os.path.splitext(self._enclosure)[1].split('?')[0]
         output_path = os.path.join(feed_directory,
@@ -102,6 +111,30 @@ class Episode:
             args=[self._enclosure, output_path, display]
         )
         t.start()
+
+    def delete(self, display=None):
+        """Deletes the episode file from the file system.
+
+        Args:
+            display: (optional) the display to write status updates to
+        """
+        assert self.downloaded
+
+        episode_partial_filename = helpers.sanitize_path(str(self))
+        feed_directory = self._feed_directory()
+
+        if os.path.exists(feed_directory):
+            for File in os.listdir(feed_directory):
+                if File.startswith(episode_partial_filename + '.'):
+                    os.remove(os.path.join(feed_directory, File))
+                    if display is not None:
+                        display.update_status(
+                            "Successfully deleted the downloaded episode"
+                        )
+
+        # if there are no more files in the feed directory, delete it
+        if len(os.listdir(feed_directory)) == 0:
+            os.rmdir(feed_directory)
 
     @property
     def title(self) -> str:
@@ -152,8 +185,8 @@ class Episode:
         return result
 
     @property
-    def downloaded(self) -> str:
-        """str: a text description of whether the episode is downloaded"""
+    def downloaded(self) -> bool:
+        """bool: whether or not the episode is downloaded"""
         found_downloaded = False
         feed_dirname = helpers.sanitize_path(str(self._feed))
         episode_partial_filename = helpers.sanitize_path(str(self))
@@ -163,8 +196,12 @@ class Episode:
             for File in os.listdir(feed_directory):
                 if File.startswith(episode_partial_filename + '.'):
                     found_downloaded = True
+        return found_downloaded
 
-        if found_downloaded:
+    @property
+    def downloaded_str(self) -> str:
+        """str: a text description of whether the episode is downloaded"""
+        if self.downloaded:
             result = "Episode downloaded and available for offline playback."
         else:
             result = "Episode not downloaded."
