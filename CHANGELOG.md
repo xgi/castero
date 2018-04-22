@@ -17,6 +17,9 @@ See also <https://github.com/xgi/castero/releases>.
 * You can now delete a downloaded episode by pressing the save key again.
 * Added a config option for asking for confirmation before deleting a feed.
 
+**Fixed**
+* Fixed an issue where config files would not be properly migrated.
+
 ## 0.2.1 - 2018-04-22
 **Added**
 * Automatically migrate users' config file when the client updates and adds or

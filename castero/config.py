@@ -119,12 +119,13 @@ class Config(DataFile):
         with open(self._default_path, "r") as default_conf_file:
             lines = default_conf_file.readlines()
             for line in lines:
-                for section in default_conf_dict:
-                    for key in default_conf_dict[section]:
-                        if line.startswith(key + " "):
-                            if key in conf_dict[section]:
-                                lines[lines.index(line)] = \
-                                    line.split(" = ")[0] + conf_dict[key]
+                for key in default_conf_dict:
+                    if line.startswith(key + " "):
+                        if key in conf_dict:
+                            lines[lines.index(line)] = "%s = %s\n" % (
+                                line.split(" = ")[0],
+                                conf_dict[key]
+                            )
 
         with open(self._path, "w") as conf_file:
             for line in lines:
