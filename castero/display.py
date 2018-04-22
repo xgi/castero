@@ -484,11 +484,19 @@ class Display:
                     )
         elif c == ord('d'):
             if self._active_window == 0:
-                deleted = self._feeds.del_at(self._feed_menu.selected_index)
-                if deleted:
-                    self.create_menus()
-                    self._feeds.write()
-                    self.update_status("Feed successfully deleted")
+                should_delete = True
+                if self._config["delete_feed_confirmation"] \
+                        in ['True', 'true', '1']:
+                    should_delete = self._get_y_n(
+                        "Are you sure you want to delete this feed? (y/n): "
+                    )
+                if should_delete:
+                    deleted = self._feeds.del_at(
+                        self._feed_menu.selected_index)
+                    if deleted:
+                        self.create_menus()
+                        self._feeds.write()
+                        self.update_status("Feed successfully deleted")
         elif c == ord('r'):
             should_reload = True
             if len(self._feeds) >= int(self._config["reload_feeds_threshold"]):
