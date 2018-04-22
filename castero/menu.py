@@ -122,8 +122,8 @@ class Menu:
         if len(self._items) > 0:
             if len(self._items[self._parent_selected]) > 0:
                 position = 0
-                for i in range(self._top_index, self._top_index +
-                                                self._max_displayed_items):
+                for i in range(self._top_index,
+                               self._top_index + self._max_displayed_items):
                     if i <= len(self._items[self._parent_selected]) - 1:
                         self._draw_item(i, position)
                         position += 1
@@ -206,5 +206,6 @@ class Menu:
             self._child.reload(self._selected)
 
     @property
-    def selected_index(self):
+    def selected_index(self) -> int:
+        """int: the current selected index of the menu"""
         return self._selected

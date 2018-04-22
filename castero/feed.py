@@ -300,23 +300,28 @@ class Feed:
             self._episodes.append(episode)
 
     @property
-    def validated(self):
+    def validated(self) -> bool:
+        """bool: whether this feed has been validated"""
         return self._validated
 
     @property
-    def title(self):
+    def title(self) -> str:
+        """str: the title of the feed"""
         return self._title
 
     @property
-    def description(self):
+    def description(self) -> str:
+        """str: the description of the feed"""
         return self._description
 
     @property
-    def episodes(self):
+    def episodes(self) -> list:
+        """list: a list of this feed's castero.episode.Episode's"""
         return self._episodes
 
     @property
     def link(self) -> str:
+        """str: the link of/for the feed"""
         result = self._link
         if result is None:
             result = "Link not available."
@@ -324,6 +329,7 @@ class Feed:
 
     @property
     def last_build_date(self) -> str:
+        """str: the last build date of the feed"""
         result = self._last_build_date
         if result is None:
             result = "Last build date not available."
@@ -331,6 +337,7 @@ class Feed:
 
     @property
     def copyright(self) -> str:
+        """str: the copyright of the feed"""
         result = self._copyright
         if result is None:
             result = "Copyright not available."

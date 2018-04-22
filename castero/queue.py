@@ -7,6 +7,7 @@ class Queue:
     A FIFO ordered queue of Player instances. This class is also the display
     class' main interface for accessing information about the current player.
     """
+
     def __init__(self, config) -> None:
         """Initializes the object.
         """
@@ -24,25 +25,34 @@ class Queue:
         self._players = []
 
     def next(self) -> None:
+        """Proceed to the next player in the queue.
+        """
         if len(self._players) > 0:
             p = self._players.pop(0)
             del p
             self.play()
 
     def add(self, player) -> None:
+        """Adds a player to the end of the queue.
+        """
         assert type(player) == Player
 
         self._players.append(player)
 
     def play(self) -> None:
+        """Plays the first player in the queue.
+        """
         if self.first is not None:
             self.first.play()
 
     def pause(self) -> None:
+        """Pauses the first player in the queue.
+        """
         if self.first is not None:
             self.first.pause()
 
     def stop(self) -> None:
+        """Stops the first player in the queue."""
         if self.first is not None:
             self.first.stop()
 
@@ -56,6 +66,11 @@ class Queue:
                 self.play()
 
     def seek(self, direction) -> None:
+        """Seeks the first player in the specified direction.
+
+        Args:
+            direction: 1 to move forward, -1 to move backward
+        """
         assert direction == 1 or direction == -1
 
         if self.first is not None:
@@ -67,11 +82,13 @@ class Queue:
         if self.first is not None:
             # sanity check the player's current time
             if self.first.duration > 0:
-                if (self.first.time / 1000) + 1 >= (self.first.duration / 1000):
+                if (self.first.time / 1000) + 1 >= \
+                        (self.first.duration / 1000):
                     self.next()
 
     @property
     def first(self) -> Player:
+        """Player: the first player in the queue"""
         result = None
         if len(self._players) > 0:
             result = self._players[0]
@@ -79,4 +96,5 @@ class Queue:
 
     @property
     def length(self) -> int:
+        """int: the length of the queue"""
         return len(self._players)

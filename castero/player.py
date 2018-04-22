@@ -110,14 +110,17 @@ class Player:
 
     @property
     def state(self) -> int:
+        """int: the state of the player"""
         return self._state
 
     @property
     def title(self) -> str:
+        """str: the title of the player"""
         return self._title
 
     @property
     def duration(self) -> int:
+        """int: the duration of the player"""
         assert self._media is not None
 
         self._duration = self._media.get_duration()
@@ -125,12 +128,14 @@ class Player:
 
     @property
     def time(self) -> int:
+        """int: the current time of the player"""
         assert self._player is not None
 
         return self._player.get_time()
 
     @property
-    def time_str(self):
+    def time_str(self) -> str:
+        """str: the formatted time and duration of the player"""
         assert self._player is not None
 
         time_seconds = int(self.time / 1000)

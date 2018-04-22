@@ -105,6 +105,7 @@ class Episode:
 
     @property
     def title(self) -> str:
+        """str: the title of the episode"""
         result = self._title
         if result is None:
             result = "Title not available."
@@ -112,6 +113,7 @@ class Episode:
 
     @property
     def description(self) -> str:
+        """str: the description of the episode"""
         result = self._description
         if result is None:
             result = "Description not available."
@@ -119,6 +121,7 @@ class Episode:
 
     @property
     def link(self) -> str:
+        """str: the link of/for the episode"""
         result = self._link
         if result is None:
             result = "Link not available."
@@ -126,6 +129,7 @@ class Episode:
 
     @property
     def pubdate(self) -> str:
+        """str: the publish date of the episode"""
         result = self._pubdate
         if result is None:
             result = "Publish date not available."
@@ -133,6 +137,7 @@ class Episode:
 
     @property
     def copyright(self) -> str:
+        """str: the copyright of the episode"""
         result = self._copyright
         if result is None:
             result = "Copyright not available."
@@ -140,6 +145,7 @@ class Episode:
 
     @property
     def enclosure(self) -> str:
+        """str: the enclosure of the episode"""
         result = self._enclosure
         if result is None:
             result = "Enclosure not available."
@@ -147,6 +153,7 @@ class Episode:
 
     @property
     def downloaded(self) -> str:
+        """str: a text description of whether the episode is downloaded"""
         found_downloaded = False
         feed_dirname = helpers.sanitize_path(str(self._feed))
         episode_partial_filename = helpers.sanitize_path(str(self))
