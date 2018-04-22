@@ -137,7 +137,8 @@ class Display:
         self._episode_window = curses.newwin(self._parent_y - 2, third_x,
                                              2, third_x)
         metadata_width = self._parent_x - ((third_x * 2) - 1)
-        self._metadata_window = curses.newwin(self._parent_y - 2, metadata_width,
+        self._metadata_window = curses.newwin(self._parent_y - 2,
+                                              metadata_width,
                                               2, 2 * third_x)
         self._footer_window = curses.newwin(2, self._parent_x,
                                             self._parent_y - 2, 0)

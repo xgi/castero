@@ -99,7 +99,7 @@ class Episode:
 
         t = threading.Thread(
             target=DataFile.download_to_file,
-            args=[self._enclosure, output_path,display]
+            args=[self._enclosure, output_path, display]
         )
         t.start()
 

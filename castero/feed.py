@@ -110,10 +110,10 @@ class Feed:
         if self._url is not None:
             # handle feed from url
             try:
-                r = requests.get(self._url)
-                if r.status_code == 200:
+                response = requests.get(self._url)
+                if response.status_code == 200:
                     try:
-                        self._tree = ElementTree.fromstring(r.text)
+                        self._tree = ElementTree.fromstring(response.text)
                     except ElementTree.ParseError:
                         raise FeedParseError(
                             "Unable to parse text as an XML document")
@@ -121,17 +121,17 @@ class Feed:
                     raise FeedDownloadError(
                         "Did not receive an acceptable status code while"
                         " download the page. Expected 200, got: "
-                        + str(r.status_code))
+                        + str(response.status_code))
             except requests.exceptions.RequestException:
                 raise FeedDownloadError(
                     "An exception occurred when attempting to download the"
                     " page")
         elif self._file is not None:
             # handle feed from file
-            f = None
+            file = None
             try:
-                f = open(self._file)
-                text = f.read()
+                file = open(self._file)
+                text = file.read()
                 try:
                     self._tree = ElementTree.fromstring(text)
                 except ElementTree.ParseError:
@@ -141,8 +141,8 @@ class Feed:
                 raise FeedLoadError(
                     "An exception occurred when attempting to load the file")
             finally:
-                if f is not None:
-                    f.close()
+                if file is not None:
+                    file.close()
 
     def _validate_feed(self):
         """Checks that the provided XML document is a valid RSS feed.
