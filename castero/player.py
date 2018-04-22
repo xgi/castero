@@ -35,8 +35,6 @@ class Player:
         self._duration = -1  # in milliseconds
         self._state = 0  # 0=stopped, 1=playing, 2=paused
 
-        self._create_player()
-
     def __del__(self) -> None:
         if self._player is not None:
             self.stop()
@@ -67,13 +65,9 @@ class Player:
 
     def play(self) -> None:
         """Plays the media.
-
-        If the media is an external stream, we may not have gotten metadata
-        about the media when it was created. However, it should become
-        accessible once the stream has begun playing, since VLC downloads the
-        stream. Therefore, we try to retrieve this metadata here.
         """
-        assert self._player is not None
+        if self._player is None:
+            self._create_player()
 
         self._player.play()
         self._state = 1
@@ -81,18 +75,16 @@ class Player:
     def stop(self) -> None:
         """Stops the media.
         """
-        assert self._player is not None
-
-        self._player.stop()
-        self._state = 0
+        if self._player is not None:
+            self._player.stop()
+            self._state = 0
 
     def pause(self) -> None:
         """Pauses the media.
         """
-        assert self._player is not None
-
-        self._player.pause()
-        self._state = 2
+        if self._player is not None:
+            self._player.pause()
+            self._state = 2
 
     def seek(self, direction, amount) -> None:
         """Seek forward or backward in the media.
@@ -102,11 +94,10 @@ class Player:
             amount: the amount of seconds to seek
         """
         assert direction == 1 or direction == -1
-        assert self._player is not None
-
-        self._player.set_time(
-            self._player.get_time() + (direction * amount * 1000)
-        )
+        if self._player is not None:
+            self._player.set_time(
+                self._player.get_time() + (direction * amount * 1000)
+            )
 
     @property
     def state(self) -> int:
@@ -121,26 +112,26 @@ class Player:
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
-        assert self._media is not None
-
-        self._duration = self._media.get_duration()
-        return self._duration
+        result = 0
+        if self._media is not None:
+            self._duration = self._media.get_duration()
+            result = self._duration
+        return result
 
     @property
     def time(self) -> int:
         """int: the current time of the player"""
-        assert self._player is not None
-
-        return self._player.get_time()
+        if self._player is not None:
+            return self._player.get_time()
 
     @property
     def time_str(self) -> str:
         """str: the formatted time and duration of the player"""
-        assert self._player is not None
-
-        time_seconds = int(self.time / 1000)
-        length_seconds = int(self.duration / 1000)
-        t = time.strftime('%H:%M:%S', time.gmtime(time_seconds))
-        d = time.strftime('%H:%M:%S', time.gmtime(length_seconds))
-
-        return "%s/%s" % (t, d)
+        result = "00:00:00/00:00:00"
+        if self._player is not None:
+            time_seconds = int(self.time / 1000)
+            length_seconds = int(self.duration / 1000)
+            t = time.strftime('%H:%M:%S', time.gmtime(time_seconds))
+            d = time.strftime('%H:%M:%S', time.gmtime(length_seconds))
+            result = "%s/%s" % (t, d)
+        return result

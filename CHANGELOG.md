@@ -17,6 +17,10 @@ See also <https://github.com/xgi/castero/releases>.
 * You can now delete a downloaded episode by pressing the save key again.
 * Added a config option for asking for confirmation before deleting a feed.
 
+**Changed**
+* The client will no longer try to load media when a player is created. This
+substantially improves performance when adding many episodes to a queue.
+
 **Fixed**
 * Fixed an issue where config files would not be properly migrated.
 
