@@ -79,6 +79,7 @@ class Display:
         curses.cbreak()
         self._stdscr.keypad(True)
 
+        self.update_parent_dimensions()
         self.create_color_pairs()
         self._create_windows()
         self.create_menus()
@@ -125,9 +126,28 @@ class Display:
             - _feed_window, _episode_window, _metadata_window
         Each window is set to use the default color pair (1), and each window
         takes up one-third of the display.
+
+        If the windows already exist when this method is run, this method will
+        delete them and create new ones.
         """
-        self.update_parent_dimensions()
         third_x = helpers.third(self._parent_x)
+
+        # delete old windows if they exist
+        if self._header_window is not None:
+            del self._header_window
+            self._header_window = None
+        if self._feed_window is not None:
+            del self._feed_window
+            self._feed_window = None
+        if self._episode_window is not None:
+            del self._episode_window
+            self._episode_window = None
+        if self._metadata_window is not None:
+            del self._metadata_window
+            self._metadata_window = None
+        if self._footer_window is not None:
+            del self._footer_window
+            self._footer_window = None
 
         # create windows
         self._header_window = curses.newwin(2, self._parent_x,
@@ -225,6 +245,9 @@ class Display:
     def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
         """
+        # check if the screen size has changed
+        self.update_parent_dimensions()
+
         # add header
         playing_str = ""
         if self._queue.first is not None:
@@ -689,7 +712,12 @@ class Display:
     def update_parent_dimensions(self) -> None:
         """Update _parent_x and _parent_y to the size of the console.
         """
-        self._parent_y, self._parent_x = self._stdscr.getmaxyx()
+        current_y, current_x = self._stdscr.getmaxyx()
+
+        if current_y != self._parent_y or current_x != self._parent_x:
+            self._parent_y, self._parent_x = current_y, current_x
+            self._create_windows()
+            self.create_menus()
 
         if self._parent_y < self.MIN_HEIGHT:
             raise DisplaySizeError("Display height is too small")

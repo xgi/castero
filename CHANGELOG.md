@@ -16,6 +16,7 @@ See also <https://github.com/xgi/castero/releases>.
 **Added**
 * Automatically migrate users' config file when the client updates and adds or
 removes a new config option.
+* The client will now properly resize when the size of the terminal changes.
 
 **Changed**
 * Metadata window will now properly extend to the right edge of the terminal.
