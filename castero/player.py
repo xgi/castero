@@ -19,8 +19,6 @@ class PlayerCreateError(PlayerError):
 class Player:
     """The Player class.
     """
-    SEEK_DISTANCE = 30 * 1000  # 10 seconds
-
     def __init__(self, title, path) -> None:
         """Initializes the object.
 
@@ -35,7 +33,6 @@ class Player:
         self._path = path
         self._media = None
         self._player = None
-        self._mrl = None  # media resource locator
         self._duration = -1  # in milliseconds
         self._state = 0  # 0=stopped, 1=playing, 2=paused
 
