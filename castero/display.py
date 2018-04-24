@@ -626,7 +626,17 @@ class Display:
                 # draw feed copyright
                 self._append_metadata_lines("Copyright:", output_lines,
                                             attr=curses.A_BOLD)
-                self._append_metadata_lines(feed.copyright, output_lines)
+                self._append_metadata_lines(feed.copyright, output_lines,
+                                            add_blank=True)
+                # draw feed number of episodes
+                num_dl = sum([episode.downloaded for episode in feed.episodes])
+                self._append_metadata_lines("Episodes:", output_lines,
+                                            attr=curses.A_BOLD)
+                self._append_metadata_lines(
+                    "Found %d episodes (%d downloaded)" % (
+                        len(feed.episodes), num_dl
+                    ), output_lines
+                )
 
         elif self._active_window == 1:
             # * the selected item is an episode
