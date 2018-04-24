@@ -17,6 +17,7 @@ See also <https://github.com/xgi/castero/releases>.
 * You can now delete a downloaded episode by pressing the save key again.
 * Added a config option for asking for confirmation before deleting a feed.
 * An error will now be raised on startup if dependencies are not met (VLC).
+* Number of episodes are now shown in feed metadata.
 
 **Changed**
 * The client will no longer try to load media when a player is created. This

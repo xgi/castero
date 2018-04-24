@@ -448,82 +448,113 @@ class Display:
         elif c == ord('b'):
             self._queue.seek(-1)
         elif c == ord('a'):
-            path = self._get_input_str("Enter the URL or path of the feed: ")
-            try:
-                # assume urls have http in them
-                if "http" in path:
-                    feed = Feed(url=path)
-                else:
-                    feed = Feed(file=path)
-                if feed.validated:
-                    self._feeds[path] = feed
-                self.create_menus()
-                self._feeds.write()
-                self.update_status("Feed '%s\' successfully added" % str(feed))
-            except FeedError as e:
-                if type(e) == FeedLoadError:
-                    self.update_status(
-                        "Error: An error occurred while loading the file"
-                    )
-                elif type(e) == FeedDownloadError:
-                    self.update_status(
-                        "Error: An error occurred while downloading the feed"
-                    )
-                elif type(e) == FeedParseError:
-                    self.update_status(
-                        "Error: An error occurred while parsing the feed"
-                    )
-                elif type(e) == FeedStructureError:
-                    self.update_status(
-                        "Error: The provided feed is not a valid RSS document"
-                    )
-                else:
-                    self.update_status(
-                        "Error: An ambiguous error occurred while handling the"
-                        " feed"
-                    )
+            self._add_feed()
         elif c == ord('d'):
-            if self._active_window == 0:
-                should_delete = True
-                if self._config["delete_feed_confirmation"] \
-                        in ['True', 'true', '1']:
-                    should_delete = self._get_y_n(
-                        "Are you sure you want to delete this feed? (y/n): "
-                    )
-                if should_delete:
-                    deleted = self._feeds.del_at(
-                        self._feed_menu.selected_index)
-                    if deleted:
-                        self.create_menus()
-                        self._feeds.write()
-                        self.update_status("Feed successfully deleted")
+            self._delete_feed()
         elif c == ord('r'):
-            should_reload = True
-            if len(self._feeds) >= int(self._config["reload_feeds_threshold"]):
-                should_reload = self._get_y_n(
-                    "Are you sure you want to reload all of your feeds?"
-                    " (y/n): "
-                )
-            if should_reload:
-                t = threading.Thread(target=self._feeds.reload, args=[self])
-                t.start()
+            self._reload_feeds()
         elif c == ord('s'):
-            if self._active_window == 1:
-                feed_index = self._feed_menu.selected_index
-                feed = self._feeds.at(feed_index)
-                episode_index = self._episode_menu.selected_index
-                if feed is not None:
-                    episode = feed.episodes[episode_index]
-                    if episode.downloaded:
-                        should_delete = self._get_y_n(
-                            "Are you sure you want to delete the downloaded"
-                            " episode? (y/n): ")
-                        if should_delete:
-                            episode.delete(self)
-                    else:
-                        episode.download(self)
+            self._save_episode()
 
         return keep_running
+
+    def _add_feed(self) -> None:
+        """Prompt the user for a feed and add it, if possible.
+        """
+        path = self._get_input_str("Enter the URL or path of the feed: ")
+        try:
+            # assume urls have http in them
+            if "http" in path:
+                feed = Feed(url=path)
+            else:
+                feed = Feed(file=path)
+            if feed.validated:
+                self._feeds[path] = feed
+            self.create_menus()
+            self._feeds.write()
+            self.update_status("Feed '%s\' successfully added" % str(feed))
+        except FeedError as e:
+            if type(e) == FeedLoadError:
+                self.update_status(
+                    "Error: An error occurred while loading the file"
+                )
+            elif type(e) == FeedDownloadError:
+                self.update_status(
+                    "Error: An error occurred while downloading the feed"
+                )
+            elif type(e) == FeedParseError:
+                self.update_status(
+                    "Error: An error occurred while parsing the feed"
+                )
+            elif type(e) == FeedStructureError:
+                self.update_status(
+                    "Error: The provided feed is not a valid RSS document"
+                )
+            else:
+                self.update_status(
+                    "Error: An ambiguous error occurred while handling the"
+                    " feed"
+                )
+
+    def _delete_feed(self) -> None:
+        """Deletes the current selected feed.
+
+        If the delete_feed_confirmation config option is true, this method will
+        first ask for y/n confirmation before deleting the feed.
+        """
+        if self._active_window == 0:
+            should_delete = True
+            if self._config["delete_feed_confirmation"] \
+                    in ['True', 'true', '1']:
+                should_delete = self._get_y_n(
+                    "Are you sure you want to delete this feed? (y/n): "
+                )
+            if should_delete:
+                deleted = self._feeds.del_at(
+                    self._feed_menu.selected_index)
+                if deleted:
+                    self.create_menus()
+                    self._feeds.write()
+                    self.update_status("Feed successfully deleted")
+
+    def _reload_feeds(self) -> None:
+        """Reloads the users' feeds.
+
+        If the total number of feeds is >= the reload_feeds_threshold config
+        option, this method will first ask for y/n confirmation.
+
+        This method starts the reloading in a new un-managed thread.
+        """
+        should_reload = True
+        if len(self._feeds) >= int(self._config["reload_feeds_threshold"]):
+            should_reload = self._get_y_n(
+                "Are you sure you want to reload all of your feeds?"
+                " (y/n): "
+            )
+        if should_reload:
+            t = threading.Thread(target=self._feeds.reload, args=[self])
+            t.start()
+
+    def _save_episode(self) -> None:
+        """Saves the current selected episode.
+
+        If the episode is already saved, this method will instead ask the user
+        if they would like to delete the downloaded episode.
+        """
+        if self._active_window == 1:
+            feed_index = self._feed_menu.selected_index
+            feed = self._feeds.at(feed_index)
+            episode_index = self._episode_menu.selected_index
+            if feed is not None:
+                episode = feed.episodes[episode_index]
+                if episode.downloaded:
+                    should_delete = self._get_y_n(
+                        "Are you sure you want to delete the downloaded"
+                        " episode? (y/n): ")
+                    if should_delete:
+                        episode.delete(self)
+                else:
+                    episode.download(self)
 
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.
