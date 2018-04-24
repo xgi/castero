@@ -306,26 +306,19 @@ class Display:
 
         # add window borders
         self._feed_window.hline(1, 0,
-                                curses.ACS_HLINE,
-                                self._feed_window.getmaxyx()[1] - 1)
+                                0, self._feed_window.getmaxyx()[1] - 1)
         self._feed_window.vline(0, self._feed_window.getmaxyx()[1] - 1,
-                                curses.ACS_VLINE,
-                                self._feed_window.getmaxyx()[0] - 2)
+                                0, self._feed_window.getmaxyx()[0] - 2)
         self._episode_window.hline(1, 0,
-                                   curses.ACS_HLINE,
-                                   self._episode_window.getmaxyx()[1] - 1)
+                                   0, self._episode_window.getmaxyx()[1] - 1)
         self._episode_window.vline(0, self._episode_window.getmaxyx()[1] - 1,
-                                   curses.ACS_VLINE,
-                                   self._episode_window.getmaxyx()[0] - 2)
+                                   0, self._episode_window.getmaxyx()[0] - 2)
         self._metadata_window.hline(1, 0,
-                                    curses.ACS_HLINE,
-                                    self._metadata_window.getmaxyx()[1] - 1)
+                                    0, self._metadata_window.getmaxyx()[1] - 1)
         self._header_window.hline(1, 0,
-                                  curses.ACS_HLINE,
-                                  self._header_window.getmaxyx()[1])
+                                  0, self._header_window.getmaxyx()[1])
         self._footer_window.hline(0, 0,
-                                  curses.ACS_HLINE,
-                                  self._footer_window.getmaxyx()[1])
+                                  0, self._footer_window.getmaxyx()[1])
 
         # display menu content
         self._feed_menu.display()
