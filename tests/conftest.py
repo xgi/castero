@@ -12,8 +12,8 @@ class MockStdscr(mock.MagicMock):
 
     Provides functions to mock typical stdscr behavior.
     """
-    def getyx(self):
-        return self.x, self.y
+    def setmaxyx(self, nlines, ncols):
+        self.nlines, self.ncols = nlines, ncols
 
     def getmaxyx(self):
         return self.nlines, self.ncols

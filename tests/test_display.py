@@ -1,7 +1,8 @@
 import os
 import curses
+import pytest
 import castero
-from castero.display import Display
+from castero.display import Display, DisplaySizeError
 from castero.feed import Feed
 from castero.episode import Episode
 
@@ -38,8 +39,11 @@ def test_display_display_footer_empty(display):
     display.display()
     display._footer_window.attron.assert_called_with(curses.A_BOLD)
     display._footer_window.addstr.assert_called_with(
-        1, 0, "Processed 1 feeds with 0 total episodes (avg. 0 episodes, med. 0) -- Press h for help"
+        1, 0,
+        "Processed 1 feeds with 0 total episodes (avg. 0 episodes, med. 0)"
+        " -- Press h for help"
     )
+
 
 def test_display_display_borders(display):
     display.display()
@@ -204,3 +208,13 @@ def test_display_nonempty(display):
     display._feeds[myfeed._file] = myfeed
     display.create_menus()
     display.display()
+
+
+def test_display_min_dimensions(display):
+    display.display()
+    display._stdscr.setmaxyx(100, Display.MIN_WIDTH - 1)
+    with pytest.raises(DisplaySizeError):
+        display.display()
+    display._stdscr.setmaxyx(Display.MIN_HEIGHT - 1, 100)
+    with pytest.raises(DisplaySizeError):
+        display.display()
