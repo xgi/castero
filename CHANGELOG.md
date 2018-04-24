@@ -12,7 +12,7 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
-## Unreleased
+## 0.2.2 - 2018-04-24
 **Added**
 * You can now delete a downloaded episode by pressing the save key again.
 * Added a config option for asking for confirmation before deleting a feed.
