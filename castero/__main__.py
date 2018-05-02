@@ -2,6 +2,7 @@ import sys
 import curses
 import threading
 import castero
+from castero import helpers
 from castero.display import Display
 from castero.config import Config
 from castero.feeds import Feeds
@@ -27,7 +28,7 @@ def main():
     display.clear()
     display.update_parent_dimensions()
 
-    if config['reload_on_start'] in ['True', 'true', '1']:
+    if helpers.is_true(config['reload_on_start']):
         t = threading.Thread(target=feeds.reload, args=[display])
         t.start()
 

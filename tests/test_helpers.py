@@ -68,3 +68,15 @@ def test_sanitize_path_many():
     path = "!@#$%^&*()=+`~<>?/"';:'
     result = helpers.sanitize_path(path)
     assert result == "_" * len(path)
+
+
+def test_is_true_yes():
+    assert helpers.is_true('True')
+    assert helpers.is_true('true')
+    assert helpers.is_true('1')
+
+
+def test_is_true_no():
+    assert not helpers.is_true('False')
+    assert not helpers.is_true('')
+    assert not helpers.is_true('hi')

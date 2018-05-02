@@ -51,3 +51,17 @@ def sanitize_path(path) -> str:
     # adapted from https://stackoverflow.com/a/13593932
     path = re.sub('[^\w\-]', '_', path)
     return path
+
+
+def is_true(string) -> bool:
+    """Determines whether a string represents True.
+
+    As the name suggests, any input which is not explicitly evaluated to True
+    will cause this method to return False.
+
+    Args:
+        string: the string to evaluate
+    """
+    assert type(string) == str
+
+    return string in ['True', 'true', '1']

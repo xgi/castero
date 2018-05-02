@@ -497,8 +497,7 @@ class Display:
         """
         if self._active_window == 0:
             should_delete = True
-            if self._config["delete_feed_confirmation"] \
-                    in ['True', 'true', '1']:
+            if helpers.is_true(self._config["delete_feed_confirmation"]):
                 should_delete = self._get_y_n(
                     "Are you sure you want to delete this feed? (y/n): "
                 )
