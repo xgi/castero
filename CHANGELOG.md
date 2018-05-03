@@ -12,7 +12,7 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
-## Unreleased
+## 0.2.3 - 2018-05-03
 **Added**
 * Downloads will now be handled sequentially rather than in parallel.
 
