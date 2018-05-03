@@ -13,8 +13,12 @@ Version listings include the following sections, if applicable:
 See also <https://github.com/xgi/castero/releases>.
 
 ## Unreleased
+**Added**
+* Downloads will now be handled sequentially rather than in parallel.
+
 **Changed**
 * The client now explicitly requires VLC >= 2.2.3
+* Revised text description for episodes/feeds with missing copyright tags.
 
 **Fixed**
 * Fixed an issue where pressing pause before the media had loaded would not

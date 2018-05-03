@@ -80,7 +80,7 @@ class Episode:
 
         return playable
 
-    def download(self, display=None):
+    def download(self, download_queue, display=None):
         """Downloads this episode to the file system.
 
         This method currently only supports downloading from an external URL.
@@ -88,6 +88,7 @@ class Episode:
         source is a local file and simply copy it instead.
 
         Args:
+            download_queue: the download_queue overseeing this download
             display: (optional) the display to write status updates to
         """
         if self._enclosure is None:
@@ -108,7 +109,8 @@ class Episode:
 
         t = threading.Thread(
             target=DataFile.download_to_file,
-            args=[self._enclosure, output_path, display]
+            args=[self._enclosure, output_path, download_queue, display],
+            name="download_%s" % str(self)
         )
         t.start()
 

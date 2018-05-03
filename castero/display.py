@@ -6,6 +6,7 @@ from castero import helpers
 from castero.menu import Menu
 from castero.player import Player
 from castero.queue import Queue
+from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
 
@@ -68,6 +69,7 @@ class Display:
         self._episode_menu = None
         self._metadata_updated = False
         self._queue = Queue(config)
+        self._download_queue = DownloadQueue(self)
         self._status = ""
         self._status_timer = self.STATUS_TIMEOUT
 
@@ -546,7 +548,7 @@ class Display:
                     if should_delete:
                         episode.delete(self)
                 else:
-                    episode.download(self)
+                    self._download_queue.add(episode)
 
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.
@@ -803,6 +805,9 @@ class Display:
         """
         # have the queue check if it needs to go to the next player
         self._queue.update()
+
+        # check the status of any downloads
+        self._download_queue.update()
 
         # update the status timer
         # If the user is not doing anything, the status message will take
