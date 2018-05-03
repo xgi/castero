@@ -10,10 +10,16 @@ from castero.player import Player
 
 
 def main():
-    # check if user is running the client with -h or --help flag
-    help_flags = ['-h', '--help']
-    if sys.argv[len(sys.argv) - 1] in help_flags:
+    # check if user is running the client with an info flag
+    info_flags = {
+        'help': ['-h', '--help'],
+        'version': ['-v', '--version']
+    }
+    if sys.argv[len(sys.argv) - 1] in info_flags['help']:
         print(castero.__help__)
+        sys.exit(0)
+    elif sys.argv[len(sys.argv) - 1] in info_flags['version']:
+        print(castero.__version__)
         sys.exit(0)
 
     # check whether dependencies are met
