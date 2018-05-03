@@ -6,7 +6,7 @@ python:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install vlc
+  - sudo snap install vlc
   - pip install --upgrade pip
 
 install:
