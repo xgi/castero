@@ -12,6 +12,9 @@ class MockStdscr(mock.MagicMock):
 
     Provides functions to mock typical stdscr behavior.
     """
+    def getstr(self, start, end):
+        return self.test_input.encode('utf-8')
+
     def setmaxyx(self, nlines, ncols):
         self.nlines, self.ncols = nlines, ncols
 
@@ -19,7 +22,12 @@ class MockStdscr(mock.MagicMock):
         return self.nlines, self.ncols
 
     def derwin(self, nlines, ncols, x, y):
-        return MockStdscr(nlines=nlines, ncols=ncols, x=x, y=y)
+        return MockStdscr(nlines=nlines, ncols=ncols,
+                          x=x, y=y,
+                          test_input='unspecified test input')
+
+    def set_test_input(self, str):
+        self.test_input = str
 
 
 @pytest.yield_fixture()

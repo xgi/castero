@@ -3,7 +3,8 @@ import curses
 import pytest
 import castero
 from castero.display import Display, DisplaySizeError
-from castero.feed import Feed
+from castero.feed import Feed, FeedLoadError, FeedStructureError, \
+    FeedParseError
 from castero.episode import Episode
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
@@ -218,3 +219,36 @@ def test_display_min_dimensions(display):
     display._stdscr.setmaxyx(Display.MIN_HEIGHT - 1, 100)
     with pytest.raises(DisplaySizeError):
         display.display()
+
+
+def test_display_add_feed(display):
+    feed_dir = my_dir + "/feeds/valid_enclosures.xml"
+    display._footer_window.set_test_input(feed_dir)
+    display._add_feed()
+    assert len(display._feeds) == 1
+    assert type(display._feeds[feed_dir]) == Feed
+
+
+def test_display_add_feed_errors(display):
+    test_inputs = ["fake", "http://fake", my_dir + "/feeds/broken_is_rss.xml",
+                   my_dir + "/datafiles/parse_error.conf"]
+    for test_input in test_inputs:
+        display._footer_window.set_test_input(test_input)
+        display._add_feed()
+        assert display._status.startswith("Error:")
+        display._status = ""
+        assert len(display._feeds) == 0
+
+
+def test_display_delete_feed(display):
+    feed = Feed(url="feed url",
+                title="feed title",
+                description="feed description",
+                link="feed link",
+                last_build_date="feed last_build_date",
+                copyright="feed copyright",
+                episodes=[])
+    display._feeds["feed url"] = feed
+    assert len(display._feeds) == 1
+    display._delete_feed()
+    assert len(display._feeds) == 0
