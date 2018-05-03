@@ -14,7 +14,7 @@ See also <https://github.com/xgi/castero/releases>.
 
 ## Unreleased
 **Changed**
-* The client now explicitly requires VLC >= 3.0.0
+* The client now explicitly requires VLC >= 2.2.3
 
 **Fixed**
 * Fixed an issue where pressing pause before the media had loaded would not

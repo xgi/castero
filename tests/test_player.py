@@ -72,9 +72,3 @@ def test_player_time_str():
     while myplayer._player.get_state() != vlc.State.Playing:
         pass
     assert myplayer.time_str == "00:00:00/00:00:05"
-
-
-def test_player_create_error():
-    with pytest.raises(player.PlayerCreateError):
-        myplayer = player.Player("fake", "not a real path")
-        myplayer._create_player()

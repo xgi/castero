@@ -25,7 +25,7 @@ $ sudo python setup.py install
 
 Running castero requires the following external dependencies:
 
-* vlc >= 3.0.0
+* vlc >= 2.2.3
 
 ## Usage
 
