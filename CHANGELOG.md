@@ -12,6 +12,11 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## Unreleased
+**Fixed**
+* Fixed an issue where pressing pause before the media had loaded would not
+properly pause it.
+
 ## 0.2.2 - 2018-04-24
 **Added**
 * You can now delete a downloaded episode by pressing the save key again.

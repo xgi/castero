@@ -73,7 +73,7 @@ class Player:
         self._media.parse()  # may output some junk into the console
         self._player.set_media(self._media)
 
-        if self._media.get_parsed_status == vlc.MediaParsedStatus.failed:
+        if self._media.get_parsed_status() == vlc.MediaParsedStatus.failed:
             raise PlayerCreateError(
                 "Media object failed while parsing (is the path valid?)")
 
@@ -92,15 +92,19 @@ class Player:
         """Stops the media.
         """
         if self._player is not None:
-            self._player.stop()
-            self._state = 0
+            if self._player.get_state() == vlc.State.Opening:
+                self._player.release()
+            else:
+                self._player.stop()
+                self._state = 0
 
     def pause(self) -> None:
         """Pauses the media.
         """
         if self._player is not None:
-            self._player.pause()
-            self._state = 2
+            if self._player.get_state() != vlc.State.Opening:
+                self._player.pause()
+                self._state = 2
 
     def seek(self, direction, amount) -> None:
         """Seek forward or backward in the media.

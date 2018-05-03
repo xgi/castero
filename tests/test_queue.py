@@ -1,5 +1,5 @@
 import os
-import pytest
+import vlc
 from castero.queue import Queue
 from castero.player import Player
 from castero.config import Config
@@ -64,6 +64,8 @@ def test_queue_play():
     myqueue = Queue(config)
     myqueue.add(player1)
     myqueue.play()
+    while player1._player.get_state() != vlc.State.Playing:
+        pass
     assert player1.state == 1
     myqueue.stop()
 
@@ -72,6 +74,8 @@ def test_queue_pause():
     myqueue = Queue(config)
     myqueue.add(player1)
     myqueue.play()
+    while player1._player.get_state() != vlc.State.Playing:
+        pass
     myqueue.pause()
     assert player1.state == 2
     myqueue.stop()
@@ -81,6 +85,8 @@ def test_queue_stop():
     myqueue = Queue(config)
     myqueue.add(player1)
     myqueue.play()
+    while player1._player.get_state() != vlc.State.Playing:
+        pass
     myqueue.stop()
     assert player1.state == 0
 
@@ -90,6 +96,8 @@ def test_queue_toggle():
     myqueue.add(player1)
     assert player1.state == 0
     myqueue.toggle()
+    while player1._player.get_state() != vlc.State.Playing:
+        pass
     assert player1.state == 1
     myqueue.toggle()
     assert player1.state == 2
@@ -100,6 +108,8 @@ def test_queue_seek():
     myqueue = Queue(config)
     myqueue.add(player1)
     myqueue.play()
+    while player1._player.get_state() != vlc.State.Playing:
+        pass
     myqueue.seek(1)
     assert player1.time == int(config["seek_distance"]) * 1000
     myqueue.stop()
