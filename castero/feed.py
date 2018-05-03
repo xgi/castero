@@ -340,6 +340,6 @@ class Feed:
         """str: the copyright of the feed"""
         result = self._copyright
         if result is None:
-            result = "Copyright not available."
+            result = "No copyright specified."
         return result
 

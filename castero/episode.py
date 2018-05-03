@@ -173,7 +173,7 @@ class Episode:
         """str: the copyright of the episode"""
         result = self._copyright
         if result is None:
-            result = "Copyright not available."
+            result = "No copyright specified."
         return result
 
     @property

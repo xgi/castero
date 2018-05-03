@@ -93,7 +93,7 @@ def test_episode_missing_property_pubdate():
 def test_episode_missing_property_copyright():
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     myepisode = Episode(myfeed, title=title)
-    assert myepisode.copyright == "Copyright not available."
+    assert myepisode.copyright == "No copyright specified."
 
 
 def test_episode_missing_property_enclosure():
