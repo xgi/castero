@@ -26,7 +26,8 @@ class DownloadQueue:
         """
         assert type(episode) == Episode
 
-        self._episodes.append(episode)
+        if not episode in self._episodes:
+            self._episodes.append(episode)
 
     def start(self) -> None:
         """Start downloading the first episode in the queue.
@@ -57,4 +58,3 @@ class DownloadQueue:
     def length(self) -> int:
         """int: the length of the queue"""
         return len(self._episodes)
-

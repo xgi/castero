@@ -10,7 +10,7 @@ def test_datafile_download():
     attempt = 0
     for url in urls:
         DataFile.download_to_file(url, "datafile_download_temp",
-                                  mydownloadqueue)
+                                  "datafile download name", mydownloadqueue)
         r = requests.get(urls[attempt])
         if r.status_code == 200:
             break

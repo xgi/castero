@@ -71,12 +71,13 @@ class DataFile:
             os.makedirs(path)
 
     @staticmethod
-    def download_to_file(url, file, download_queue, display=None):
+    def download_to_file(url, file, name, download_queue, display=None):
         """Downloads a URL to a local file.
 
         Args:
             url: the source url
             file: the destination path
+            name: the user-friendly name of the content
             download_queue: the download_queue overseeing this download
             display: (optional) the display to write status updates to
         """
@@ -88,8 +89,8 @@ class DataFile:
         downloaded = 0
         for chunk in response.iter_content(chunk_size=chunk_size):
             if display is not None:
-                status_str = "Downloading episode: %d%s" % (
-                    downloaded / chunk_size, chuck_size_label
+                status_str = "Downloading \"%s\": %d%s" % (
+                    name, downloaded / chunk_size, chuck_size_label
                 )
                 if download_queue.length > 1:
                     status_str += " (+%d downloads in queue)" % (
