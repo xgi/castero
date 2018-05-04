@@ -37,8 +37,8 @@ def main():
 
     # check if we need to start reloading
     if helpers.is_true(config['reload_on_start']):
-        t = threading.Thread(target=feeds.reload, args=[display])
-        t.start()
+        reload_thread = threading.Thread(target=feeds.reload, args=[display])
+        reload_thread.start()
 
     # core loop for the client
     running = True
@@ -46,9 +46,9 @@ def main():
         display.display()
         display.update()
         display.refresh()
-        c = display.getch()
-        if c != -1:
-            running = display.handle_input(c)
+        char = display.getch()
+        if char != -1:
+            running = display.handle_input(char)
 
     sys.exit(0)
 

@@ -376,13 +376,13 @@ class Display:
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
         )
         self._footer_window.addstr(1, 0, prompt)
-        c = self._footer_window.getch()
+        char = self._footer_window.getch()
 
         self._footer_window.clear()
         curses.curs_set(0)
         curses.noecho()
 
-        return c == ord('y')
+        return char == ord('y')
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
@@ -781,8 +781,8 @@ class Display:
         Returns:
             int: the character entered by the user, or -1
         """
-        c = self._stdscr.getch()
-        return c
+        char = self._stdscr.getch()
+        return char
 
     def update_status(self, status) -> None:
         """Updates the status message displayed in the footer.
