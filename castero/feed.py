@@ -120,8 +120,8 @@ class Feed:
                 else:
                     raise FeedDownloadError(
                         "Did not receive an acceptable status code while"
-                        " download the page. Expected 200, got: "
-                        + str(response.status_code))
+                        " download the page. Expected 200, got: " +
+                        str(response.status_code))
             except requests.exceptions.RequestException:
                 raise FeedDownloadError(
                     "An exception occurred when attempting to download the"
@@ -186,8 +186,8 @@ class Feed:
         if len(root_children) > 0:
             if len(root_children) > 1:
                 raise FeedStructureError(
-                    "RSS feed has too many children; expected 1, was: "
-                    + str(len(root_children)))
+                    "RSS feed has too many children; expected 1, was: " +
+                    str(len(root_children)))
             else:
                 if root_children[0].tag != 'channel':
                     raise FeedStructureError(
@@ -205,25 +205,25 @@ class Feed:
                         if len(chan_title_tags) != 1:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
-                                " title tags; expected 1, was: "
-                                + str(len(chan_title_tags)))
+                                " title tags; expected 1, was: " +
+                                str(len(chan_title_tags)))
                         if len(chan_link_tags) != 1:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
-                                " link tags; expected 1, was: "
-                                + str(len(chan_link_tags)))
+                                " link tags; expected 1, was: " +
+                                str(len(chan_link_tags)))
                         if len(chan_description_tags) != 1:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
-                                " description tags; expected 1, was: "
-                                + str(len(chan_description_tags)))
+                                " description tags; expected 1, was: " +
+                                str(len(chan_description_tags)))
 
                         # if the channel has any items, each item should have
                         # at least a title or description tag
                         channel_item_tags = channel.findall('item')
                         for item in channel_item_tags:
-                            if len(item.findall('title')
-                                   + item.findall('description')) < 1:
+                            if len(item.findall('title') +
+                                   item.findall('description')) < 1:
                                 raise FeedStructureError(
                                     "An item in the RSS feed's channel did not"
                                     " have at least one of a title or a"
@@ -231,8 +231,8 @@ class Feed:
                     else:
                         raise FeedStructureError(
                             "RSS feed's channel does not have enough required"
-                            " children; expected >=3, was: "
-                            + str(len(channel_children)))
+                            " children; expected >=3, was: " +
+                            str(len(channel_children)))
         else:
             raise FeedStructureError(
                 "RSS feed does not have any children; expected 1 (a channel"
@@ -342,4 +342,3 @@ class Feed:
         if result is None:
             result = "No copyright specified."
         return result
-

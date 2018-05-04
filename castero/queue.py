@@ -28,8 +28,7 @@ class Queue:
         """Proceed to the next player in the queue.
         """
         if len(self._players) > 0:
-            p = self._players.pop(0)
-            del p
+            self._players.pop(0)
             self.play()
 
     def add(self, player) -> None:

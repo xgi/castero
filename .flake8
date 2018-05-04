@@ -1,0 +1,8 @@
+[flake8]
+ignore = E221
+exclude =
+    .git,
+    __pycache__,
+    build,
+    dist,
+    venv

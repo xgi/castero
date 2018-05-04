@@ -11,6 +11,7 @@ class Menu:
     Methods in that class simply call appropriate methods here in response to
     user input in order to change the state of the menu.
     """
+
     def __init__(self, window, items, child=None, active=False) -> None:
         """Initializes the object.
 
@@ -83,24 +84,24 @@ class Menu:
         setting them to appropriate extremes if they are not.
         """
         if len(self._items) > 0:
+            num_my_items = len(self._items[self._parent_selected])
+
             # _selected cannot be outside range of items
             if self._selected < 0:
                 self._selected = 0
-            if self._selected > len(self._items[self._parent_selected]) - 1:
-                self._selected = len(self._items[self._parent_selected]) - 1
+            if self._selected > num_my_items - 1:
+                self._selected = num_my_items - 1
 
             # if there is no next page, then the current page should be as full
             # as possible
-            if self._top_index + self._max_displayed_items >\
-                    len(self._items[self._parent_selected]):
-                self._top_index = len(self._items[self._parent_selected])\
-                                  - self._max_displayed_items
+            if self._top_index + self._max_displayed_items > num_my_items:
+                self._top_index = num_my_items - self._max_displayed_items
 
             # _top_index cannot be outside range of items
             if self._top_index < 0:
                 self._top_index = 0
-            if self._top_index > len(self._items[self._parent_selected]) - 1:
-                self._top_index = len(self._items[self._parent_selected]) - 1
+            if self._top_index > num_my_items - 1:
+                self._top_index = num_my_items - 1
 
     def clear(self) -> None:
         """Clears the menu.
