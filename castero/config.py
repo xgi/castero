@@ -41,6 +41,9 @@ class Config(DataFile):
 
     def load(self) -> None:
         """Loads the config file.
+
+        Raises:
+            ConfigParseError: an error occurred while parsing the config file
         """
         assert os.path.exists(self._path)
         assert os.path.exists(self._default_path)

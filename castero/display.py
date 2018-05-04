@@ -27,9 +27,6 @@ class Display:
     This class is used to handle all user-interaction. It creates and handles
     all aspects of the application's interface, including windows and menus. It
     retrieves input from the user and performs corresponding actions.
-
-    This class also includes the core input loop of the application, contained
-    in the loop() method.
     """
     MIN_WIDTH = 20
     MIN_HEIGHT = 8

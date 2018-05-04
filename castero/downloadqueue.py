@@ -35,7 +35,7 @@ class DownloadQueue:
         if self.first is not None:
             self.first.download(self, self._display)
 
-    def update(self):
+    def update(self) -> None:
         """Checks the status of the current download.
         """
         # if nothing is downloading, start downloading the first episode

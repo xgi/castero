@@ -170,8 +170,10 @@ class Menu:
         self._selected -= direction
 
         if self._selected < self._top_index:
+            # the cursor went above the menu
             self._top_index -= 1
         elif self._selected >= self._top_index + self._max_displayed_items:
+            # the cursor went below the menu
             self._top_index += 1
 
         self._sanitize()

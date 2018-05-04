@@ -25,19 +25,22 @@ def main():
     # check whether dependencies are met
     Player.check_dependencies()
 
+    # instantiate DataFile-based objects
     config = Config()
     feeds = Feeds()
 
+    # instantiate the display object
     stdscr = curses.initscr()
     display = Display(stdscr, config, feeds)
-
     display.clear()
     display.update_parent_dimensions()
 
+    # check if we need to start reloading
     if helpers.is_true(config['reload_on_start']):
         t = threading.Thread(target=feeds.reload, args=[display])
         t.start()
 
+    # core loop for the client
     running = True
     while running:
         display.display()
