@@ -464,26 +464,26 @@ class Display:
                 self._feeds[path] = feed
             self.create_menus()
             self._feeds.write()
-            self.update_status("Feed '%s\' successfully added" % str(feed))
+            self.change_status("Feed '%s\' successfully added" % str(feed))
         except FeedError as e:
             if type(e) == FeedLoadError:
-                self.update_status(
+                self.change_status(
                     "Error: An error occurred while loading the file"
                 )
             elif type(e) == FeedDownloadError:
-                self.update_status(
+                self.change_status(
                     "Error: An error occurred while downloading the feed"
                 )
             elif type(e) == FeedParseError:
-                self.update_status(
+                self.change_status(
                     "Error: An error occurred while parsing the feed"
                 )
             elif type(e) == FeedStructureError:
-                self.update_status(
+                self.change_status(
                     "Error: The provided feed is not a valid RSS document"
                 )
             else:
-                self.update_status(
+                self.change_status(
                     "Error: An ambiguous error occurred while handling the"
                     " feed"
                 )
@@ -506,7 +506,7 @@ class Display:
                 if deleted:
                     self.create_menus()
                     self._feeds.write()
-                    self.update_status("Feed successfully deleted")
+                    self.change_status("Feed successfully deleted")
 
     def _reload_feeds(self) -> None:
         """Reloads the users' feeds.
@@ -784,8 +784,8 @@ class Display:
         char = self._stdscr.getch()
         return char
 
-    def update_status(self, status) -> None:
-        """Updates the status message displayed in the footer.
+    def change_status(self, status) -> None:
+        """Changes the status message displayed in the footer.
 
         Args:
             status: the status message to display
@@ -817,5 +817,5 @@ class Display:
         if self._status_timer > 0:
             self._status_timer -= 1
             if self._status_timer <= 0:
-                # status_timer should be reset during the next update_status()
+                # status_timer should be reset during the next change_status()
                 self._status = ""

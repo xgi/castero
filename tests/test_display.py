@@ -162,7 +162,7 @@ def test_display_get_active_menu(display):
 def test_display_update_status(display):
     display._status = ""
     display._status_timer = 0
-    display.update_status("test status")
+    display.change_status("test status")
     assert display._status == "test status"
     assert display._status_timer == display.STATUS_TIMEOUT
 

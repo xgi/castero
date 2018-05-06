@@ -97,13 +97,13 @@ class DataFile:
                         download_queue.length - 1
                     )
 
-                display.update_status(status_str)
+                display.change_status(status_str)
             if chunk:
                 handle.write(chunk)
             downloaded += len(chunk)
 
         if display is not None:
-            display.update_status("Episode successfully downloaded.")
+            display.change_status("Episode successfully downloaded.")
         download_queue.next()
 
     def load(self) -> None:

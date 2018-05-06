@@ -93,7 +93,7 @@ class Episode:
         """
         if self._enclosure is None:
             if display is not None:
-                display.update_status("Download failed: episode does not have"
+                display.change_status("Download failed: episode does not have"
                                       " a valid media source")
             return
 
@@ -105,7 +105,7 @@ class Episode:
         DataFile.ensure_path(output_path)
 
         if display is not None:
-            display.update_status("Starting episode download...")
+            display.change_status("Starting episode download...")
 
         t = threading.Thread(
             target=DataFile.download_to_file,
@@ -133,7 +133,7 @@ class Episode:
                 if File.startswith(episode_partial_filename + '.'):
                     os.remove(os.path.join(feed_directory, File))
                     if display is not None:
-                        display.update_status(
+                        display.change_status(
                             "Successfully deleted the downloaded episode"
                         )
 

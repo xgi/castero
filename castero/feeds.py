@@ -128,7 +128,7 @@ class Feeds(DataFile):
         current_feed = 1
         for key in self.data:
             if display is not None:
-                display.update_status(
+                display.change_status(
                     "Reloading feeds (%d/%d)" % (current_feed, total_feeds)
                 )
 
@@ -142,7 +142,7 @@ class Feeds(DataFile):
         self.write()
 
         if display is not None:
-            display.update_status("Feeds successfully reloaded")
+            display.change_status("Feeds successfully reloaded")
             display.create_menus()
 
     def at(self, index) -> Feed:
