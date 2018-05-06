@@ -6,6 +6,7 @@ from unittest import mock
 from castero.display import Display
 from castero.config import Config
 from castero.feeds import Feeds
+from castero.datafile import DataFile
 
 
 class Helpers:
@@ -19,6 +20,7 @@ class Helpers:
     def hide_user_feeds():
         """Moves the user's feeds file, if it exists, to make it unreachable.
         """
+        DataFile.ensure_path(Feeds.PATH)
         if os.path.exists(Feeds.PATH):
             os.rename(Feeds.PATH, Feeds.PATH + ".tmp")
         copyfile(Feeds.DEFAULT_PATH, Feeds.PATH)
@@ -26,6 +28,7 @@ class Helpers:
     @staticmethod
     def restore_user_feeds():
         """Restores the user's feeds file if it has been hidden."""
+        DataFile.ensure_path(Feeds.PATH)
         if os.path.exists(Feeds.PATH + ".tmp"):
             os.rename(Feeds.PATH + ".tmp", Feeds.PATH)
 
@@ -33,6 +36,7 @@ class Helpers:
     def hide_user_config():
         """Moves the user's config file, if it exists, to make it unreachable.
         """
+        DataFile.ensure_path(Config.PATH)
         if os.path.exists(Config.PATH):
             os.rename(Config.PATH, Config.PATH + ".tmp")
         copyfile(Config.DEFAULT_PATH, Config.PATH)
@@ -40,6 +44,7 @@ class Helpers:
     @staticmethod
     def restore_user_config():
         """Restores the user's config file if it has been hidden."""
+        DataFile.ensure_path(Config.PATH)
         if os.path.exists(Config.PATH + ".tmp"):
             os.rename(Config.PATH + ".tmp", Config.PATH)
 
