@@ -1,10 +1,47 @@
+import os
 import pytest
 import curses
+from shutil import copyfile
 from unittest import mock
 from castero.display import Display
 from castero.config import Config
 from castero.feeds import Feeds
-from tests import test_config, test_feeds
+
+
+class Helpers:
+    """The Helpers class.
+
+    Provides functions that are useful to multiple test units.
+
+    This class should not be instantiated.
+    """
+    @staticmethod
+    def hide_user_feeds():
+        """Moves the user's feeds file, if it exists, to make it unreachable.
+        """
+        if os.path.exists(Feeds.PATH):
+            os.rename(Feeds.PATH, Feeds.PATH + ".tmp")
+        copyfile(Feeds.DEFAULT_PATH, Feeds.PATH)
+
+    @staticmethod
+    def restore_user_feeds():
+        """Restores the user's feeds file if it has been hidden."""
+        if os.path.exists(Feeds.PATH + ".tmp"):
+            os.rename(Feeds.PATH + ".tmp", Feeds.PATH)
+
+    @staticmethod
+    def hide_user_config():
+        """Moves the user's config file, if it exists, to make it unreachable.
+        """
+        if os.path.exists(Config.PATH):
+            os.rename(Config.PATH, Config.PATH + ".tmp")
+        copyfile(Config.DEFAULT_PATH, Config.PATH)
+
+    @staticmethod
+    def restore_user_config():
+        """Restores the user's config file if it has been hidden."""
+        if os.path.exists(Config.PATH + ".tmp"):
+            os.rename(Config.PATH + ".tmp", Config.PATH)
 
 
 class MockStdscr(mock.MagicMock):
@@ -60,11 +97,16 @@ def stdscr():
 
 
 @pytest.yield_fixture()
-def display(stdscr):
-    test_config.hide_user_config()
-    test_feeds.hide_user_feeds()
+def prevent_modification():
+    Helpers.hide_user_feeds()
+    Helpers.hide_user_config()
+    yield
+    Helpers.restore_user_feeds()
+    Helpers.restore_user_config()
+
+
+@pytest.yield_fixture()
+def display(prevent_modification, stdscr):
     config = Config()
     feeds = Feeds()
-    test_config.restore_user_config()
-    test_feeds.restore_user_feeds()
-    return Display(stdscr, config, feeds)
+    yield Display(stdscr, config, feeds)
