@@ -4,7 +4,7 @@
 
 castero is a podcast client for the command line.
 
-![client_example](https://raw.githubusercontent.com/xgi/castero/master/res/client_example.png)
+![example client screenshot](https://raw.githubusercontent.com/xgi/castero/master/res/client_example.png)
 
 ## Installation
 
