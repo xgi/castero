@@ -4,7 +4,7 @@
 
 castero is a podcast client for the command line.
 
-![client_example](res/client_example.png)
+![client_example](https://raw.githubusercontent.com/xgi/castero/master/res/client_example.png)
 
 ## Installation
 
@@ -58,7 +58,7 @@ Commands
 
 The configuration file is located at `{HOME}/.config/castero/` after the client has been run at least once.
 
-Please see [castero.conf](castero/templates/castero.conf) for a list of available settings.
+Please see [castero.conf](https://github.com/xgi/castero/blob/master/castero/templates/castero.conf) for a list of available settings.
 
 Additionally, a file containing your list of feeds is located at `{HOME}/.local/share/castero/feeds`. This file is provided to avoid redownloading feeds on every startup. However, it is not intended to be manually modified. Removing this file will simply cause castero to replace it with an empty list next time you run the client.
 
@@ -75,4 +75,4 @@ python -m pytest tests/test_feed.py
 
 ## License
 
-[MIT License](LICENSE.txt)
+[MIT License](https://github.com/xgi/castero/blob/master/LICENSE.txt)
