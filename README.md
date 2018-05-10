@@ -13,6 +13,11 @@ Install from [PyPi](https://pypi.org/project/castero) with pip:
 $ pip install castero
 ```
 
+Upgrading:
+```bash
+$ pip install castero --upgrade
+```
+
 ### Manual Installation
 
 ```bash
@@ -66,11 +71,11 @@ Additionally, a file containing your list of feeds is located at `{HOME}/.local/
 
 This project uses [pytest](https://pytest.org) for testing. To run tests, run the following command in the project's root directory:
 ```bash
-python -m pytest tests
+$ python -m pytest tests
 ```
 You can also run tests for an individual unit, i.e.:
 ```bash
-python -m pytest tests/test_feed.py
+$ python -m pytest tests/test_feed.py
 ```
 
 ## License
