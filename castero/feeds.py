@@ -171,5 +171,8 @@ class Feeds(DataFile):
         result = False
         if index < len(list(self.data)) > 0:
             result = True
+            feed = self.data[list(self.data)[index]]
+            for episode in feed.episodes:
+                episode.delete()
             del self.data[list(self.data)[index]]
         return result

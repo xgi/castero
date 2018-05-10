@@ -493,6 +493,8 @@ class Display:
 
         If the delete_feed_confirmation config option is true, this method will
         first ask for y/n confirmation before deleting the feed.
+
+        Deleting a feed also deletes all downloaded/saved episodes.
         """
         if self._active_window == 0:
             should_delete = True

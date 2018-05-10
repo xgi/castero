@@ -123,23 +123,22 @@ class Episode:
         Args:
             display: (optional) the display to write status updates to
         """
-        assert self.downloaded
+        if self.downloaded:
+            episode_partial_filename = helpers.sanitize_path(str(self))
+            feed_directory = self._feed_directory()
 
-        episode_partial_filename = helpers.sanitize_path(str(self))
-        feed_directory = self._feed_directory()
+            if os.path.exists(feed_directory):
+                for File in os.listdir(feed_directory):
+                    if File.startswith(episode_partial_filename + '.'):
+                        os.remove(os.path.join(feed_directory, File))
+                        if display is not None:
+                            display.change_status(
+                                "Successfully deleted the downloaded episode"
+                            )
 
-        if os.path.exists(feed_directory):
-            for File in os.listdir(feed_directory):
-                if File.startswith(episode_partial_filename + '.'):
-                    os.remove(os.path.join(feed_directory, File))
-                    if display is not None:
-                        display.change_status(
-                            "Successfully deleted the downloaded episode"
-                        )
-
-        # if there are no more files in the feed directory, delete it
-        if len(os.listdir(feed_directory)) == 0:
-            os.rmdir(feed_directory)
+            # if there are no more files in the feed directory, delete it
+            if len(os.listdir(feed_directory)) == 0:
+                os.rmdir(feed_directory)
 
     @property
     def title(self) -> str:
