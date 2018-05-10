@@ -12,9 +12,14 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
-## Unreleased
+## 0.2.4 - 2018-05-10
 **Added**
-* Handle -v or --version flag to display version instead of starting the client.
+* Added support for saving an entire feed at once.
+* Handle -v or --version flag to display version instead of starting the
+client.
+
+**Changed**
+* Deleting a feed will now delete all of its downloaded/saved episodes.
 
 ## 0.2.3 - 2018-05-03
 **Added**
