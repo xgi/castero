@@ -446,7 +446,7 @@ class Display:
         elif c == ord('r'):
             self._reload_feeds()
         elif c == ord('s'):
-            self._save_episode()
+            self._save_episodes()
 
         return keep_running
 
@@ -526,13 +526,23 @@ class Display:
             t = threading.Thread(target=self._feeds.reload, args=[self])
             t.start()
 
-    def _save_episode(self) -> None:
-        """Saves the current selected episode.
+    def _save_episodes(self) -> None:
+        """Saves the current selected feed or episode.
 
-        If the episode is already saved, this method will instead ask the user
-        if they would like to delete the downloaded episode.
+        If the user is selecting an episode and the episode is already saved,
+        this method will instead ask the user if they would like to delete the
+        downloaded episode. However, if the user is selecting a feed, there is
+        no prompt to delete episodes, even if some are downloaded. In this
+        case, downloaded episodes are simply skipped.
         """
-        if self._active_window == 1:
+        if self._active_window == 0:
+            feed_index = self._feed_menu.selected_index
+            feed = self._feeds.at(feed_index)
+            if feed is not None:
+                for episode in feed.episodes:
+                    if not episode.downloaded:
+                        self._download_queue.add(episode)
+        elif self._active_window == 1:
             feed_index = self._feed_menu.selected_index
             feed = self._feeds.at(feed_index)
             episode_index = self._episode_menu.selected_index
