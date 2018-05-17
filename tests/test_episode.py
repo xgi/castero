@@ -1,4 +1,7 @@
+from unittest import mock
 import os
+
+from castero.downloadqueue import DownloadQueue
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.datafile import DataFile
@@ -123,14 +126,48 @@ def test_episode_playable_local():
                                     "myfeed_item1_title.mp3")
 
 
-def test_episode_delete():
+def test_episode_delete(display):
     DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     episode_location = os.path.join(DataFile.DOWNLOADED_DIR,
                                     "myfeed_title/myfeed_item2_title.mp3")
     with open(episode_location, "w") as file:
         file.write("temp file for test_episode.test_episode_delete")
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    display.change_status = mock.MagicMock(name="change_status")
     episode = myfeed.episodes[1]
     assert episode.downloaded
-    episode.delete()
+    episode.delete(display=display)
+    display.change_status.assert_called_once()
     assert not episode.downloaded
+
+
+def test_episode_download():
+    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    mydownloadqueue = DownloadQueue()
+    myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    myepisode = myfeed.episodes[1]
+    DataFile.download_to_file = mock.MagicMock(name="download_to_file")
+    myepisode.download(mydownloadqueue)
+    DataFile.download_to_file.assert_called_once()
+
+
+def test_episode_download_with_display(display):
+    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    mydownloadqueue = DownloadQueue()
+    myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    myepisode = myfeed.episodes[1]
+    DataFile.download_to_file = mock.MagicMock(name="download_to_file")
+    display.change_status = mock.MagicMock(name="change_status")
+    myepisode.download(mydownloadqueue, display=display)
+    DataFile.download_to_file.assert_called_once()
+
+
+def test_episode_download_with_display_no_enclosure(display):
+    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    mydownloadqueue = DownloadQueue()
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = myfeed.episodes[1]
+    DataFile.download_to_file = mock.MagicMock(name="download_to_file")
+    display.change_status = mock.MagicMock(name="change_status")
+    myepisode.download(mydownloadqueue, display=display)
+    display.change_status.assert_called_once()
