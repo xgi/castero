@@ -120,7 +120,7 @@ class Feed:
                 else:
                     raise FeedDownloadError(
                         "Did not receive an acceptable status code while"
-                        " download the page. Expected 200, got: " +
+                        " downloading the page. Expected 200, got: " +
                         str(response.status_code))
             except requests.exceptions.RequestException:
                 raise FeedDownloadError(

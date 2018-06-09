@@ -21,6 +21,11 @@ def test_feed_validations_is_v2():
         myfeed = feed.Feed(file=my_dir+"/feeds/broken_is_v2.xml")
 
 
+def test_feed_validations_rss_empty():
+    with pytest.raises(feed.FeedStructureError):
+        myfeed = feed.Feed(file=my_dir+"/feeds/broken_rss_empty.xml")
+
+
 def test_feed_validations_has_channel():
     with pytest.raises(feed.FeedStructureError):
         myfeed = feed.Feed(file=my_dir+"/feeds/broken_has_channel.xml")
@@ -29,6 +34,11 @@ def test_feed_validations_has_channel():
 def test_feed_validations_channel_children():
     with pytest.raises(feed.FeedStructureError):
         myfeed = feed.Feed(file=my_dir+"/feeds/broken_channel_children.xml")
+
+
+def test_feed_validations_channel_empty():
+    with pytest.raises(feed.FeedStructureError):
+        myfeed = feed.Feed(file=my_dir+"/feeds/broken_channel_empty.xml")
 
 
 def test_feed_validations_two_channels():
