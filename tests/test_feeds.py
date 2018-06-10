@@ -1,6 +1,8 @@
 import copy
 import os
 from shutil import copyfile
+from unittest import mock
+
 import castero.feeds as feeds
 from castero.feed import Feed
 
@@ -97,11 +99,13 @@ def test_feeds_del_at_2(prevent_modification):
     assert not deleted
 
 
-def test_feeds_reload(prevent_modification):
+def test_feeds_reload(prevent_modification, display):
     os.chdir(my_dir)
     copyfile(my_dir + "/datafiles/feeds_working2", feeds.Feeds.PATH)
     myfeeds = feeds.Feeds()
     myfeeds2 = copy.copy(myfeeds)
-    myfeeds2.reload()
+    display.change_status = mock.MagicMock(name="change_status")
+    myfeeds2.reload(display)
+    assert display.change_status.call_count == 2
     for feed in myfeeds:
         assert feed in myfeeds2
