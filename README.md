@@ -53,10 +53,11 @@ Commands
     enter        - play selected feed/episode
     space        - add selected feed/episode to queue
     c            - clear the queue
-    p            - pause/play the current episode
     n            - go to the next episode in the queue
-    f            - seek forward
-    b            - seek backward
+    i            - invert the order of the menu
+    p or k       - pause/play the current episode
+    f or l       - seek forward
+    b or j       - seek backward
 ```
 
 ## Configuration
