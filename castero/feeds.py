@@ -1,8 +1,10 @@
-import os
+import collections
 import json
+import os
+
 from castero.datafile import DataFile
-from castero.feed import Feed
 from castero.episode import Episode
+from castero.feed import Feed
 
 
 class FeedsError(Exception):
@@ -27,6 +29,7 @@ class Feeds(DataFile):
         """Initializes the object.
         """
         super().__init__(self.PATH, self.DEFAULT_PATH)
+        self._inverted = False
         self.load()
 
     def load(self) -> None:
@@ -89,6 +92,9 @@ class Feeds(DataFile):
         """Writes to the data file.
         """
         assert os.path.exists(self._path)
+
+        # force writing feeds in alphabetical order
+        self.sort(self._inverted)
 
         output_dict = dict(self.data)  # make a copy of self.data
         for key in output_dict:
@@ -176,3 +182,20 @@ class Feeds(DataFile):
                 episode.delete()
             del self.data[list(self.data)[index]]
         return result
+
+    def sort(self, toggle_invert=False) -> None:
+        """Sorts the list of Feed's by their string representation.
+
+        Args:
+            toggle_invert: (optional) toggles whether the list is inverted
+        """
+        if toggle_invert:
+            self._inverted = not self._inverted
+
+        self.data = collections.OrderedDict(
+            sorted(
+                self.data.items(),
+                key=lambda x: str(x[1]),
+                reverse=self._inverted
+            )
+        )

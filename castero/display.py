@@ -447,6 +447,8 @@ class Display:
             self._reload_feeds()
         elif c == ord('s'):
             self._save_episodes()
+        elif c == ord('i'):
+            self._invert_selected_menu()
 
         return keep_running
 
@@ -462,8 +464,8 @@ class Display:
                 feed = Feed(file=path)
             if feed.validated:
                 self._feeds[path] = feed
-            self.create_menus()
             self._feeds.write()
+            self.create_menus()
             self.change_status("Feed '%s\' successfully added" % str(feed))
         except FeedError as e:
             if type(e) == FeedLoadError:
@@ -506,8 +508,8 @@ class Display:
                 deleted = self._feeds.del_at(
                     self._feed_menu.selected_index)
                 if deleted:
-                    self.create_menus()
                     self._feeds.write()
+                    self.create_menus()
                     self.change_status("Feed successfully deleted")
 
     def _reload_feeds(self) -> None:
@@ -558,6 +560,23 @@ class Display:
                         episode.delete(self)
                 else:
                     self._download_queue.add(episode)
+
+    def _invert_selected_menu(self) -> None:
+        """Inverts the contents of the selected menu.
+        """
+        feed_index = self._feed_menu.selected_index
+        if self._active_window == 0:
+            self._feeds.sort(toggle_invert=True)
+            self.create_menus()
+        elif self._active_window == 1:
+            feed = self._feeds.at(feed_index)
+            if feed is not None:
+                feed.invert_episodes()
+                self._feeds.write()
+                self.create_menus()
+                for i in range(feed_index):
+                    self._feed_menu.move(-1)
+                self._change_active_window(1)
 
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.

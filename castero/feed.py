@@ -299,6 +299,11 @@ class Feed:
                               enclosure=item_enclosure_str)
             self._episodes.append(episode)
 
+    def invert_episodes(self) -> None:
+        """Invert this feed's list of episodes.
+        """
+        self._episodes = self._episodes[::-1]
+
     @property
     def validated(self) -> bool:
         """bool: whether this feed has been validated"""

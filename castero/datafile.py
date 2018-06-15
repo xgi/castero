@@ -1,6 +1,9 @@
 import os
-import requests
 from shutil import copyfile
+
+import requests
+import collections
+
 import castero
 
 
@@ -31,7 +34,7 @@ class DataFile:
         """
         assert os.path.exists(default_path)
 
-        self.data = {}
+        self.data = collections.OrderedDict()
         self._path = path
         self._default_path = default_path
 
@@ -94,7 +97,7 @@ class DataFile:
                 )
                 if download_queue.length > 1:
                     status_str += " (+%d downloads in queue)" % (
-                        download_queue.length - 1
+                            download_queue.length - 1
                     )
 
                 display.change_status(status_str)

@@ -16,6 +16,12 @@ See also <https://github.com/xgi/castero/releases>.
 **Added**
 * Added j/k/l as aliases for seek backward, pause/play, and seek forward,
 respectively.
+* Added support for inverting the list of feeds or episodes by pressing 'i' in
+the corresponding menu. The order of episode lists is preserved, but the order
+of the feeds list is not.
+
+**Changed**
+* Feeds are now ordered alphabetically.
 
 ## 0.2.4 - 2018-05-10
 **Added**
