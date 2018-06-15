@@ -12,6 +12,11 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## Unreleased
+**Added**
+* Added j/k/l as aliases for seek backward, pause/play, and seek forward,
+respectively.
+
 ## 0.2.4 - 2018-05-10
 **Added**
 * Added support for saving an entire feed at once.

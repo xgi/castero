@@ -108,7 +108,8 @@ def test_display_input_keys(display):
         assert not display._metadata_updated
 
     operation_keys = [10, ord(' '), ord('c'), ord('p'), ord('n'), ord('f'),
-                      ord('b'), ord('a'), ord('d'), ord('r'), ord('s')]
+                      ord('b'), ord('a'), ord('d'), ord('r'), ord('s'),
+                      ord('j'), ord('k'), ord('l')]
     for key in operation_keys:
         ret_val = display.handle_input(key)
         assert ret_val

@@ -429,15 +429,15 @@ class Display:
         elif c == ord('c'):
             self._queue.stop()
             self._queue.clear()
-        elif c == ord('p'):
+        elif c == ord('p') or c == ord('k'):
             self._queue.toggle()
         elif c == ord('n'):
             self._queue.stop()
             self._queue.next()
             self._queue.play()
-        elif c == ord('f'):
+        elif c == ord('f') or c == ord('l'):
             self._queue.seek(1)
-        elif c == ord('b'):
+        elif c == ord('b') or c == ord('j'):
             self._queue.seek(-1)
         elif c == ord('a'):
             self._add_feed()
