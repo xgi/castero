@@ -32,6 +32,7 @@ Commands
     space        - add selected feed/episode to queue
     c            - clear the queue
     n            - go to the next episode in the queue
+    i            - invert the order of the menu
     p or k       - pause/play the current episode
     f or l       - seek forward
     b or j       - seek backward
