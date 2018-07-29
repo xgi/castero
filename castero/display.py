@@ -16,7 +16,7 @@ class DisplayError(Exception):
     """
 
 
-class DisplaySizeError(FeedError):
+class DisplaySizeError(DisplayError):
     """The display does not have acceptable dimensions.
     """
 
