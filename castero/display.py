@@ -1,14 +1,15 @@
 import curses
 import textwrap
 import threading
+
 import castero
 from castero import helpers
-from castero.menu import Menu
-from castero.player import Player
-from castero.queue import Queue
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
+from castero.menu import Menu
+from castero.player import Player
+from castero.queue import Queue
 
 
 class DisplayError(Exception):
@@ -42,6 +43,17 @@ class Display:
         'white': curses.COLOR_WHITE,
         'yellow': curses.COLOR_YELLOW
     }
+    KEY_MAPPING = {chr(i): i for i in range(256)}
+    KEY_MAPPING.update(
+        (name[4:], value) for name, value in vars(curses).items()
+        if name.startswith('KEY_')
+    )
+    KEY_MAPPING.update(
+        {
+            'ENTER': 10,
+            'SPACE': 32
+        }
+    )
 
     def __init__(self, stdscr, config, feeds) -> None:
         """Initializes the object.
@@ -394,60 +406,63 @@ class Display:
             bool: whether or not the application should continue running
         """
         keep_running = True
-        if c == ord('q'):
+        if c == self.KEY_MAPPING[self._config['key_exit']]:
             self.terminate()
             keep_running = False
-        elif c == ord('h'):
+        elif c == self.KEY_MAPPING[self._config['key_help']]:
             self._show_help()
-        elif c == curses.KEY_RIGHT:
+        elif c == self.KEY_MAPPING[self._config['key_right']]:
             self._change_active_window(1)
             self._metadata_updated = False
-        elif c == curses.KEY_LEFT:
+        elif c == self.KEY_MAPPING[self._config['key_left']]:
             self._change_active_window(-1)
             self._metadata_updated = False
-        elif c == curses.KEY_UP:
+        elif c == self.KEY_MAPPING[self._config['key_up']]:
             self.get_active_menu().move(1)
             self._metadata_updated = False
-        elif c == curses.KEY_DOWN:
+        elif c == self.KEY_MAPPING[self._config['key_down']]:
             self.get_active_menu().move(-1)
             self._metadata_updated = False
-        elif c == curses.KEY_PPAGE:  # page up
+        elif c == self.KEY_MAPPING[self._config['key_scroll_up']]:
             self.get_active_menu().move_page(1)
             self._metadata_updated = False
-        elif c == curses.KEY_NPAGE:  # page down
+        elif c == self.KEY_MAPPING[self._config['key_scroll_down']]:
             self.get_active_menu().move_page(-1)
             self._metadata_updated = False
-        elif c == 10:  # return
+        elif c == self.KEY_MAPPING[self._config['key_play_selected']]:
             self._queue.stop()
             self._queue.clear()
             self._create_player_from_selected()
             self._queue.play()
             self.get_active_menu().move(-1)
-        elif c == ord(' '):  # space
+        elif c == self.KEY_MAPPING[self._config['key_add_selected']]:
             self._create_player_from_selected()
             self.get_active_menu().move(-1)
-        elif c == ord('c'):
+        elif c == self.KEY_MAPPING[self._config['key_clear']]:
             self._queue.stop()
             self._queue.clear()
-        elif c == ord('p') or c == ord('k'):
+        elif c == self.KEY_MAPPING[self._config['key_pause_play']] or \
+                c == self.KEY_MAPPING[self._config['key_pause_play_alt']]:
             self._queue.toggle()
-        elif c == ord('n'):
+        elif c == self.KEY_MAPPING[self._config['key_next']]:
             self._queue.stop()
             self._queue.next()
             self._queue.play()
-        elif c == ord('f') or c == ord('l'):
+        elif c == self.KEY_MAPPING[self._config['key_seek_forward']] or \
+                 c == self.KEY_MAPPING[self._config['key_seek_forward_alt']]:
             self._queue.seek(1)
-        elif c == ord('b') or c == ord('j'):
+        elif c == self.KEY_MAPPING[self._config['key_seek_backward']] or \
+                 c == self.KEY_MAPPING[self._config['key_seek_backward_alt']]:
             self._queue.seek(-1)
-        elif c == ord('a'):
+        elif c == self.KEY_MAPPING[self._config['key_add_feed']]:
             self._add_feed()
-        elif c == ord('d'):
+        elif c == self.KEY_MAPPING[self._config['key_delete']]:
             self._delete_feed()
-        elif c == ord('r'):
+        elif c == self.KEY_MAPPING[self._config['key_reload']]:
             self._reload_feeds()
-        elif c == ord('s'):
+        elif c == self.KEY_MAPPING[self._config['key_save']]:
             self._save_episodes()
-        elif c == ord('i'):
+        elif c == self.KEY_MAPPING[self._config['key_invert']]:
             self._invert_selected_menu()
 
         return keep_running

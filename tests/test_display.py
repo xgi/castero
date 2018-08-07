@@ -1,11 +1,13 @@
-import os
 import curses
+import os
+
 import pytest
+
 import castero
+import castero.config as config
 from castero.display import Display, DisplaySizeError
-from castero.feed import Feed, FeedLoadError, FeedStructureError, \
-    FeedParseError
 from castero.episode import Episode
+from castero.feed import Feed
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -90,6 +92,7 @@ def test_display_get_y_n(display):
 
 
 def test_display_input_keys(display):
+    myconfig = config.Config()
     ret_val = display.handle_input(ord('q'))
     assert not ret_val
     display._stdscr.reset_mock()
@@ -99,17 +102,37 @@ def test_display_input_keys(display):
     display._stdscr.timeout.assert_any_call(-1)
     display._stdscr.reset_mock()
 
-    movement_keys = [curses.KEY_UP, curses.KEY_DOWN, curses.KEY_LEFT,
-                     curses.KEY_RIGHT, curses.KEY_PPAGE, curses.KEY_NPAGE]
+    movement_keys = [
+        display.KEY_MAPPING[myconfig['key_up']],
+        display.KEY_MAPPING[myconfig['key_right']],
+        display.KEY_MAPPING[myconfig['key_down']],
+        display.KEY_MAPPING[myconfig['key_left']],
+        display.KEY_MAPPING[myconfig['key_scroll_up']],
+        display.KEY_MAPPING[myconfig['key_scroll_down']],
+    ]
     for key in movement_keys:
         display._metadata_updated = True
         ret_val = display.handle_input(key)
         assert ret_val
         assert not display._metadata_updated
 
-    operation_keys = [10, ord(' '), ord('c'), ord('p'), ord('n'), ord('f'),
-                      ord('b'), ord('a'), ord('d'), ord('r'), ord('s'),
-                      ord('j'), ord('k'), ord('l')]
+    operation_keys = [
+        display.KEY_MAPPING[myconfig['key_add_feed']],
+        display.KEY_MAPPING[myconfig['key_delete']],
+        display.KEY_MAPPING[myconfig['key_reload']],
+        display.KEY_MAPPING[myconfig['key_save']],
+        display.KEY_MAPPING[myconfig['key_play_selected']],
+        display.KEY_MAPPING[myconfig['key_add_selected']],
+        display.KEY_MAPPING[myconfig['key_clear']],
+        display.KEY_MAPPING[myconfig['key_next']],
+        display.KEY_MAPPING[myconfig['key_invert']],
+        display.KEY_MAPPING[myconfig['key_pause_play']],
+        display.KEY_MAPPING[myconfig['key_pause_play_alt']],
+        display.KEY_MAPPING[myconfig['key_seek_forward']],
+        display.KEY_MAPPING[myconfig['key_seek_forward_alt']],
+        display.KEY_MAPPING[myconfig['key_seek_backward']],
+        display.KEY_MAPPING[myconfig['key_seek_backward_alt']],
+    ]
     for key in operation_keys:
         ret_val = display.handle_input(key)
         assert ret_val

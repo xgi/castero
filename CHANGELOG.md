@@ -12,6 +12,10 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## Unreleased
+**Added**
+* Added support for custom keybindings in the config.
+
 ## 0.2.5 - 2018-06-15
 **Added**
 * Added j/k/l as aliases for seek backward, pause/play, and seek forward,
