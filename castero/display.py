@@ -299,7 +299,7 @@ class Display:
         else:
             footer_str = self._status
 
-        footer_str += " -- Press h for help"
+        footer_str += " -- Press %s for help" % self._config["key_help"]
         self._footer_window.attron(curses.A_BOLD)
         self._footer_window.addstr(
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
