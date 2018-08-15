@@ -16,6 +16,10 @@ See also <https://github.com/xgi/castero/releases>.
 **Added**
 * Added support for custom keybindings in the config.
 
+**Fixed**
+* Fixed an issue where the client would crash if a feed's description or title
+field was missing.
+
 ## 0.2.5 - 2018-06-15
 **Added**
 * Added j/k/l as aliases for seek backward, pause/play, and seek forward,
