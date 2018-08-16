@@ -79,6 +79,7 @@ def stdscr():
          mock.patch('curses.flash'), \
          mock.patch('curses.endwin'), \
          mock.patch('curses.newwin'), \
+         mock.patch('curses.newpad'), \
          mock.patch('curses.noecho'), \
          mock.patch('curses.cbreak'), \
          mock.patch('curses.doupdate'), \

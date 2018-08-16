@@ -240,8 +240,8 @@ class Display:
         help_window.attron(curses.A_BOLD)
 
         # display lines from __help__
-        help_lines = castero.__help__\
-            .split('\n')[:self._parent_y - padding_yx[0] - 1]
+        help_lines = castero.__help__ \
+                         .split('\n')[:self._parent_y - padding_yx[0] - 1]
         help_lines.append("Press any key to exit this screen.")
         for i in range(len(help_lines)):
             help_window.addstr(i + padding_yx[0], padding_yx[1], help_lines[i])
@@ -355,20 +355,51 @@ class Display:
         assert self._footer_window is not None
         assert type(prompt) == str
 
-        curses.echo()
         curses.curs_set(1)
+        self._stdscr.timeout(-1)  # disable timeouts while waiting for entry
 
+        # display input prompt
         self._footer_window.addstr(
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
         )
         self._footer_window.addstr(1, 0, prompt)
-        result = self._footer_window.getstr(1, len(prompt))
 
+        entry_pad = curses.newpad(1, 999)
+        current_x = 0
+        scroll_x = 0
+        input_char = None
+        while input_char not in [curses.KEY_ENTER, 10]:
+            if input_char is not None:
+                # manually handle backspace
+                if input_char in [curses.KEY_BACKSPACE, 127]:
+                    if current_x > 0:
+                        entry_pad.delch(0, current_x - 1)
+                        current_x -= 1
+                else:
+                    # scroll the input pad if necessary
+                    if current_x + len(prompt) > \
+                            self._footer_window.getmaxyx()[1] - 1:
+                        scroll_x += 1
+
+                    # add the entered character to the pad
+                    entry_pad.addch(0, current_x, input_char)
+                    current_x += 1
+
+                # display current portion of pad
+                entry_pad.refresh(0, scroll_x,
+                                  self._parent_y - 1, len(prompt),
+                                  self._parent_y - 1,
+                                  self._footer_window.getmaxyx()[1] - 1)
+
+            # get the next input character
+            input_char = self._footer_window.getch()
+
+        self._stdscr.timeout(self.INPUT_TIMEOUT)
         self._footer_window.clear()
         curses.curs_set(0)
-        curses.noecho()
 
-        return result.decode("utf-8")
+        return entry_pad.instr(0, 0, entry_pad.getmaxyx()[1])\
+            .decode('utf-8').strip()
 
     def _get_y_n(self, prompt) -> bool:
         """Prompts the user for a yes or no (y/n) input.
@@ -450,10 +481,10 @@ class Display:
             self._queue.next()
             self._queue.play()
         elif c == self.KEY_MAPPING[self._config['key_seek_forward']] or \
-                 c == self.KEY_MAPPING[self._config['key_seek_forward_alt']]:
+                c == self.KEY_MAPPING[self._config['key_seek_forward_alt']]:
             self._queue.seek(1)
         elif c == self.KEY_MAPPING[self._config['key_seek_backward']] or \
-                 c == self.KEY_MAPPING[self._config['key_seek_backward_alt']]:
+                c == self.KEY_MAPPING[self._config['key_seek_backward_alt']]:
             self._queue.seek(-1)
         elif c == self.KEY_MAPPING[self._config['key_add_feed']]:
             self._add_feed()

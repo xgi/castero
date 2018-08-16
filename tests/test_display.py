@@ -1,5 +1,6 @@
 import curses
 import os
+from unittest import mock
 
 import pytest
 
@@ -76,7 +77,10 @@ def test_display_refresh(display):
 
 
 def test_display_get_input_str(display):
+    display._footer_window.getch = mock.Mock()
+    display._footer_window.getch.side_effect = [ord('a'), ord('b'), 10]
     display._get_input_str("prompt")
+    assert display._footer_window.getch.call_count == 3
     display._footer_window.clear.assert_called_once()
     assert display._footer_window.addstr.call_count == 2
     display._footer_window.addstr.assert_any_call(1, 0, "prompt")
@@ -92,6 +96,8 @@ def test_display_get_y_n(display):
 
 
 def test_display_input_keys(display):
+    display._footer_window.getch = mock.MagicMock(return_value=10)
+
     myconfig = config.Config()
     ret_val = display.handle_input(ord('q'))
     assert not ret_val
@@ -247,7 +253,7 @@ def test_display_min_dimensions(display):
 
 def test_display_add_feed(display):
     feed_dir = my_dir + "/feeds/valid_enclosures.xml"
-    display._footer_window.set_test_input(feed_dir)
+    display._get_input_str = mock.MagicMock(return_value=feed_dir)
     display._add_feed()
     assert len(display._feeds) == 1
     assert type(display._feeds[feed_dir]) == Feed
@@ -257,7 +263,7 @@ def test_display_add_feed_errors(display):
     test_inputs = ["fake", "http://fake", my_dir + "/feeds/broken_is_rss.xml",
                    my_dir + "/datafiles/parse_error.conf"]
     for test_input in test_inputs:
-        display._footer_window.set_test_input(test_input)
+        display._get_input_str = mock.MagicMock(return_value=test_input)
         display._add_feed()
         assert display._status.startswith("Error:")
         display._status = ""
