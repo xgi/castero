@@ -234,16 +234,17 @@ class Display:
         self.clear()
         self._stdscr.refresh()
 
-        padding_xy = (1, 4)
+        padding_yx = (1, 4)
 
         help_window = curses.newwin(self._parent_y, self._parent_x, 0, 0)
         help_window.attron(curses.A_BOLD)
 
         # display lines from __help__
-        help_lines = castero.__help__.split('\n')
+        help_lines = castero.__help__\
+            .split('\n')[:self._parent_y - padding_yx[0] - 1]
         help_lines.append("Press any key to exit this screen.")
         for i in range(len(help_lines)):
-            help_window.addstr(i + padding_xy[0], padding_xy[1], help_lines[i])
+            help_window.addstr(i + padding_yx[0], padding_yx[1], help_lines[i])
         help_window.refresh()
 
         # simply wait until any key is pressed (temporarily disable timeout)

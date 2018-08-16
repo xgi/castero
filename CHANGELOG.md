@@ -12,6 +12,10 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## Unreleased
+**Fixed**
+* Fixed a crash when opening the help menu with a short terminal.
+
 ## 0.2.6 - 2018-08-15
 **Added**
 * Added support for custom keybindings in the config.
