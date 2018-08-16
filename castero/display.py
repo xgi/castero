@@ -240,11 +240,12 @@ class Display:
         help_window.attron(curses.A_BOLD)
 
         # display lines from __help__
-        help_lines = castero.__help__ \
-                         .split('\n')[:self._parent_y - padding_yx[0] - 1]
+        help_lines = castero.__help__.split('\n')[
+                     :self._parent_y - padding_yx[0] - 1]
         help_lines.append("Press any key to exit this screen.")
         for i in range(len(help_lines)):
-            help_window.addstr(i + padding_yx[0], padding_yx[1], help_lines[i])
+            help_window.addstr(i + padding_yx[0], padding_yx[1],
+                               help_lines[i][:self._parent_x - padding_yx[1]])
         help_window.refresh()
 
         # simply wait until any key is pressed (temporarily disable timeout)
@@ -398,7 +399,7 @@ class Display:
         self._footer_window.clear()
         curses.curs_set(0)
 
-        return entry_pad.instr(0, 0, entry_pad.getmaxyx()[1])\
+        return entry_pad.instr(0, 0, entry_pad.getmaxyx()[1]) \
             .decode('utf-8').strip()
 
     def _get_y_n(self, prompt) -> bool:
