@@ -1,10 +1,11 @@
-import sys
 import curses
+import sys
 import threading
+
 import castero
 from castero import helpers
-from castero.display import Display
 from castero.config import Config
+from castero.display import Display
 from castero.feeds import Feeds
 from castero.player import Player
 

@@ -1,5 +1,6 @@
-import os
 import configparser
+import os
+
 from castero.datafile import DataFile
 
 

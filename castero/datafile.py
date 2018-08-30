@@ -1,8 +1,8 @@
+import collections
 import os
 from shutil import copyfile
 
 import requests
-import collections
 
 import castero
 

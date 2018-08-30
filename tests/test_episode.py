@@ -1,10 +1,10 @@
-from unittest import mock
 import os
+from unittest import mock
 
+from castero.datafile import DataFile
 from castero.downloadqueue import DownloadQueue
 from castero.episode import Episode
 from castero.feed import Feed
-from castero.datafile import DataFile
 
 title = "episode title"
 description = "episode description"
@@ -119,7 +119,8 @@ def test_episode_playable_local():
     episode = myfeed.episodes[0]
     playable = episode.get_playable()
     assert episode.downloaded()
-    assert playable == os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR, "myfeed_title",
+    assert playable == os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
+                                    "myfeed_title",
                                     "myfeed_item1_title.mp3")
 
 

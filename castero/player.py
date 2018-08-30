@@ -1,5 +1,6 @@
-import vlc
 import time
+
+import vlc
 
 
 class PlayerError(Exception):
@@ -19,6 +20,7 @@ class PlayerCreateError(PlayerError):
 class Player:
     """The Player class.
     """
+
     def __init__(self, title, path) -> None:
         """Initializes the object.
 

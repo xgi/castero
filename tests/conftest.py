@@ -1,12 +1,14 @@
-import os
-import pytest
 import curses
+import os
 from shutil import copyfile
 from unittest import mock
-from castero.display import Display
+
+import pytest
+
 from castero.config import Config
-from castero.feeds import Feeds
 from castero.datafile import DataFile
+from castero.display import Display
+from castero.feeds import Feeds
 
 
 class Helpers:
@@ -16,6 +18,7 @@ class Helpers:
 
     This class should not be instantiated.
     """
+
     @staticmethod
     def hide_user_feeds():
         """Moves the user's feeds file, if it exists, to make it unreachable.
@@ -54,6 +57,7 @@ class MockStdscr(mock.MagicMock):
 
     Provides functions to mock typical stdscr behavior.
     """
+
     def getstr(self, start, end):
         return self.test_input.encode('utf-8')
 

@@ -1,5 +1,7 @@
-import requests
 import xml.etree.ElementTree as ElementTree
+
+import requests
+
 from castero.episode import Episode
 
 
@@ -39,6 +41,7 @@ class Feed:
 
     The url for the feed should point to an RSS document.
     """
+
     def __init__(self, url=None, file=None, **kwargs) -> None:
         """Initializes the object.
 

@@ -1,6 +1,8 @@
-import pytest
 import os
 from shutil import copyfile
+
+import pytest
+
 import castero.config as config
 
 my_dir = os.path.dirname(os.path.realpath(__file__))

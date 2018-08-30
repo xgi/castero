@@ -1,8 +1,10 @@
 import os
+
 import vlc
-from castero.queue import Queue
-from castero.player import Player
+
 from castero.config import Config
+from castero.player import Player
+from castero.queue import Queue
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 

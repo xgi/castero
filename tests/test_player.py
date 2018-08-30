@@ -1,6 +1,7 @@
 import os
+
 import vlc
-import pytest
+
 import castero.player as player
 
 my_dir = os.path.dirname(os.path.realpath(__file__))

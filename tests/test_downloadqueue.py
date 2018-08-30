@@ -1,8 +1,9 @@
-from unittest import mock
 import os
+from unittest import mock
+
 from castero.downloadqueue import DownloadQueue
-from castero.feed import Feed
 from castero.episode import Episode
+from castero.feed import Feed
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -35,7 +36,7 @@ def test_downloadqueue_start():
     mydownloadqueue.start()
     episode1.download.assert_called_with(mydownloadqueue,
                                          mydownloadqueue._display.config,
-                                         mydownloadqueue._display,)
+                                         mydownloadqueue._display, )
 
 
 def test_downloadqueue_first():
