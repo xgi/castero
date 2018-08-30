@@ -165,11 +165,13 @@ class Feeds(DataFile):
             result = self.data[list(self.data)[index]]
         return result
 
-    def del_at(self, index) -> bool:
+    def del_at(self, index, config=None) -> bool:
         """Deletes the Feed at index.
 
         Args:
             index: the index of the Feed to delete
+            config: (optional) the user's Config. If unset, this will check in
+            DataFile.DEFAULT_DOWNLOADED_DIR
 
         Returns:
             bool: whether a Feed was deleted
@@ -179,7 +181,7 @@ class Feeds(DataFile):
             result = True
             feed = self.data[list(self.data)[index]]
             for episode in feed.episodes:
-                episode.delete()
+                episode.delete(config)
             del self.data[list(self.data)[index]]
         return result
 

@@ -29,10 +29,13 @@ def test_downloadqueue_add():
 
 def test_downloadqueue_start():
     mydownloadqueue = DownloadQueue()
+    mydownloadqueue._display = mock.MagicMock()
     mydownloadqueue.add(episode1)
     episode1.download = mock.MagicMock(name="download")
     mydownloadqueue.start()
-    episode1.download.assert_called_with(mydownloadqueue, None)
+    episode1.download.assert_called_with(mydownloadqueue,
+                                         mydownloadqueue._display.config,
+                                         mydownloadqueue._display,)
 
 
 def test_downloadqueue_first():

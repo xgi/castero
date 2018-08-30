@@ -4,6 +4,7 @@ import threading
 
 import castero
 from castero import helpers
+from castero.config import Config
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
@@ -553,8 +554,8 @@ class Display:
                     "Are you sure you want to delete this feed? (y/n): "
                 )
             if should_delete:
-                deleted = self._feeds.del_at(
-                    self._feed_menu.selected_index)
+                deleted = self._feeds.del_at(self._feed_menu.selected_index,
+                                             self._config)
                 if deleted:
                     self._feeds.write()
                     self.create_menus()
@@ -592,7 +593,7 @@ class Display:
             feed = self._feeds.at(feed_index)
             if feed is not None:
                 for episode in feed.episodes:
-                    if not episode.downloaded:
+                    if not episode.downloaded():
                         self._download_queue.add(episode)
         elif self._active_window == 1:
             feed_index = self._feed_menu.selected_index
@@ -600,12 +601,12 @@ class Display:
             episode_index = self._episode_menu.selected_index
             if feed is not None:
                 episode = feed.episodes[episode_index]
-                if episode.downloaded:
+                if episode.downloaded():
                     should_delete = self._get_y_n(
                         "Are you sure you want to delete the downloaded"
                         " episode? (y/n): ")
                     if should_delete:
-                        episode.delete(self)
+                        episode.delete(self._config, self)
                 else:
                     self._download_queue.add(episode)
 
@@ -730,7 +731,8 @@ class Display:
                 self._append_metadata_lines(feed.copyright, output_lines,
                                             add_blank=True)
                 # draw feed number of episodes
-                num_dl = sum([episode.downloaded for episode in feed.episodes])
+                num_dl = sum([episode.downloaded(self._config) for episode in
+                              feed.episodes])
                 self._append_metadata_lines("Episodes:", output_lines,
                                             attr=curses.A_BOLD)
                 self._append_metadata_lines(
@@ -771,8 +773,10 @@ class Display:
                 # draw episode downloaded
                 self._append_metadata_lines("Downloaded:", output_lines,
                                             attr=curses.A_BOLD)
-                self._append_metadata_lines(episode.downloaded_str,
-                                            output_lines)
+                self._append_metadata_lines(
+                    "Episode downloaded and available for offline playback." if
+                    episode.downloaded(self._config) else
+                    "Episode not downloaded.", output_lines)
 
         y = 2
         for line in output_lines[:max_lines]:
@@ -898,3 +902,8 @@ class Display:
             if self._status_timer <= 0:
                 # status_timer should be reset during the next change_status()
                 self._status = ""
+
+    @property
+    def config(self) -> Config:
+        """Config: the user's config"""
+        return self._config

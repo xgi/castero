@@ -1,5 +1,6 @@
 import os
 import threading
+
 from castero import helpers
 from castero.datafile import DataFile
 
@@ -9,6 +10,7 @@ class Episode:
 
     This class represents a single episode from a podcast feed.
     """
+
     def __init__(self, feed, title=None, description=None, link=None,
                  pubdate=None, copyright=None, enclosure=None) -> None:
         """Initializes the object.
@@ -46,24 +48,35 @@ class Episode:
             representation = self._description
         return representation.split('\n')[0]
 
-    def _feed_directory(self) -> str:
+    def _feed_directory(self, config=None) -> str:
         """Gets the path to the downloaded episode's feed directory.
 
         This method does not ensure whether the directory exists -- it simply
         acts as a single definition of where it _should_ be.
 
+        Args:
+            config: (optional) the user's Config. If unset, this will check in
+            DataFile.DEFAULT_DOWNLOADED_DIR
+
         Returns:
             str: a path to the feed directory
         """
         feed_dirname = helpers.sanitize_path(str(self._feed))
-        return os.path.join(DataFile.DOWNLOADED_DIR, feed_dirname)
+        return os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR if
+                            (config is None or config["custom_download_dir"]
+                             == "") else config["custom_download_dir"],
+                            feed_dirname)
 
-    def get_playable(self) -> str:
+    def get_playable(self, config=None) -> str:
         """Gets a playable path for this episode.
 
         This method checks whether the episode is available on the disk, giving
         the path to that file if so. Otherwise, simply return the episode's
         enclosure, which is probably a URL.
+
+        Args:
+            config: (optional) the user's Config. If unset, this will check in
+            DataFile.DEFAULT_DOWNLOADED_DIR
 
         Returns:
             str: a path to a playable file for this episode
@@ -71,7 +84,7 @@ class Episode:
         playable = self.enclosure
 
         episode_partial_filename = helpers.sanitize_path(str(self))
-        feed_directory = self._feed_directory()
+        feed_directory = self._feed_directory(config)
 
         if os.path.exists(feed_directory):
             for File in os.listdir(feed_directory):
@@ -80,7 +93,7 @@ class Episode:
 
         return playable
 
-    def download(self, download_queue, display=None):
+    def download(self, download_queue, config=None, display=None):
         """Downloads this episode to the file system.
 
         This method currently only supports downloading from an external URL.
@@ -89,6 +102,8 @@ class Episode:
 
         Args:
             download_queue: the download_queue overseeing this download
+            config: (optional) the user's Config. If unset, this will check in
+            DataFile.DEFAULT_DOWNLOADED_DIR
             display: (optional) the display to write status updates to
         """
         if self._enclosure is None:
@@ -97,7 +112,7 @@ class Episode:
                                       " a valid media source")
             return
 
-        feed_directory = self._feed_directory()
+        feed_directory = self._feed_directory(config)
         episode_partial_filename = helpers.sanitize_path(str(self))
         extension = os.path.splitext(self._enclosure)[1].split('?')[0]
         output_path = os.path.join(feed_directory,
@@ -117,15 +132,17 @@ class Episode:
         )
         t.start()
 
-    def delete(self, display=None):
+    def delete(self, config=None, display=None):
         """Deletes the episode file from the file system.
 
         Args:
+            config: (optional) the user's Config. If unset, this will check in
+            DataFile.DEFAULT_DOWNLOADED_DIR
             display: (optional) the display to write status updates to
         """
         if self.downloaded:
             episode_partial_filename = helpers.sanitize_path(str(self))
-            feed_directory = self._feed_directory()
+            feed_directory = self._feed_directory(config)
 
             if os.path.exists(feed_directory):
                 for File in os.listdir(feed_directory):
@@ -136,9 +153,29 @@ class Episode:
                                 "Successfully deleted the downloaded episode"
                             )
 
-            # if there are no more files in the feed directory, delete it
-            if len(os.listdir(feed_directory)) == 0:
-                os.rmdir(feed_directory)
+                # if there are no more files in the feed directory, delete it
+                if len(os.listdir(feed_directory)) == 0:
+                    os.rmdir(feed_directory)
+
+    def downloaded(self, config=None) -> bool:
+        """Determines whether the episode is downloaded.
+
+        Args:
+            config: (optional) the user's Config. If unset, this will check in
+            DataFile.DEFAULT_DOWNLOADED_DIR
+
+        Returns:
+            bool: whether or not the episode is downloaded
+        """
+        found_downloaded = False
+        episode_partial_filename = helpers.sanitize_path(str(self))
+        feed_directory = self._feed_directory(config)
+
+        if os.path.exists(feed_directory):
+            for File in os.listdir(feed_directory):
+                if File.startswith(episode_partial_filename + '.'):
+                    found_downloaded = True
+        return found_downloaded
 
     @property
     def title(self) -> str:
@@ -186,27 +223,4 @@ class Episode:
         result = self._enclosure
         if result is None:
             result = "Enclosure not available."
-        return result
-
-    @property
-    def downloaded(self) -> bool:
-        """bool: whether or not the episode is downloaded"""
-        found_downloaded = False
-        feed_dirname = helpers.sanitize_path(str(self._feed))
-        episode_partial_filename = helpers.sanitize_path(str(self))
-        feed_directory = os.path.join(DataFile.DOWNLOADED_DIR, feed_dirname)
-
-        if os.path.exists(feed_directory):
-            for File in os.listdir(feed_directory):
-                if File.startswith(episode_partial_filename + '.'):
-                    found_downloaded = True
-        return found_downloaded
-
-    @property
-    def downloaded_str(self) -> str:
-        """str: a text description of whether the episode is downloaded"""
-        if self.downloaded:
-            result = "Episode downloaded and available for offline playback."
-        else:
-            result = "Episode not downloaded."
         return result

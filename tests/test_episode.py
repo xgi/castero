@@ -109,40 +109,37 @@ def test_episode_playable_remote():
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     episode = myfeed.episodes[0]
     playable = episode.get_playable()
-    assert not episode.downloaded
-    assert episode.downloaded_str == "Episode not downloaded."
+    assert not episode.downloaded()
     assert playable == "http://example.com/myfeed_item1_title.mp3"
 
 
 def test_episode_playable_local():
-    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     episode = myfeed.episodes[0]
     playable = episode.get_playable()
-    assert episode.downloaded
-    assert episode.downloaded_str == "Episode downloaded and available for" \
-                                     " offline playback."
-    assert playable == os.path.join(DataFile.DOWNLOADED_DIR, "myfeed_title",
+    assert episode.downloaded()
+    assert playable == os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR, "myfeed_title",
                                     "myfeed_item1_title.mp3")
 
 
 def test_episode_delete(display):
-    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
-    episode_location = os.path.join(DataFile.DOWNLOADED_DIR,
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    episode_location = os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
                                     "myfeed_title/myfeed_item2_title.mp3")
     with open(episode_location, "w") as file:
         file.write("temp file for test_episode.test_episode_delete")
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     display.change_status = mock.MagicMock(name="change_status")
     episode = myfeed.episodes[1]
-    assert episode.downloaded
-    episode.delete(display=display)
+    assert episode.downloaded()
+    episode.delete(display.config, display=display)
     display.change_status.assert_called_once()
-    assert not episode.downloaded
+    assert not episode.downloaded()
 
 
 def test_episode_download():
-    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     mydownloadqueue = DownloadQueue()
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     myepisode = myfeed.episodes[1]
@@ -152,7 +149,7 @@ def test_episode_download():
 
 
 def test_episode_download_with_display(display):
-    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     mydownloadqueue = DownloadQueue()
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     myepisode = myfeed.episodes[1]
@@ -163,7 +160,7 @@ def test_episode_download_with_display(display):
 
 
 def test_episode_download_with_display_no_enclosure(display):
-    DataFile.DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     mydownloadqueue = DownloadQueue()
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     myepisode = myfeed.episodes[1]

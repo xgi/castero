@@ -13,6 +13,9 @@ Version listings include the following sections, if applicable:
 See also <https://github.com/xgi/castero/releases>.
 
 ## Unreleased
+**Added**
+* Added support for a custom download directory.
+
 **Fixed**
 * Fixed a crash when opening the help menu with a short terminal.
 
