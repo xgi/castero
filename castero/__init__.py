@@ -1,13 +1,13 @@
-__title__        = "castero"
-__description__  = "Command line podcast client"
-__keywords__     = "podcast commandline terminal curses"
-__author__       = "Jake Robertson"
+__title__ = "castero"
+__description__ = "Command line podcast client"
+__keywords__ = "podcast commandline terminal curses"
+__author__ = "Jake Robertson"
 __author_email__ = "jake@faltro.com"
-__version__      = "0.2.6"
-__date__         = "2018-08-15"
-__copyright__    = "Copyright (c) 2018 Jake Robertson"
-__license__      = "MIT License"
-__url__          = "https://github.com/xgi/castero"
+__version__ = "0.2.6"
+__date__ = "2018-08-15"
+__copyright__ = "Copyright (c) 2018 Jake Robertson"
+__license__ = "MIT License"
+__url__ = "https://github.com/xgi/castero"
 
 __help__ = """\
 %s help

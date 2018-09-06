@@ -1,6 +1,8 @@
 import curses
-import textwrap
+import glob
+import importlib
 import threading
+from os.path import dirname, basename, isfile
 
 import castero
 from castero import helpers
@@ -8,8 +10,8 @@ from castero.config import Config
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
-from castero.menu import Menu
-from castero.player import Player
+from castero.feeds import Feeds
+from castero.perspective import Perspective
 from castero.queue import Queue
 
 
@@ -69,15 +71,10 @@ class Display:
         self._feeds = feeds
         self._parent_x = -1
         self._parent_y = -1
-        self._active_window = 0
-        self._feed_window = None
-        self._episode_window = None
-        self._metadata_window = None
+        self._perspectives = {}
+        self._active_perspective = 1
         self._header_window = None
         self._footer_window = None
-        self._feed_menu = None
-        self._episode_menu = None
-        self._metadata_updated = False
         self._queue = Queue(config)
         self._download_queue = DownloadQueue(self)
         self._status = ""
@@ -93,6 +90,7 @@ class Display:
 
         self.update_parent_dimensions()
         self.create_color_pairs()
+        self._load_perspectives()
         self._create_windows()
         self.create_menus()
 
@@ -131,32 +129,33 @@ class Display:
             self.AVAILABLE_COLORS[self._config["color_background_alt"]]
         )
 
+    """Load instances of perspectives from the `perspectives` package.
+    """
+
+    def _load_perspectives(self) -> None:
+        # load a list of modules names by manually detecting .py files
+        module_files = glob.glob(dirname(__file__) + "/perspectives/*.py")
+        module_names = [basename(f)[:-3] for f in module_files if isfile(f)]
+
+        for name in module_names:
+            p_mod = importlib.import_module("castero.perspectives.%s" % name)
+            p_cls = getattr(
+                p_mod,
+                dir(p_mod)[[cls.lower() == name
+                            for cls in dir(p_mod)].index(True)])
+            cls = p_cls(self)
+            self._perspectives[int(cls.ID)] = cls
+
     def _create_windows(self) -> None:
         """Creates and sets basic parameters for the windows.
-
-        Creates the following windows:
-            - _feed_window, _episode_window, _metadata_window
-        Each window is set to use the default color pair (1), and each window
-        takes up one-third of the display.
 
         If the windows already exist when this method is run, this method will
         delete them and create new ones.
         """
-        third_x = helpers.third(self._parent_x)
-
         # delete old windows if they exist
         if self._header_window is not None:
             del self._header_window
             self._header_window = None
-        if self._feed_window is not None:
-            del self._feed_window
-            self._feed_window = None
-        if self._episode_window is not None:
-            del self._episode_window
-            self._episode_window = None
-        if self._metadata_window is not None:
-            del self._metadata_window
-            self._metadata_window = None
         if self._footer_window is not None:
             del self._footer_window
             self._footer_window = None
@@ -164,23 +163,16 @@ class Display:
         # create windows
         self._header_window = curses.newwin(2, self._parent_x,
                                             0, 0)
-        self._feed_window = curses.newwin(self._parent_y - 2, third_x,
-                                          2, 0)
-        self._episode_window = curses.newwin(self._parent_y - 2, third_x,
-                                             2, third_x)
-        metadata_width = self._parent_x - ((third_x * 2) - 1)
-        self._metadata_window = curses.newwin(self._parent_y - 2,
-                                              metadata_width,
-                                              2, 2 * third_x)
         self._footer_window = curses.newwin(2, self._parent_x,
                                             self._parent_y - 2, 0)
 
         # set window attributes
-        self._feed_window.attron(curses.color_pair(1))
-        self._episode_window.attron(curses.color_pair(1))
-        self._metadata_window.attron(curses.color_pair(1))
         self._header_window.attron(curses.color_pair(4))
         self._footer_window.attron(curses.color_pair(4))
+
+        # create windows for all perspectives
+        for perspective_id in self._perspectives:
+            self._perspectives[perspective_id].create_windows()
 
     def create_menus(self) -> None:
         """Creates the menus used in each window.
@@ -191,39 +183,8 @@ class Display:
         If the menus already exist when this method is run, this method will
         delete them and create new ones.
         """
-        assert all(window is not None for window in [
-            self._feed_window, self._episode_window
-        ])
-
-        # this method could change a lot of screen content - probably
-        # reasonable to simply clear the whole screen
-        self.clear()
-
-        # delete old menus if they exist
-        if self._feed_menu is not None:
-            del self._feed_menu
-            self._feed_menu = None
-        if self._episode_menu is not None:
-            del self._episode_menu
-            self._episode_menu = None
-
-        feed_items = [[]]
-        episode_items = []
-        for key in self._feeds:
-            feed = self._feeds[key]
-            feed_items[0].append(
-                str(feed)
-            )
-            episode_items.append(
-                [str(ep) for ep in feed.episodes]
-            )
-
-        self._episode_menu = Menu(self._episode_window, episode_items)
-        self._feed_menu = Menu(self._feed_window, feed_items,
-                               child=self._episode_menu, active=True)
-
-        # force reset active window to prevent starting in the episodes menu
-        self._active_window = 0
+        for perspective_id in self._perspectives:
+            self._perspectives[perspective_id].create_menus()
 
     def _show_help(self) -> None:
         """Show the help screen.
@@ -310,37 +271,28 @@ class Display:
         footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
         self._footer_window.addstr(1, 0, footer_str)
 
-        # add window titles
-        self._feed_window.attron(curses.A_BOLD)
-        self._episode_window.attron(curses.A_BOLD)
-        self._metadata_window.attron(curses.A_BOLD)
-        self._feed_window.addstr(0, 0, "Feeds")
-        self._episode_window.addstr(0, 0, "Episodes")
-        self._metadata_window.addstr(0, 0, "Metadata")
-
         # add window borders
-        self._feed_window.hline(1, 0,
-                                0, self._feed_window.getmaxyx()[1] - 1)
-        self._feed_window.vline(0, self._feed_window.getmaxyx()[1] - 1,
-                                0, self._feed_window.getmaxyx()[0] - 2)
-        self._episode_window.hline(1, 0,
-                                   0, self._episode_window.getmaxyx()[1] - 1)
-        self._episode_window.vline(0, self._episode_window.getmaxyx()[1] - 1,
-                                   0, self._episode_window.getmaxyx()[0] - 2)
-        self._metadata_window.hline(1, 0,
-                                    0, self._metadata_window.getmaxyx()[1] - 1)
         self._header_window.hline(1, 0,
                                   0, self._header_window.getmaxyx()[1])
         self._footer_window.hline(0, 0,
                                   0, self._footer_window.getmaxyx()[1])
 
-        # display menu content
-        self._feed_menu.display()
-        self._episode_menu.display()
+        # update display for all perspectives
+        for perspective_id in self._perspectives:
+            self._perspectives[perspective_id].display()
 
-        # draw metadata
-        if not self._metadata_updated:
-            self._draw_metadata()
+    def _get_active_perspective(self) -> Perspective:
+        return self._perspectives[self._active_perspective]
+
+    def _change_active_perspective(self, perspective_id) -> None:
+        """Changes _active_perspective to the given perspective.
+
+        Args:
+            perspective_id: the ID of the perspective to change to
+        """
+        assert perspective_id in self._perspectives
+
+        self._active_perspective = perspective_id
 
     def _get_input_str(self, prompt) -> str:
         """Prompts the user for input and returns the resulting string.
@@ -439,69 +391,13 @@ class Display:
         Returns:
             bool: whether or not the application should continue running
         """
-        keep_running = True
-        if c == self.KEY_MAPPING[self._config['key_exit']]:
-            self.terminate()
-            keep_running = False
-        elif c == self.KEY_MAPPING[self._config['key_help']]:
-            self._show_help()
-        elif c == self.KEY_MAPPING[self._config['key_right']]:
-            self._change_active_window(1)
-            self._metadata_updated = False
-        elif c == self.KEY_MAPPING[self._config['key_left']]:
-            self._change_active_window(-1)
-            self._metadata_updated = False
-        elif c == self.KEY_MAPPING[self._config['key_up']]:
-            self.get_active_menu().move(1)
-            self._metadata_updated = False
-        elif c == self.KEY_MAPPING[self._config['key_down']]:
-            self.get_active_menu().move(-1)
-            self._metadata_updated = False
-        elif c == self.KEY_MAPPING[self._config['key_scroll_up']]:
-            self.get_active_menu().move_page(1)
-            self._metadata_updated = False
-        elif c == self.KEY_MAPPING[self._config['key_scroll_down']]:
-            self.get_active_menu().move_page(-1)
-            self._metadata_updated = False
-        elif c == self.KEY_MAPPING[self._config['key_play_selected']]:
-            self._queue.stop()
-            self._queue.clear()
-            self._create_player_from_selected()
-            self._queue.play()
-            self.get_active_menu().move(-1)
-        elif c == self.KEY_MAPPING[self._config['key_add_selected']]:
-            self._create_player_from_selected()
-            self.get_active_menu().move(-1)
-        elif c == self.KEY_MAPPING[self._config['key_clear']]:
-            self._queue.stop()
-            self._queue.clear()
-        elif c == self.KEY_MAPPING[self._config['key_pause_play']] or \
-                c == self.KEY_MAPPING[self._config['key_pause_play_alt']]:
-            self._queue.toggle()
-        elif c == self.KEY_MAPPING[self._config['key_next']]:
-            self._queue.stop()
-            self._queue.next()
-            self._queue.play()
-        elif c == self.KEY_MAPPING[self._config['key_seek_forward']] or \
-                c == self.KEY_MAPPING[self._config['key_seek_forward_alt']]:
-            self._queue.seek(1)
-        elif c == self.KEY_MAPPING[self._config['key_seek_backward']] or \
-                c == self.KEY_MAPPING[self._config['key_seek_backward_alt']]:
-            self._queue.seek(-1)
-        elif c == self.KEY_MAPPING[self._config['key_add_feed']]:
-            self._add_feed()
-        elif c == self.KEY_MAPPING[self._config['key_delete']]:
-            self._delete_feed()
-        elif c == self.KEY_MAPPING[self._config['key_reload']]:
-            self._reload_feeds()
-        elif c == self.KEY_MAPPING[self._config['key_save']]:
-            self._save_episodes()
-        elif c == self.KEY_MAPPING[self._config['key_invert']]:
-            self._invert_selected_menu()
+        for perspective_id in self._perspectives:
+            if c == self.KEY_MAPPING[str(perspective_id)]:
+                self._change_active_perspective(perspective_id)
 
-        return keep_running
+        return self._get_active_perspective().handle_input(c)
 
-    def _add_feed(self) -> None:
+    def add_feed(self) -> None:
         """Prompt the user for a feed and add it, if possible.
         """
         path = self._get_input_str("Enter the URL or path of the feed: ")
@@ -539,29 +435,30 @@ class Display:
                     " feed"
                 )
 
-    def _delete_feed(self) -> None:
-        """Deletes the current selected feed.
+    def delete_feed(self, index) -> None:
+        """Deletes the feed at the given index.
 
         If the delete_feed_confirmation config option is true, this method will
         first ask for y/n confirmation before deleting the feed.
 
         Deleting a feed also deletes all downloaded/saved episodes.
-        """
-        if self._active_window == 0:
-            should_delete = True
-            if helpers.is_true(self._config["delete_feed_confirmation"]):
-                should_delete = self._get_y_n(
-                    "Are you sure you want to delete this feed? (y/n): "
-                )
-            if should_delete:
-                deleted = self._feeds.del_at(self._feed_menu.selected_index,
-                                             self._config)
-                if deleted:
-                    self._feeds.write()
-                    self.create_menus()
-                    self.change_status("Feed successfully deleted")
 
-    def _reload_feeds(self) -> None:
+        Args:
+            index: the index of the feed to delete within self._feeds
+        """
+        should_delete = True
+        if helpers.is_true(self._config["delete_feed_confirmation"]):
+            should_delete = self._get_y_n(
+                "Are you sure you want to delete this feed? (y/n): "
+            )
+        if should_delete:
+            deleted = self._feeds.del_at(index, self._config)
+            if deleted:
+                self._feeds.write()
+                self.create_menus()
+                self.change_status("Feed successfully deleted")
+
+    def reload_feeds(self) -> None:
         """Reloads the users' feeds.
 
         If the total number of feeds is >= the reload_feeds_threshold config
@@ -579,26 +476,28 @@ class Display:
             t = threading.Thread(target=self._feeds.reload, args=[self])
             t.start()
 
-    def _save_episodes(self) -> None:
+    def save_episodes(self, feed_index, episode_index=None) -> None:
         """Saves the current selected feed or episode.
 
-        If the user is selecting an episode and the episode is already saved,
-        this method will instead ask the user if they would like to delete the
-        downloaded episode. However, if the user is selecting a feed, there is
-        no prompt to delete episodes, even if some are downloaded. In this
-        case, downloaded episodes are simply skipped.
+        If the user is saving an episode and the episode is already saved, this
+        method will instead ask the user if they would like to delete the
+        downloaded episode. However, if the user is saving a feed, there is no
+        prompt to delete episodes, even if some are downloaded. In this case,
+        downloaded episodes are simply skipped.
+
+        Args:
+            feed_index: the index of the feed to delete in self._feeds
+            episode_index: (optional) the index of the episode to delete in the
+            feed's episode list, if saving an individual episode
         """
-        if self._active_window == 0:
-            feed_index = self._feed_menu.selected_index
+        if episode_index is None:
             feed = self._feeds.at(feed_index)
             if feed is not None:
                 for episode in feed.episodes:
                     if not episode.downloaded():
                         self._download_queue.add(episode)
-        elif self._active_window == 1:
-            feed_index = self._feed_menu.selected_index
+        else:
             feed = self._feeds.at(feed_index)
-            episode_index = self._episode_menu.selected_index
             if feed is not None:
                 episode = feed.episodes[episode_index]
                 if episode.downloaded():
@@ -610,221 +509,19 @@ class Display:
                 else:
                     self._download_queue.add(episode)
 
-    def _invert_selected_menu(self) -> None:
-        """Inverts the contents of the selected menu.
-        """
-        feed_index = self._feed_menu.selected_index
-        if self._active_window == 0:
-            self._feeds.sort(toggle_invert=True)
-            self.create_menus()
-        elif self._active_window == 1:
-            feed = self._feeds.at(feed_index)
-            if feed is not None:
-                feed.invert_episodes()
-                self._feeds.write()
-                self.create_menus()
-                for i in range(feed_index):
-                    self._feed_menu.move(-1)
-                self._change_active_window(1)
-
-    def _create_player_from_selected(self) -> None:
-        """Creates player(s) based on the selected items and adds to the queue.
-
-        If the active menu is the feed menu, then this will create players for
-        all episodes in the selected feed. If the active menu is the episode
-        menu, this will simply create a single player.
-
-        This method will not clear the queue prior to adding the new player(s),
-        nor will it play the episodes after running.
-        """
-        feed_index = self._feed_menu.selected_index
-        feed = self._feeds.at(feed_index)
-        if self._active_window == 0:
-            if feed is not None:
-                for episode in feed.episodes:
-                    player = Player(str(episode), episode.get_playable())
-                    self._queue.add(player)
-        elif self._active_window == 1:
-            episode_index = self._episode_menu.selected_index
-            if feed is not None:
-                episode = feed.episodes[episode_index]
-                player = Player(str(episode), episode.get_playable())
-                self._queue.add(player)
-
-    def _change_active_window(self, direction) -> None:
-        """Changes _active_window to the next or previous window, if available.
-
-        Args:
-            direction: 1 to change to the next window, -1 to change to the
-                previous (if it exists)
-        """
-        assert direction == 1 or direction == -1
-
-        self.get_active_menu().set_active(False)
-        self._active_window += direction
-        if self._active_window > 1:
-            self._active_window = 1
-        elif self._active_window < 0:
-            self._active_window = 0
-        self.get_active_menu().set_active(True)
-
-    def _append_metadata_lines(self, string, output_lines, attr=-1,
-                               add_blank=False) -> None:
-        """Appends properly formatted lines to the 2D output_lines array.
-
-        Args:
-            string: the string to add to output_lines
-            output_lines: 2D array, each element is [attr, str]
-            attr: (optional) the attribute (i.e. curses.A_BOLD)
-        """
-        max_lines = int(0.7 * self._metadata_window.getmaxyx()[0])
-        max_line_width = self._metadata_window.getmaxyx()[1] - 1
-        lines = textwrap.wrap(string, max_line_width)
-
-        # truncate to at most 70% of the total lines on the screen
-        lines = lines[:max_lines]
-
-        # add all lines to array
-        for line in lines:
-            output_lines.append([attr, line])
-
-        # add a blank line afterward, if necessary
-        if add_blank:
-            output_lines.append([-1, ""])
-
-    def _draw_metadata(self) -> None:
-        """Draws the metadata of the selected feed/episode onto the window.
-        """
-        assert self._metadata_window is not None
-
-        output_lines = []  # 2D array, each element is [attr, str]
-        max_lines = self._metadata_window.getmaxyx()[0] - 2
-        max_line_width = self._metadata_window.getmaxyx()[1] - 1
-
-        # clear the window by drawing blank lines
-        for y in range(2, self._metadata_window.getmaxyx()[0]):
-            self._metadata_window.addstr(y, 0, " " * max_line_width)
-
-        if self._active_window == 0:
-            # * the selected item is a feed
-            selected_index = self._feed_menu.selected_index
-            feed = self._feeds.at(selected_index)
-
-            if feed is not None:
-                # draw feed title
-                self._append_metadata_lines(feed.title, output_lines,
-                                            attr=curses.A_BOLD)
-                # draw feed lastBuildDate
-                self._append_metadata_lines(feed.last_build_date, output_lines,
-                                            add_blank=True)
-                # draw feed link
-                self._append_metadata_lines(feed.link, output_lines,
-                                            add_blank=True)
-                # draw feed description
-                self._append_metadata_lines("Description:", output_lines,
-                                            attr=curses.A_BOLD)
-                self._append_metadata_lines(feed.description, output_lines,
-                                            add_blank=True)
-                # draw feed copyright
-                self._append_metadata_lines("Copyright:", output_lines,
-                                            attr=curses.A_BOLD)
-                self._append_metadata_lines(feed.copyright, output_lines,
-                                            add_blank=True)
-                # draw feed number of episodes
-                num_dl = sum([episode.downloaded(self._config) for episode in
-                              feed.episodes])
-                self._append_metadata_lines("Episodes:", output_lines,
-                                            attr=curses.A_BOLD)
-                self._append_metadata_lines(
-                    "Found %d episodes (%d downloaded)" % (
-                        len(feed.episodes), num_dl
-                    ), output_lines
-                )
-
-        elif self._active_window == 1:
-            # * the selected item is an episode
-            selected_feed_index = self._feed_menu.selected_index
-            selected_episode_index = self._episode_menu.selected_index
-            feed = self._feeds.at(selected_feed_index)
-
-            if feed is not None:
-                episode = feed.episodes[selected_episode_index]
-
-                # draw episode title
-                self._append_metadata_lines(episode.title, output_lines,
-                                            attr=curses.A_BOLD)
-                # draw episode pubdate
-                self._append_metadata_lines(episode.pubdate, output_lines,
-                                            add_blank=True)
-                # draw episode link
-                self._append_metadata_lines(episode.link, output_lines,
-                                            add_blank=True)
-                # draw episode description
-                self._append_metadata_lines("Description:", output_lines,
-                                            attr=curses.A_BOLD)
-                self._append_metadata_lines(episode.description, output_lines,
-                                            add_blank=True)
-                # draw episode copyright
-                self._append_metadata_lines("Copyright:", output_lines,
-                                            attr=curses.A_BOLD)
-                self._append_metadata_lines(episode.copyright, output_lines,
-                                            add_blank=True)
-
-                # draw episode downloaded
-                self._append_metadata_lines("Downloaded:", output_lines,
-                                            attr=curses.A_BOLD)
-                self._append_metadata_lines(
-                    "Episode downloaded and available for offline playback." if
-                    episode.downloaded(self._config) else
-                    "Episode not downloaded.", output_lines)
-
-        y = 2
-        for line in output_lines[:max_lines]:
-            self._metadata_window.attrset(curses.color_pair(1))
-            if line[0] != -1:
-                self._metadata_window.attron(line[0])
-            self._metadata_window.addstr(y, 0, line[1])
-            y += 1 + line[1].count('\n')
-
-    def get_active_window(self):
-        """Retrieve the window object corresponding to the active window.
-
-        Returns:
-            curses.window: the active window object
-        """
-        assert 0 <= self._active_window < 3
-
-        return {
-            0: self._feed_window,
-            1: self._episode_window,
-            2: self._metadata_window
-        }.get(self._active_window)
-
-    def get_active_menu(self) -> Menu:
-        """Retrieve the menu object corresponding to the active window.
-
-        Returns:
-            menu.Menu: the active menu object
-        """
-        assert 0 <= self._active_window < 2
-
-        return {
-            0: self._feed_menu,
-            1: self._episode_menu,
-        }.get(self._active_window)
-
     def clear(self) -> None:
         """Clear the screen.
         """
         self._stdscr.clear()
 
     def refresh(self) -> None:
-        """Refresh the screen and all windows.
+        """Refresh the screen and all windows in all perspectives.
         """
         self._stdscr.refresh()
-        self._feed_window.refresh()
-        self._episode_window.refresh()
-        self._metadata_window.refresh()
+
+        for perspective_id in self._perspectives:
+            self._perspectives[perspective_id].refresh()
+
         self._header_window.refresh()
         self._footer_window.refresh()
 
@@ -904,6 +601,26 @@ class Display:
                 self._status = ""
 
     @property
+    def parent_x(self) -> int:
+        """int: the width of the parent screen, in characters"""
+        return self._parent_x
+
+    @property
+    def parent_y(self) -> int:
+        """int: the height of the parent screen, in characters"""
+        return self._parent_y
+
+    @property
     def config(self) -> Config:
         """Config: the user's config"""
         return self._config
+
+    @property
+    def feeds(self) -> Feeds:
+        """Feeds: the user's feeds"""
+        return self._feeds
+
+    @property
+    def queue(self) -> Queue:
+        """Queue: the Queue of Player's"""
+        return self._queue
