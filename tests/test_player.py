@@ -7,6 +7,10 @@ import castero.player as player
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
 
+def test_player_check_dependencies():
+    assert player.Player.check_dependencies
+
+
 def test_player_init():
     myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
     assert isinstance(myplayer, player.Player)
