@@ -13,6 +13,12 @@ def test_feed_validation_valid():
     assert myfeed.validated
 
 
+def test_feed_validation_complete():
+    myfeed = feed.Feed(file=my_dir + "/feeds/valid_basic.xml")
+    assert isinstance(myfeed, feed.Feed)
+    assert myfeed.validated
+
+
 def test_feed_validations_is_rss():
     with pytest.raises(feed.FeedStructureError):
         myfeed = feed.Feed(file=my_dir + "/feeds/broken_is_rss.xml")

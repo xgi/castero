@@ -315,18 +315,12 @@ class Feed:
     @property
     def title(self) -> str:
         """str: the title of the feed"""
-        result = self._title
-        if result is None:
-            result = "Title not available."
-        return result
+        return self._title
 
     @property
     def description(self) -> str:
         """str: the description of the feed"""
-        result = self._description
-        if result is None:
-            result = "Description not available."
-        return result
+        return self._description
 
     @property
     def episodes(self) -> list:
@@ -336,10 +330,7 @@ class Feed:
     @property
     def link(self) -> str:
         """str: the link of/for the feed"""
-        result = self._link
-        if result is None:
-            result = "Link not available."
-        return result
+        return self._link
 
     @property
     def last_build_date(self) -> str:
