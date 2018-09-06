@@ -144,7 +144,7 @@ class Display:
                 dir(p_mod)[[cls.lower() == name
                             for cls in dir(p_mod)].index(True)])
             cls = p_cls(self)
-            self._perspectives[int(cls.ID)] = cls
+            self._perspectives[cls.ID] = cls
 
     def _create_windows(self) -> None:
         """Creates and sets basic parameters for the windows.
@@ -186,7 +186,7 @@ class Display:
         for perspective_id in self._perspectives:
             self._perspectives[perspective_id].create_menus()
 
-    def _show_help(self) -> None:
+    def show_help(self) -> None:
         """Show the help screen.
 
         This method takes over the main loop, displaying the screen until a key
@@ -619,6 +619,11 @@ class Display:
     def feeds(self) -> Feeds:
         """Feeds: the user's feeds"""
         return self._feeds
+
+    @property
+    def perspectives(self) -> dict:
+        """dict: the loaded Perspective's with id:perspective pairs"""
+        return self._perspectives
 
     @property
     def queue(self) -> Queue:

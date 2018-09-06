@@ -13,7 +13,7 @@ class Primary(Perspective):
     This class handles display elements while in the primary perspective, which
     is the default perspective.
     """
-    _ID = 1
+    ID = 1
 
     def __init__(self, display) -> None:
         """Initializes the object.

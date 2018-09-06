@@ -18,7 +18,7 @@ class Perspective(ABC):
     instance of the Feed class or Config class. We instead reference the
     variables held in Display instance.
     """
-    _ID = -1
+    ID = -1
 
     @abstractmethod
     def __init__(self, display):
@@ -109,8 +109,3 @@ class Perspective(ABC):
         new_active_menu = self._get_active_menu()
         if new_active_menu is not None:
             new_active_menu.set_active(True)
-
-    @property
-    def ID(self):
-        """int: the Perspective's unique ID"""
-        return self._ID

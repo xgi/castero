@@ -5,7 +5,6 @@ from unittest import mock
 import pytest
 
 import castero
-import castero.config as config
 from castero.display import Display, DisplaySizeError
 from castero.episode import Episode
 from castero.feed import Feed
@@ -39,7 +38,7 @@ def test_display_display_footer_empty(display):
                 last_build_date="feed last_build_date",
                 copyright="feed copyright",
                 episodes=[])
-    display._feeds["feed url"] = feed
+    display.feeds["feed url"] = feed
     display.display()
     display._footer_window.attron.assert_called_with(curses.A_BOLD)
     display._footer_window.addstr.assert_called_with(
@@ -51,11 +50,6 @@ def test_display_display_footer_empty(display):
 
 def test_display_display_borders(display):
     display.display()
-    assert display._feed_window.hline.call_count == 1
-    assert display._feed_window.vline.call_count == 1
-    assert display._episode_window.hline.call_count == 1
-    assert display._episode_window.vline.call_count == 1
-    assert display._metadata_window.hline.call_count == 1
     assert display._header_window.hline.call_count == 1
     assert display._footer_window.hline.call_count == 1
     display._stdscr.reset_mock()
@@ -63,7 +57,7 @@ def test_display_display_borders(display):
 
 def test_display_help(display):
     display._stdscr.reset_mock()
-    display._show_help()
+    display.show_help()
     assert display._stdscr.refresh.call_count == 1
     assert display._stdscr.timeout.call_count == 2
     display._stdscr.timeout.assert_any_call(-1)
@@ -96,97 +90,17 @@ def test_display_get_y_n(display):
 
 
 def test_display_input_keys(display):
-    display._footer_window.getch = mock.MagicMock(return_value=10)
-
-    myconfig = config.Config()
-    ret_val = display.handle_input(ord('q'))
-    assert not ret_val
-    display._stdscr.reset_mock()
-
-    ret_val = display.handle_input(ord('h'))
-    assert ret_val
-    display._stdscr.timeout.assert_any_call(-1)
-    display._stdscr.reset_mock()
-
-    movement_keys = [
-        display.KEY_MAPPING[myconfig['key_up']],
-        display.KEY_MAPPING[myconfig['key_right']],
-        display.KEY_MAPPING[myconfig['key_down']],
-        display.KEY_MAPPING[myconfig['key_left']],
-        display.KEY_MAPPING[myconfig['key_scroll_up']],
-        display.KEY_MAPPING[myconfig['key_scroll_down']],
-    ]
-    for key in movement_keys:
-        display._metadata_updated = True
-        ret_val = display.handle_input(key)
-        assert ret_val
-        assert not display._metadata_updated
-
-    operation_keys = [
-        display.KEY_MAPPING[myconfig['key_add_feed']],
-        display.KEY_MAPPING[myconfig['key_delete']],
-        display.KEY_MAPPING[myconfig['key_reload']],
-        display.KEY_MAPPING[myconfig['key_save']],
-        display.KEY_MAPPING[myconfig['key_play_selected']],
-        display.KEY_MAPPING[myconfig['key_add_selected']],
-        display.KEY_MAPPING[myconfig['key_clear']],
-        display.KEY_MAPPING[myconfig['key_next']],
-        display.KEY_MAPPING[myconfig['key_invert']],
-        display.KEY_MAPPING[myconfig['key_pause_play']],
-        display.KEY_MAPPING[myconfig['key_pause_play_alt']],
-        display.KEY_MAPPING[myconfig['key_seek_forward']],
-        display.KEY_MAPPING[myconfig['key_seek_forward_alt']],
-        display.KEY_MAPPING[myconfig['key_seek_backward']],
-        display.KEY_MAPPING[myconfig['key_seek_backward_alt']],
-    ]
-    for key in operation_keys:
-        ret_val = display.handle_input(key)
-        assert ret_val
-
-
-def test_display_draw_metadata(display):
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
-    episode = Episode(feed,
-                      title="episode title",
-                      description="episode description",
-                      link="episode link",
-                      pubdate="episode pubdate",
-                      copyright="episode copyright",
-                      enclosure="episode enclosure")
-    feed.episodes.append(episode)
-    display._feeds["feed url"] = feed
-    display._active_window = 0
-    display._draw_metadata()
-    display._active_window = 1
-    display._draw_metadata()
+    for perspective_id in display.perspectives:
+        perspective = display.perspectives[perspective_id]
+        perspective.handle_input = mock.MagicMock()
+        display.handle_input(display.KEY_MAPPING[str(perspective_id)])
+        perspective.handle_input.assert_called_once()
 
 
 def test_display_getch(display):
     display._stdscr.reset_mock()
     display.getch()
     display._stdscr.getch.assert_called_once()
-
-
-def test_display_get_active_window(display):
-    display._active_window = 0
-    assert display.get_active_window() == display._feed_window
-    display._active_window = 1
-    assert display.get_active_window() == display._episode_window
-    display._active_window = 2
-    assert display.get_active_window() == display._metadata_window
-
-
-def test_display_get_active_menu(display):
-    display._active_window = 0
-    assert display.get_active_menu() == display._feed_menu
-    display._active_window = 1
-    assert display.get_active_menu() == display._episode_menu
 
 
 def test_display_update_status(display):
@@ -205,38 +119,9 @@ def test_display_update(display):
     assert display._status == ""
 
 
-def test_display_create_player(display):
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
-    episode = Episode(feed,
-                      title="episode title",
-                      description="episode description",
-                      link="episode link",
-                      pubdate="episode pubdate",
-                      copyright="episode copyright",
-                      enclosure="episode enclosure")
-    feed.episodes.append(episode)
-    feed.episodes.append(episode)
-    feed.episodes.append(episode)
-    display._feeds["feed url"] = feed
-    display._active_window = 0
-    display._create_player_from_selected()
-    assert display._queue.length == 3
-    display._queue.clear()
-    assert display._queue.length == 0
-    display._active_window = 1
-    display._create_player_from_selected()
-    assert display._queue.length == 1
-
-
 def test_display_nonempty(display):
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
-    display._feeds[myfeed._file] = myfeed
+    display.feeds[myfeed._file] = myfeed
     display.create_menus()
     display.display()
 
@@ -254,9 +139,9 @@ def test_display_min_dimensions(display):
 def test_display_add_feed(display):
     feed_dir = my_dir + "/feeds/valid_enclosures.xml"
     display._get_input_str = mock.MagicMock(return_value=feed_dir)
-    display._add_feed()
-    assert len(display._feeds) == 1
-    assert type(display._feeds[feed_dir]) == Feed
+    display.add_feed()
+    assert len(display.feeds) == 1
+    assert type(display.feeds[feed_dir]) == Feed
 
 
 def test_display_add_feed_errors(display):
@@ -264,10 +149,10 @@ def test_display_add_feed_errors(display):
                    my_dir + "/datafiles/parse_error.conf"]
     for test_input in test_inputs:
         display._get_input_str = mock.MagicMock(return_value=test_input)
-        display._add_feed()
+        display.add_feed()
         assert display._status.startswith("Error:")
         display._status = ""
-        assert len(display._feeds) == 0
+        assert len(display.feeds) == 0
 
 
 def test_display_delete_feed(display):
@@ -278,7 +163,7 @@ def test_display_delete_feed(display):
                 last_build_date="feed last_build_date",
                 copyright="feed copyright",
                 episodes=[])
-    display._feeds["feed url"] = feed
-    assert len(display._feeds) == 1
-    display._delete_feed()
-    assert len(display._feeds) == 0
+    display.feeds["feed url"] = feed
+    assert len(display.feeds) == 1
+    display.delete_feed(0)
+    assert len(display.feeds) == 0
