@@ -14,6 +14,12 @@ class Queue:
         self._players = []
         self._config = config
 
+    def __getitem__(self, index):
+        return self._players[index]
+
+    def __iter__(self):
+        return self._players.__iter__()
+
     def clear(self) -> None:
         """Clears the queue.
 
@@ -74,6 +80,21 @@ class Queue:
 
         if self.first is not None:
             self.first.seek(direction, int(self._config["seek_distance"]))
+
+    def remove(self, player) -> int:
+        """Remove a player from the queue, if it is currently in it.
+
+        Args:
+            player: the Player to remove
+
+        Returns:
+            int: the index of the player in the queue, or -1
+        """
+        result = -1
+        if player in self._players:
+            result = self._players.index(player)
+            self._players.remove(player)
+        return result
 
     def update(self) -> None:
         """Checks the status of the current player.

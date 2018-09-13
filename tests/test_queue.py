@@ -3,15 +3,25 @@ import os
 import vlc
 
 from castero.config import Config
+from castero.episode import Episode
+from castero.feed import Feed
 from castero.player import Player
 from castero.queue import Queue
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
 config = Config()
-player1 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
-player2 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
-player3 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+episode = Episode(feed,
+                  title="episode title",
+                  description="episode description",
+                  link="episode link",
+                  pubdate="episode pubdate",
+                  copyright="episode copyright",
+                  enclosure="episode enclosure")
+player1 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
+player2 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
+player3 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 
 
 def test_queue_init():

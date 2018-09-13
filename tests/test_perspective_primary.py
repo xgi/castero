@@ -108,10 +108,8 @@ def test_perspective_primary_draw_metadata(display):
                       enclosure="episode enclosure")
     feed.episodes.append(episode)
     display.feeds["feed url"] = feed
-    perspective._active_window = 0
-    perspective._draw_metadata()
-    perspective._active_window = 1
-    perspective._draw_metadata()
+    perspective._draw_metadata(perspective._metadata_window, feed=feed)
+    perspective._draw_metadata(perspective._metadata_window, episode=episode)
 
 
 def test_perspective_primary_get_active_menu(display):

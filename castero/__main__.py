@@ -57,6 +57,11 @@ def main():
         reload_thread = threading.Thread(target=feeds.reload, args=[display])
         reload_thread.start()
 
+    # run initial display operations
+    display.display()
+    display.update()
+    display.refresh()
+
     # core loop for the client
     running = True
     while running:

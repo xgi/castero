@@ -14,7 +14,14 @@ See also <https://github.com/xgi/castero/releases>.
 
 ## Unreleased
 **Added**
+* Added a new "perspective" - a separate page for viewing your current queue.
+You can switch through perspectives by using number keys -- 1 is the primary
+perspective, 2 is the queue perspective.
 * Added support for a custom download directory.
+
+**Changed**
+* The menu no longer automatically scrolls when playing an episode/feed (but it
+still does when you only add the episode/feed to the queue).
 
 **Fixed**
 * Fixed a crash when opening the help menu with a short terminal.

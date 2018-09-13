@@ -277,9 +277,8 @@ class Display:
         self._footer_window.hline(0, 0,
                                   0, self._footer_window.getmaxyx()[1])
 
-        # update display for all perspectives
-        for perspective_id in self._perspectives:
-            self._perspectives[perspective_id].display()
+        # update display for current perspective
+        self._perspectives[self._active_perspective].display()
 
     def _get_active_perspective(self) -> Perspective:
         return self._perspectives[self._active_perspective]
@@ -293,6 +292,8 @@ class Display:
         assert perspective_id in self._perspectives
 
         self._active_perspective = perspective_id
+        self._perspectives[perspective_id].made_active()
+        self.clear()
 
     def _get_input_str(self, prompt) -> str:
         """Prompts the user for input and returns the resulting string.
@@ -547,6 +548,7 @@ class Display:
             self._parent_y, self._parent_x = current_y, current_x
             self._create_windows()
             self.create_menus()
+            self.refresh()
 
         if self._parent_y < self.MIN_HEIGHT:
             raise DisplaySizeError("Display height is too small")

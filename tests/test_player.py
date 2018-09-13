@@ -3,8 +3,19 @@ import os
 import vlc
 
 import castero.player as player
+from castero.episode import Episode
+from castero.feed import Feed
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
+
+feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+episode = Episode(feed,
+                  title="episode title",
+                  description="episode description",
+                  link="episode link",
+                  pubdate="episode pubdate",
+                  copyright="episode copyright",
+                  enclosure="episode enclosure")
 
 
 def test_player_check_dependencies():
@@ -12,12 +23,14 @@ def test_player_check_dependencies():
 
 
 def test_player_init():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     assert isinstance(myplayer, player.Player)
 
 
 def test_player_play():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     myplayer.play()
     while myplayer._player.get_state() == vlc.State.Opening:
         pass
@@ -25,7 +38,8 @@ def test_player_play():
 
 
 def test_player_pause():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     myplayer.play()
     while myplayer._player.get_state() != vlc.State.Playing:
         pass
@@ -34,7 +48,8 @@ def test_player_pause():
 
 
 def test_player_stop():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     myplayer.play()
     while myplayer._player.get_state() != vlc.State.Playing:
         pass
@@ -43,14 +58,16 @@ def test_player_stop():
 
 
 def test_player_del():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     assert "myplayer" in locals()
     del myplayer
     assert "myplayer" not in locals()
 
 
 def test_player_seek():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     myplayer.play()
     while myplayer._player.get_state() != vlc.State.Playing:
         pass
@@ -59,12 +76,14 @@ def test_player_seek():
 
 
 def test_player_title():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     assert myplayer.title == "MLK Dream"
 
 
 def test_player_time():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     myplayer.play()
     while myplayer._player.get_state() != vlc.State.Playing:
         pass
@@ -72,7 +91,8 @@ def test_player_time():
 
 
 def test_player_time_str():
-    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3")
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
     myplayer.play()
     while myplayer._player.get_state() != vlc.State.Playing:
         pass

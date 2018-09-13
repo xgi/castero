@@ -2,6 +2,8 @@ import time
 
 import vlc
 
+from castero.episode import Episode
+
 
 class PlayerError(Exception):
     """An ambiguous error while handling the player.
@@ -21,18 +23,21 @@ class Player:
     """The Player class.
     """
 
-    def __init__(self, title, path) -> None:
+    def __init__(self, title, path, episode) -> None:
         """Initializes the object.
 
         Args:
             title: the title of the media (usually an episode title)
             path: a URL or file-path of a media file (usually an audio file)
+            episode: the Episode which this is a player for
         """
         assert type(title) == str and title != ""
         assert type(path) == str and path != ""
+        assert type(episode) == Episode and episode is not None
 
         self._title = title
         self._path = path
+        self._episode = episode
         self._media = None
         self._player = None
         self._duration = -1  # in milliseconds
@@ -41,6 +46,14 @@ class Player:
     def __del__(self) -> None:
         if self._player is not None:
             self.stop()
+
+    def __str__(self) -> str:
+        """Represent this object as a string.
+
+        Returns:
+            string: the title of the player
+        """
+        return self._title
 
     @staticmethod
     def check_dependencies():
@@ -126,6 +139,11 @@ class Player:
     def title(self) -> str:
         """str: the title of the player"""
         return self._title
+
+    @property
+    def episode(self) -> Episode:
+        """Episode: the Episode which this player has the media for"""
+        return self._episode
 
     @property
     def duration(self) -> int:
