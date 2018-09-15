@@ -330,6 +330,8 @@ class Display:
                     if current_x > 0:
                         entry_pad.delch(0, current_x - 1)
                         current_x -= 1
+                        if scroll_x > 0:
+                            scroll_x -= 1
                 else:
                     # scroll the input pad if necessary
                     if current_x + len(prompt) > \
