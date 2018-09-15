@@ -75,10 +75,22 @@ def test_player_seek():
     assert myplayer.time == 10 * 1000
 
 
+def test_player_str():
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
+    assert str(myplayer) == myplayer.title
+
+
 def test_player_title():
     myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
                              episode)
     assert myplayer.title == "MLK Dream"
+
+
+def test_player_episode():
+    myplayer = player.Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3",
+                             episode)
+    assert myplayer.episode == episode
 
 
 def test_player_time():

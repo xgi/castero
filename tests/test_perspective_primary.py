@@ -1,18 +1,13 @@
-from castero.perspectives.primary import Primary
-from unittest import mock
-import castero.config as config
-import curses
 import os
 from unittest import mock
 
-import pytest
-
-import castero
-from castero.display import Display, DisplaySizeError
+import castero.config as config
 from castero.episode import Episode
 from castero.feed import Feed
+from castero.perspectives.primary import Primary
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
+
 
 def get_primary_perspective(display):
     """Retrieve the Primary perspective.
@@ -35,6 +30,34 @@ def test_perspective_primary_borders(display):
     assert perspective._episode_window.hline.call_count == 1
     assert perspective._episode_window.vline.call_count == 1
     assert perspective._metadata_window.hline.call_count == 1
+    display._stdscr.reset_mock()
+
+
+def test_perspective_primary_display_feed_metadata(display):
+    perspective = get_primary_perspective(display)
+    perspective._active_window = 0
+
+    feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    display.feeds["feed url"] = feed
+
+    perspective._draw_metadata = mock.MagicMock()
+    display.display()
+    perspective._draw_metadata.assert_called_with(perspective._metadata_window,
+                                                  feed=feed)
+    display._stdscr.reset_mock()
+
+
+def test_perspective_primary_display_episode_metadata(display):
+    perspective = get_primary_perspective(display)
+    perspective._active_window = 1
+
+    feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    display.feeds["feed url"] = feed
+
+    perspective._draw_metadata = mock.MagicMock()
+    display.display()
+    perspective._draw_metadata.assert_called_with(perspective._metadata_window,
+                                                  episode=feed.episodes[0])
     display._stdscr.reset_mock()
 
 
@@ -150,3 +173,16 @@ def test_perspective_primary_create_player(display):
     perspective._active_window = 1
     perspective._create_player_from_selected()
     assert display.queue.length == 1
+
+
+def test_perspective_primary_invert_episodes(display):
+    perspective = get_primary_perspective(display)
+    perspective._active_window = 1
+
+    feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    display.feeds["feed url"] = feed
+
+    display.feeds.at(0).invert_episodes = mock.MagicMock()
+    perspective._invert_selected_menu()
+    display.feeds.at(0).invert_episodes.assert_called_once()
+    display._stdscr.reset_mock()

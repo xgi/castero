@@ -35,6 +35,16 @@ def test_queue_first():
     assert myqueue.first == player1
 
 
+def test_queue_get():
+    myqueue = Queue(config)
+    myqueue.add(player1)
+    myqueue.add(player2)
+    retrieved_player1 = myqueue[0]
+    assert retrieved_player1 == player1
+    retrieved_player2 = myqueue[1]
+    assert retrieved_player2 == player2
+
+
 def test_queue_add():
     myqueue = Queue(config)
     myqueue.add(player1)
@@ -59,6 +69,17 @@ def test_queue_clear():
     assert myqueue.length == 2
     myqueue.clear()
     assert myqueue.length == 0
+
+
+def test_queue_remove():
+    myqueue = Queue(config)
+    myqueue.add(player1)
+    myqueue.add(player2)
+    assert myqueue.length == 2
+    removed_index = myqueue.remove(player1)
+    assert removed_index == 0
+    assert myqueue.length == 1
+    assert myqueue.first == player2
 
 
 def test_queue_next():
