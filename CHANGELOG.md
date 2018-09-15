@@ -12,6 +12,11 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.3.1 - 2018-09-15
+**Fixed**
+* Fixed an issue where config files would not properly migrate when a new
+config section was added.
+
 ## 0.3.0 - 2018-09-15
 **Added**
 * Added a new "perspective" - a separate page for viewing your current queue.
