@@ -80,18 +80,21 @@ class Config(DataFile):
 
         for section in conf:
             for key in conf[section]:
-                if key in default_conf[section]:
-                    # sections in the config file are purely for aesthetic
-                    # purposes - this config object only stores variables
-                    # at a single depth
-                    if key in self.data:
-                        raise ConfigDuplicateError(
-                            "Variable defined multiple times, key: " + key
-                        )
+                if section in default_conf:
+                    if key in default_conf[section]:
+                        # sections in the config file are purely for aesthetic
+                        # purposes - this config object only stores variables
+                        # at a single depth
+                        if key in self.data:
+                            raise ConfigDuplicateError(
+                                "Variable defined multiple times, key: " + key
+                            )
 
-                    self.data[key] = conf[section][key]
+                        self.data[key] = conf[section][key]
+                    else:
+                        # disallow keys which are not in the default config
+                        self.migrate(conf, default_conf)
                 else:
-                    # disallow keys which are not in the default config
                     self.migrate(conf, default_conf)
 
     def migrate(self, conf, default_conf) -> None:
