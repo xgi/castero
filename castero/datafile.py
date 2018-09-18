@@ -96,9 +96,8 @@ class DataFile:
                     name, downloaded / chunk_size, chuck_size_label
                 )
                 if download_queue.length > 1:
-                    status_str += " (+%d downloads in queue)" % (
-                            download_queue.length - 1
-                    )
+                    status_str += " (+%d downloads in queue)" % \
+                                  download_queue.length - 1
 
                 display.change_status(status_str)
             if chunk:

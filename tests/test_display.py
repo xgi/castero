@@ -6,7 +6,6 @@ import pytest
 
 import castero
 from castero.display import Display, DisplaySizeError
-from castero.episode import Episode
 from castero.feed import Feed
 
 my_dir = os.path.dirname(os.path.realpath(__file__))

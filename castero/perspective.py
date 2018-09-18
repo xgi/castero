@@ -196,7 +196,8 @@ class Perspective(ABC):
             self._append_metadata_lines(window, "Downloaded:", output_lines,
                                         attr=curses.A_BOLD)
             self._append_metadata_lines(window,
-                                        "Episode downloaded and available for offline playback." if
+                                        "Episode downloaded and available for"
+                                        " offline playback." if
                                         episode.downloaded(
                                             self._display.config) else
                                         "Episode not downloaded.",

@@ -62,10 +62,11 @@ class Episode:
             str: a path to the feed directory
         """
         feed_dirname = helpers.sanitize_path(str(self._feed))
-        return os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR if
-                            (config is None or config["custom_download_dir"]
-                             == "") else config["custom_download_dir"],
-                            feed_dirname)
+        if config is None or config["custom_download_dir"] == "":
+            path = DataFile.DEFAULT_DOWNLOADED_DIR
+        else:
+            path = config["custom_download_dir"]
+        return os.path.join(path, feed_dirname)
 
     def get_playable(self, config=None) -> str:
         """Gets a playable path for this episode.

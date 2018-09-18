@@ -4,7 +4,6 @@ from unittest import mock
 import castero.config as config
 from castero.episode import Episode
 from castero.feed import Feed
-from castero.perspectives.primary import Primary
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 

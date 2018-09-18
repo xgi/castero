@@ -4,7 +4,6 @@ from unittest import mock
 import castero.config as config
 from castero.episode import Episode
 from castero.feed import Feed
-from castero.perspectives.queuelisting import QueueListing
 from castero.player import Player
 from castero.queue import Queue
 

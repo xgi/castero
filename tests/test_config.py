@@ -16,7 +16,7 @@ def test_config_default(prevent_modification):
 def test_config_parse_error(prevent_modification):
     copyfile(my_dir + "/datafiles/parse_error.conf", config.Config.PATH)
     with pytest.raises(config.ConfigParseError):
-        myconfig = config.Config()
+        config.Config()
 
 
 def test_config_incomplete_migrate(prevent_modification):
