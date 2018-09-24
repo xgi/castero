@@ -185,7 +185,7 @@ class Feed:
                 "RSS feed does not have a version attribute")
 
         # root should have one child, which is the channel tag
-        root_children = self._tree.getchildren()
+        root_children = list(self._tree)
         if len(root_children) > 0:
             if len(root_children) > 1:
                 raise FeedStructureError(
@@ -199,7 +199,7 @@ class Feed:
                     # channel should have at least 3 children, including a
                     # title, link, and description tag
                     channel = root_children[0]
-                    channel_children = channel.getchildren()
+                    channel_children = list(channel)
                     if len(channel_children) >= 3:
                         chan_title_tags = channel.findall('title')
                         chan_link_tags = channel.findall('link')
@@ -250,7 +250,7 @@ class Feed:
         """
         assert self._validated
 
-        channel = self._tree.getchildren()[0]
+        channel = list(self._tree)[0]
         self._title = channel.find('title').text
         self._description = channel.find('description').text
         self._link = channel.find('link').text
