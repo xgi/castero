@@ -107,7 +107,9 @@ class Display:
         """
 
         assert self._config["color_foreground"] in self.AVAILABLE_COLORS
+        assert self._config["color_background"] in self.AVAILABLE_COLORS
         assert self._config["color_foreground_alt"] in self.AVAILABLE_COLORS
+        assert self._config["color_background_alt"] in self.AVAILABLE_COLORS
 
         if (self.AVAILABLE_COLORS[self._config["color_background"]] == -1):
             curses.use_default_colors()
