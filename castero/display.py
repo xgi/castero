@@ -44,7 +44,8 @@ class Display:
         'magenta': curses.COLOR_MAGENTA,
         'red': curses.COLOR_RED,
         'white': curses.COLOR_WHITE,
-        'yellow': curses.COLOR_YELLOW
+        'yellow': curses.COLOR_YELLOW,
+        'transparent': -1,
     }
     KEY_MAPPING = {chr(i): i for i in range(256)}
     KEY_MAPPING.update(
@@ -94,6 +95,7 @@ class Display:
         self._create_windows()
         self.create_menus()
 
+
     def create_color_pairs(self) -> None:
         """Initializes color pairs used for the display.
 
@@ -103,10 +105,13 @@ class Display:
             - 3: background_alt, foreground_alt
             - 4: foreground_alt, background_alt
         """
+#        curses.use_default_colors()
+
         assert self._config["color_foreground"] in self.AVAILABLE_COLORS
-        assert self._config["color_background"] in self.AVAILABLE_COLORS
         assert self._config["color_foreground_alt"] in self.AVAILABLE_COLORS
-        assert self._config["color_background_alt"] in self.AVAILABLE_COLORS
+
+        if (self.AVAILABLE_COLORS[self._config["color_background"]] == -1):
+            curses.use_default_colors()
 
         curses.init_pair(
             1,
@@ -128,6 +133,7 @@ class Display:
             self.AVAILABLE_COLORS[self._config["color_foreground_alt"]],
             self.AVAILABLE_COLORS[self._config["color_background_alt"]]
         )
+
 
     """Load instances of perspectives from the `perspectives` package.
     """
