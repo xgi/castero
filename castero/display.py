@@ -44,7 +44,8 @@ class Display:
         'magenta': curses.COLOR_MAGENTA,
         'red': curses.COLOR_RED,
         'white': curses.COLOR_WHITE,
-        'yellow': curses.COLOR_YELLOW
+        'yellow': curses.COLOR_YELLOW,
+        'transparent': -1
     }
     KEY_MAPPING = {chr(i): i for i in range(256)}
     KEY_MAPPING.update(
@@ -107,6 +108,9 @@ class Display:
         assert self._config["color_background"] in self.AVAILABLE_COLORS
         assert self._config["color_foreground_alt"] in self.AVAILABLE_COLORS
         assert self._config["color_background_alt"] in self.AVAILABLE_COLORS
+
+        if (self.AVAILABLE_COLORS[self._config["color_background"]] == -1 or self.AVAILABLE_COLORS[self._config["color_background_alt"]] == -1):
+            curses.use_default_colors()
 
         curses.init_pair(
             1,
