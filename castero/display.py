@@ -105,7 +105,6 @@ class Display:
             - 3: background_alt, foreground_alt
             - 4: foreground_alt, background_alt
         """
-#        curses.use_default_colors()
 
         assert self._config["color_foreground"] in self.AVAILABLE_COLORS
         assert self._config["color_foreground_alt"] in self.AVAILABLE_COLORS
@@ -133,7 +132,6 @@ class Display:
             self.AVAILABLE_COLORS[self._config["color_foreground_alt"]],
             self.AVAILABLE_COLORS[self._config["color_background_alt"]]
         )
-
 
     """Load instances of perspectives from the `perspectives` package.
     """
