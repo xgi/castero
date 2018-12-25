@@ -1,6 +1,7 @@
 import curses
-import textwrap
 from abc import ABC, abstractmethod
+
+import cjkwrap
 
 from castero.menu import Menu
 
@@ -223,7 +224,7 @@ class Perspective(ABC):
         """
         max_lines = int(0.7 * window.getmaxyx()[0])
         max_line_width = window.getmaxyx()[1] - 1
-        lines = textwrap.wrap(string, max_line_width)
+        lines = cjkwrap.wrap(string, max_line_width)
 
         # truncate to at most 70% of the total lines on the screen
         lines = lines[:max_lines]
