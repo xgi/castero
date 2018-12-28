@@ -3,7 +3,8 @@ import castero
 
 install_requires = [
     'requests',
-    'python-vlc'
+    'python-vlc',
+    'cjkwrap'
 ]
 
 tests_require = [
