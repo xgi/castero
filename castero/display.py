@@ -594,8 +594,8 @@ class Display:
         # check the status of any downloads
         try:
             self._download_queue.update()
-        except Exception as e:
-            self.change_status("Error: %s" % (str(e)))
+        except OSError as e:
+            self.change_status("OSError: %s" % (str(e)))
             return
 
         # update the status timer
