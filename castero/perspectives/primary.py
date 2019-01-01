@@ -2,6 +2,7 @@ import curses
 
 from castero import helpers
 from castero.menu import Menu
+from castero.menus.episodemenu import EpisodeMenu
 from castero.perspective import Perspective
 from castero.player import Player
 
@@ -81,17 +82,14 @@ class Primary(Perspective):
             self._episode_menu = None
 
         feed_items = [[]]
-        episode_items = []
         for key in self._display.feeds:
             feed = self._display.feeds[key]
             feed_items[0].append(
                 str(feed)
             )
-            episode_items.append(
-                [str(ep) for ep in feed.episodes]
-            )
 
-        self._episode_menu = Menu(self._episode_window, episode_items)
+        self._episode_menu = EpisodeMenu(self._episode_window, self._display._feeds,
+                                         config = self._display.config)
         self._feed_menu = Menu(self._feed_window, feed_items,
                                child=self._episode_menu, active=True)
 
