@@ -4,23 +4,23 @@ from unittest import mock
 import vlc
 
 from castero.config import Config
+from castero.episode import Episode
 from castero.feed import Feed
 from castero.queue import Queue
 from castero.player import Player
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
-config = Config()
 feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
 
 
 def test_queue_init():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     assert isinstance(myqueue, Queue)
 
 
 def test_queue_first():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
 
     myqueue.add(player1)
@@ -28,7 +28,7 @@ def test_queue_first():
 
 
 def test_queue_get():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
     player2 = mock.MagicMock(spec=Player)
 
@@ -41,15 +41,16 @@ def test_queue_get():
 
 
 def test_queue_add():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
 
+    myqueue = Queue(Config)
     myqueue.add(player1)
     assert myqueue.length == 1
 
 
 def test_queue_length():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
     player2 = mock.MagicMock(spec=Player)
     player3 = mock.MagicMock(spec=Player)
@@ -64,7 +65,7 @@ def test_queue_length():
 
 
 def test_queue_clear():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
     player2 = mock.MagicMock(spec=Player)
 
@@ -76,11 +77,9 @@ def test_queue_clear():
 
 
 def test_queue_remove():
-    myqueue = Queue(config)
     player1 = mock.MagicMock(spec=Player)
     player2 = mock.MagicMock(spec=Player)
 
-    myqueue.add(player1)
     myqueue.add(player2)
     assert myqueue.length == 2
     removed_index = myqueue.remove(player1)
@@ -90,7 +89,7 @@ def test_queue_remove():
 
 
 def test_queue_next():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
     player2 = mock.MagicMock(spec=Player)
 
@@ -102,7 +101,7 @@ def test_queue_next():
 
 
 def test_queue_play():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
 
     myqueue.add(player1)
@@ -111,7 +110,7 @@ def test_queue_play():
 
 
 def test_queue_pause():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
 
     myqueue.add(player1)
@@ -120,16 +119,14 @@ def test_queue_pause():
 
 
 def test_queue_stop():
-    myqueue = Queue(config)
     player1 = mock.MagicMock(spec=Player)
 
-    myqueue.add(player1)
     myqueue.stop()
     player1.stop.assert_called_once()
 
 
 def test_queue_toggle():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
 
     myqueue.add(player1)
@@ -141,9 +138,11 @@ def test_queue_toggle():
 
 
 def test_queue_seek():
-    myqueue = Queue(config)
+    myqueue = Queue(Config)
     player1 = mock.MagicMock(spec=Player)
 
     myqueue.add(player1)
     myqueue.seek(1)
     player1.seek.assert_called_with(1, int(config["seek_distance"]))
+    assert player1.time == int(Config["seek_distance"]) * 1000
+    myqueue.stop()

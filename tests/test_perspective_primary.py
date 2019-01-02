@@ -65,7 +65,7 @@ def test_perspective_primary_input_keys(display):
 
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    myconfig = config.Config()
+    myconfig = config._Config()
     ret_val = perspective.handle_input(ord('q'))
     assert not ret_val
     display._stdscr.reset_mock()

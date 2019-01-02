@@ -6,7 +6,7 @@ from os.path import dirname, basename, isfile
 
 import castero
 from castero import helpers
-from castero.config import Config
+from castero.config import Config, _Config
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
@@ -76,7 +76,7 @@ class Display:
         self._active_perspective = 1
         self._header_window = None
         self._footer_window = None
-        self._queue = Queue(config)
+        self._queue = Queue(None)
         self._download_queue = DownloadQueue(self)
         self._status = ""
         self._status_timer = self.STATUS_TIMEOUT
@@ -626,7 +626,7 @@ class Display:
         return self._parent_y
 
     @property
-    def config(self) -> Config:
+    def config(self) -> _Config:
         """Config: the user's config"""
         return self._config
 

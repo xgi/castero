@@ -12,23 +12,22 @@ from castero.player import Player
 
 def main():
     # instantiate DataFile-based objects
-    config = Config()
     feeds = Feeds()
 
     # update fields in help menu text
-    for field in config:
+    for field in Config:
         if "{%s}" % field in castero.__help__:
             castero.__help__ = \
                 castero.__help__.replace(
                     "{%s}" % field,
-                    config[field].ljust(9)
+                    Config[field].ljust(9)
                 )
         elif "{%s|" % field in castero.__help__:
             field2 = castero.__help__.split("{%s|" % field)[1].split("}")[0]
             castero.__help__ = \
                 castero.__help__.replace(
                     "{%s|%s}" % (field, field2),
-                    ("%s or %s" % (config[field], config[field2])).ljust(9)
+                    ("%s or %s" % (Config[field], Config[field2])).ljust(9)
                 )
 
     # check if user is running the client with an info flag
@@ -48,12 +47,12 @@ def main():
 
     # instantiate the display object
     stdscr = curses.initscr()
-    display = Display(stdscr, config, feeds)
+    display = Display(stdscr, Config, feeds)
     display.clear()
     display.update_parent_dimensions()
 
     # check if we need to start reloading
-    if helpers.is_true(config['reload_on_start']):
+    if helpers.is_true(Config['reload_on_start']):
         reload_thread = threading.Thread(target=feeds.reload, args=[display])
         reload_thread.start()
 
