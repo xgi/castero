@@ -20,7 +20,7 @@ episode = Episode(feed,
 player1 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player2 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player3 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
-queue = Queue(None) # No one uses config here, we should break if we start
+queue = Queue(config._Config())
 queue.add(player1)
 queue.add(player2)
 
@@ -143,7 +143,7 @@ def test_perspective_queuelisting_cycle_queue_to_selected_middle(display):
     perspective = get_queuelisting_perspective(display)
 
     perspective._queue_menu._selected = 1
-    queue1 = Queue(config._Config)
+    queue1 = Queue(config._Config())
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -157,7 +157,7 @@ def test_perspective_queuelisting_remove_selected_first(display):
     perspective = get_queuelisting_perspective(display)
 
     perspective._queue_menu._selected = 0
-    queue1 = Queue(config._Config)
+    queue1 = Queue(config._Config())
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -171,7 +171,7 @@ def test_perspective_queuelisting_remove_selected_middle(display):
     perspective = get_queuelisting_perspective(display)
 
     perspective._queue_menu._selected = 1
-    queue1 = Queue(config._Config)
+    queue1 = Queue(config._Config())
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
