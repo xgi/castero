@@ -117,6 +117,5 @@ def prevent_modification():
 
 @pytest.yield_fixture()
 def display(prevent_modification, stdscr):
-    config = Config()
     feeds = Feeds()
-    yield Display(stdscr, config, feeds)
+    yield Display(stdscr, Config, feeds)

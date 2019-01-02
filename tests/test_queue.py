@@ -2,7 +2,7 @@ import os
 
 import vlc
 
-from castero.Config import Config
+from castero.config import Config
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.player import Player
