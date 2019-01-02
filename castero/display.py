@@ -6,7 +6,7 @@ from os.path import dirname, basename, isfile
 
 import castero
 from castero import helpers
-from castero.config import Config, _Config
+from castero.config import _Config
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
@@ -64,7 +64,7 @@ class Display:
 
         Args:
             stdscr: a stdscr from curses.initscr()
-            config: a loaded castero.Config object
+            config: a loaded castero._Config object
             feeds: a loaded castero.Feeds object
         """
         self._stdscr = stdscr
