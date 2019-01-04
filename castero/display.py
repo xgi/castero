@@ -104,39 +104,40 @@ class Display:
             - 3: background_alt, foreground_alt
             - 4: foreground_alt, background_alt
         """
-        assert self._config["color_foreground"] in self.AVAILABLE_COLORS
-        assert self._config["color_background"] in self.AVAILABLE_COLORS
-        assert self._config["color_foreground_alt"] in self.AVAILABLE_COLORS
-        assert self._config["color_background_alt"] in self.AVAILABLE_COLORS
+        config = self._config
+        assert config["color_foreground"] in self.AVAILABLE_COLORS
+        assert config["color_background"] in self.AVAILABLE_COLORS
+        assert config["color_foreground_alt"] in self.AVAILABLE_COLORS
+        assert config["color_background_alt"] in self.AVAILABLE_COLORS
 
-        if (self.AVAILABLE_COLORS[self._config["color_background"]] == -1 or self.AVAILABLE_COLORS[self._config["color_background_alt"]] == -1):
+        if (self.AVAILABLE_COLORS[config["color_background"]] == -1 or
+                self.AVAILABLE_COLORS[config["color_background_alt"]] == -1):
             curses.use_default_colors()
 
         curses.init_pair(
             1,
-            self.AVAILABLE_COLORS[self._config["color_foreground"]],
-            self.AVAILABLE_COLORS[self._config["color_background"]]
+            self.AVAILABLE_COLORS[config["color_foreground"]],
+            self.AVAILABLE_COLORS[config["color_background"]]
         )
         curses.init_pair(
             2,
-            self.AVAILABLE_COLORS[self._config["color_background"]],
-            self.AVAILABLE_COLORS[self._config["color_foreground"]]
+            self.AVAILABLE_COLORS[config["color_background"]],
+            self.AVAILABLE_COLORS[config["color_foreground"]]
         )
         curses.init_pair(
             3,
-            self.AVAILABLE_COLORS[self._config["color_background_alt"]],
-            self.AVAILABLE_COLORS[self._config["color_foreground_alt"]]
+            self.AVAILABLE_COLORS[config["color_background_alt"]],
+            self.AVAILABLE_COLORS[config["color_foreground_alt"]]
         )
         curses.init_pair(
             4,
-            self.AVAILABLE_COLORS[self._config["color_foreground_alt"]],
-            self.AVAILABLE_COLORS[self._config["color_background_alt"]]
+            self.AVAILABLE_COLORS[config["color_foreground_alt"]],
+            self.AVAILABLE_COLORS[config["color_background_alt"]]
         )
 
-    """Load instances of perspectives from the `perspectives` package.
-    """
-
     def _load_perspectives(self) -> None:
+        """Load instances of perspectives from the `perspectives` package.
+        """
         # load a list of modules names by manually detecting .py files
         module_files = glob.glob(dirname(__file__) + "/perspectives/*.py")
         module_names = [basename(f)[:-3] for f in module_files if isfile(f)]
@@ -285,6 +286,8 @@ class Display:
         self._perspectives[self._active_perspective].display()
 
     def _get_active_perspective(self) -> Perspective:
+        """Retrieve the active/visible Perspective.
+        """
         return self._perspectives[self._active_perspective]
 
     def _change_active_perspective(self, perspective_id) -> None:
