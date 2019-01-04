@@ -40,7 +40,7 @@ class Queue:
     def add(self, player) -> None:
         """Adds a player to the end of the queue.
         """
-        assert type(player) == Player
+        assert isinstance(player, Player)
 
         self._players.append(player)
 
