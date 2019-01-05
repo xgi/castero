@@ -145,4 +145,4 @@ def test_queue_seek():
 
     myqueue.add(player1)
     myqueue.seek(1)
-    player1.seek.assert_called_with(1, int(config["seek_distance"]))
+    player1.seek.assert_called_with(1, int(Config["seek_distance"]))
