@@ -146,3 +146,4 @@ def test_queue_seek():
     player1.seek.assert_called_with(1, int(config["seek_distance"]))
     assert player1.time == int(Config["seek_distance"]) * 1000
     myqueue.stop()
+    player1.seek.assert_called_with(1, int(Config["seek_distance"]))
