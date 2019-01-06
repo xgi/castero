@@ -174,6 +174,27 @@ def test_perspective_primary_create_player(display):
     assert display.queue.length == 1
 
 
+def test_perspective_regression_11(display):
+    perspective = get_primary_perspective(display)
+
+    old_ddir = display.config["custom_download_dir"]
+    display.config.data["custom_download_dir"] = os.path.join(my_dir,
+                                                              "downloaded")
+
+    feed = Feed(file="%s/feeds/valid_enclosures.xml" % (my_dir))
+    display.feeds["feed url"] = feed
+    display.queue.clear()
+    perspective._active_window = 1
+    perspective._create_player_from_selected()
+
+    assert display.queue[0]._path == os.path.join(my_dir, "downloaded",
+                                                  "myfeed_title",
+                                                  "myfeed_item1_title.mp3")
+
+
+    display.config.data["custom_download_dir"] = old_ddir
+
+
 def test_perspective_primary_invert_episodes(display):
     perspective = get_primary_perspective(display)
     perspective._active_window = 1
