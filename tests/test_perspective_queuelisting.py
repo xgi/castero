@@ -1,7 +1,7 @@
 import os
 from unittest import mock
 
-import castero.config as config
+from castero.config import Config
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.player import Player
@@ -20,7 +20,7 @@ episode = Episode(feed,
 player1 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player2 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player3 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
-queue = Queue(config._Config())
+queue = Queue()
 queue.add(player1)
 queue.add(player2)
 
@@ -66,7 +66,6 @@ def test_perspective_queuelisting_input_keys(display):
     display._queue = queue
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    myconfig = config._Config()
     ret_val = perspective.handle_input(ord('q'))
     assert not ret_val
     display._stdscr.reset_mock()
@@ -77,12 +76,12 @@ def test_perspective_queuelisting_input_keys(display):
     display._stdscr.reset_mock()
 
     movement_keys = [
-        display.KEY_MAPPING[myconfig['key_up']],
-        display.KEY_MAPPING[myconfig['key_right']],
-        display.KEY_MAPPING[myconfig['key_down']],
-        display.KEY_MAPPING[myconfig['key_left']],
-        display.KEY_MAPPING[myconfig['key_scroll_up']],
-        display.KEY_MAPPING[myconfig['key_scroll_down']],
+        display.KEY_MAPPING[Config['key_up']],
+        display.KEY_MAPPING[Config['key_right']],
+        display.KEY_MAPPING[Config['key_down']],
+        display.KEY_MAPPING[Config['key_left']],
+        display.KEY_MAPPING[Config['key_scroll_up']],
+        display.KEY_MAPPING[Config['key_scroll_down']],
     ]
     for key in movement_keys:
         perspective._metadata_updated = True
@@ -91,18 +90,18 @@ def test_perspective_queuelisting_input_keys(display):
         assert not perspective._metadata_updated
 
     operation_keys = [
-        display.KEY_MAPPING[myconfig['key_delete']],
-        display.KEY_MAPPING[myconfig['key_reload']],
-        display.KEY_MAPPING[myconfig['key_play_selected']],
-        display.KEY_MAPPING[myconfig['key_add_selected']],
-        display.KEY_MAPPING[myconfig['key_clear']],
-        display.KEY_MAPPING[myconfig['key_next']],
-        display.KEY_MAPPING[myconfig['key_pause_play']],
-        display.KEY_MAPPING[myconfig['key_pause_play_alt']],
-        display.KEY_MAPPING[myconfig['key_seek_forward']],
-        display.KEY_MAPPING[myconfig['key_seek_forward_alt']],
-        display.KEY_MAPPING[myconfig['key_seek_backward']],
-        display.KEY_MAPPING[myconfig['key_seek_backward_alt']],
+        display.KEY_MAPPING[Config['key_delete']],
+        display.KEY_MAPPING[Config['key_reload']],
+        display.KEY_MAPPING[Config['key_play_selected']],
+        display.KEY_MAPPING[Config['key_add_selected']],
+        display.KEY_MAPPING[Config['key_clear']],
+        display.KEY_MAPPING[Config['key_next']],
+        display.KEY_MAPPING[Config['key_pause_play']],
+        display.KEY_MAPPING[Config['key_pause_play_alt']],
+        display.KEY_MAPPING[Config['key_seek_forward']],
+        display.KEY_MAPPING[Config['key_seek_forward_alt']],
+        display.KEY_MAPPING[Config['key_seek_backward']],
+        display.KEY_MAPPING[Config['key_seek_backward_alt']],
     ]
     for key in operation_keys:
         ret_val = perspective.handle_input(key)
@@ -129,7 +128,7 @@ def test_perspective_queuelisting_cycle_queue_to_selected_first(display):
     perspective = get_queuelisting_perspective(display)
 
     perspective._queue_menu._selected = 0
-    queue1 = Queue(config._Config)
+    queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -143,7 +142,7 @@ def test_perspective_queuelisting_cycle_queue_to_selected_middle(display):
     perspective = get_queuelisting_perspective(display)
 
     perspective._queue_menu._selected = 1
-    queue1 = Queue(config._Config())
+    queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -157,7 +156,7 @@ def test_perspective_queuelisting_remove_selected_first(display):
     perspective = get_queuelisting_perspective(display)
 
     perspective._queue_menu._selected = 0
-    queue1 = Queue(config._Config())
+    queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -171,7 +170,7 @@ def test_perspective_queuelisting_remove_selected_middle(display):
     perspective = get_queuelisting_perspective(display)
 
     perspective._queue_menu._selected = 1
-    queue1 = Queue(config._Config())
+    queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)

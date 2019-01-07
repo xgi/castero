@@ -6,7 +6,7 @@ from os.path import dirname, basename, isfile
 
 import castero
 from castero import helpers
-from castero.config import _Config
+from castero.config import Config
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
@@ -59,16 +59,14 @@ class Display:
         }
     )
 
-    def __init__(self, stdscr, config, feeds) -> None:
+    def __init__(self, stdscr, feeds) -> None:
         """Initializes the object.
 
         Args:
             stdscr: a stdscr from curses.initscr()
-            config: a loaded castero._Config object
             feeds: a loaded castero.Feeds object
         """
         self._stdscr = stdscr
-        self._config = config
         self._feeds = feeds
         self._parent_x = -1
         self._parent_y = -1
@@ -76,7 +74,7 @@ class Display:
         self._active_perspective = 1
         self._header_window = None
         self._footer_window = None
-        self._queue = Queue(None)
+        self._queue = Queue()
         self._download_queue = DownloadQueue(self)
         self._status = ""
         self._status_timer = self.STATUS_TIMEOUT
@@ -104,35 +102,34 @@ class Display:
             - 3: background_alt, foreground_alt
             - 4: foreground_alt, background_alt
         """
-        config = self._config
-        assert config["color_foreground"] in self.AVAILABLE_COLORS
-        assert config["color_background"] in self.AVAILABLE_COLORS
-        assert config["color_foreground_alt"] in self.AVAILABLE_COLORS
-        assert config["color_background_alt"] in self.AVAILABLE_COLORS
+        assert Config["color_foreground"] in self.AVAILABLE_COLORS
+        assert Config["color_background"] in self.AVAILABLE_COLORS
+        assert Config["color_foreground_alt"] in self.AVAILABLE_COLORS
+        assert Config["color_background_alt"] in self.AVAILABLE_COLORS
 
-        if (self.AVAILABLE_COLORS[config["color_background"]] == -1 or
-                self.AVAILABLE_COLORS[config["color_background_alt"]] == -1):
+        if (self.AVAILABLE_COLORS[Config["color_background"]] == -1 or
+                self.AVAILABLE_COLORS[Config["color_background_alt"]] == -1):
             curses.use_default_colors()
 
         curses.init_pair(
             1,
-            self.AVAILABLE_COLORS[config["color_foreground"]],
-            self.AVAILABLE_COLORS[config["color_background"]]
+            self.AVAILABLE_COLORS[Config["color_foreground"]],
+            self.AVAILABLE_COLORS[Config["color_background"]]
         )
         curses.init_pair(
             2,
-            self.AVAILABLE_COLORS[config["color_background"]],
-            self.AVAILABLE_COLORS[config["color_foreground"]]
+            self.AVAILABLE_COLORS[Config["color_background"]],
+            self.AVAILABLE_COLORS[Config["color_foreground"]]
         )
         curses.init_pair(
             3,
-            self.AVAILABLE_COLORS[config["color_background_alt"]],
-            self.AVAILABLE_COLORS[config["color_foreground_alt"]]
+            self.AVAILABLE_COLORS[Config["color_background_alt"]],
+            self.AVAILABLE_COLORS[Config["color_foreground_alt"]]
         )
         curses.init_pair(
             4,
-            self.AVAILABLE_COLORS[config["color_foreground_alt"]],
-            self.AVAILABLE_COLORS[config["color_background_alt"]]
+            self.AVAILABLE_COLORS[Config["color_foreground_alt"]],
+            self.AVAILABLE_COLORS[Config["color_background_alt"]]
         )
 
     def _load_perspectives(self) -> None:
@@ -268,7 +265,7 @@ class Display:
         else:
             footer_str = self._status
 
-        footer_str += " -- Press %s for help" % self._config["key_help"]
+        footer_str += " -- Press %s for help" % Config["key_help"]
         self._footer_window.attron(curses.A_BOLD)
         self._footer_window.addstr(
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
@@ -457,12 +454,12 @@ class Display:
             index: the index of the feed to delete within self._feeds
         """
         should_delete = True
-        if helpers.is_true(self._config["delete_feed_confirmation"]):
+        if helpers.is_true(Config["delete_feed_confirmation"]):
             should_delete = self._get_y_n(
                 "Are you sure you want to delete this feed? (y/n): "
             )
         if should_delete:
-            deleted = self._feeds.del_at(index, self._config)
+            deleted = self._feeds.del_at(index)
             if deleted:
                 self._feeds.write()
                 self.create_menus()
@@ -477,7 +474,7 @@ class Display:
         This method starts the reloading in a new un-managed thread.
         """
         should_reload = True
-        if len(self._feeds) >= int(self._config["reload_feeds_threshold"]):
+        if len(self._feeds) >= int(Config["reload_feeds_threshold"]):
             should_reload = self._get_y_n(
                 "Are you sure you want to reload all of your feeds?"
                 " (y/n): "
@@ -515,7 +512,7 @@ class Display:
                         "Are you sure you want to delete the downloaded"
                         " episode? (y/n): ")
                     if should_delete:
-                        episode.delete(self._config, self)
+                        episode.delete(self)
                 else:
                     self._download_queue.add(episode)
 
@@ -624,11 +621,6 @@ class Display:
     def parent_y(self) -> int:
         """int: the height of the parent screen, in characters"""
         return self._parent_y
-
-    @property
-    def config(self) -> _Config:
-        """Config: the user's config"""
-        return self._config
 
     @property
     def feeds(self) -> Feeds:

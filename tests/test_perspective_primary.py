@@ -1,7 +1,7 @@
 import os
 from unittest import mock
 
-import castero.config as config
+from castero.config import Config
 from castero.episode import Episode
 from castero.feed import Feed
 
@@ -65,7 +65,6 @@ def test_perspective_primary_input_keys(display):
 
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    myconfig = config._Config()
     ret_val = perspective.handle_input(ord('q'))
     assert not ret_val
     display._stdscr.reset_mock()
@@ -76,12 +75,12 @@ def test_perspective_primary_input_keys(display):
     display._stdscr.reset_mock()
 
     movement_keys = [
-        display.KEY_MAPPING[myconfig['key_up']],
-        display.KEY_MAPPING[myconfig['key_right']],
-        display.KEY_MAPPING[myconfig['key_down']],
-        display.KEY_MAPPING[myconfig['key_left']],
-        display.KEY_MAPPING[myconfig['key_scroll_up']],
-        display.KEY_MAPPING[myconfig['key_scroll_down']],
+        display.KEY_MAPPING[Config['key_up']],
+        display.KEY_MAPPING[Config['key_right']],
+        display.KEY_MAPPING[Config['key_down']],
+        display.KEY_MAPPING[Config['key_left']],
+        display.KEY_MAPPING[Config['key_scroll_up']],
+        display.KEY_MAPPING[Config['key_scroll_down']],
     ]
     for key in movement_keys:
         perspective._metadata_updated = True
@@ -90,21 +89,21 @@ def test_perspective_primary_input_keys(display):
         assert not perspective._metadata_updated
 
     operation_keys = [
-        display.KEY_MAPPING[myconfig['key_add_feed']],
-        display.KEY_MAPPING[myconfig['key_delete']],
-        display.KEY_MAPPING[myconfig['key_reload']],
-        display.KEY_MAPPING[myconfig['key_save']],
-        display.KEY_MAPPING[myconfig['key_play_selected']],
-        display.KEY_MAPPING[myconfig['key_add_selected']],
-        display.KEY_MAPPING[myconfig['key_clear']],
-        display.KEY_MAPPING[myconfig['key_next']],
-        display.KEY_MAPPING[myconfig['key_invert']],
-        display.KEY_MAPPING[myconfig['key_pause_play']],
-        display.KEY_MAPPING[myconfig['key_pause_play_alt']],
-        display.KEY_MAPPING[myconfig['key_seek_forward']],
-        display.KEY_MAPPING[myconfig['key_seek_forward_alt']],
-        display.KEY_MAPPING[myconfig['key_seek_backward']],
-        display.KEY_MAPPING[myconfig['key_seek_backward_alt']],
+        display.KEY_MAPPING[Config['key_add_feed']],
+        display.KEY_MAPPING[Config['key_delete']],
+        display.KEY_MAPPING[Config['key_reload']],
+        display.KEY_MAPPING[Config['key_save']],
+        display.KEY_MAPPING[Config['key_play_selected']],
+        display.KEY_MAPPING[Config['key_add_selected']],
+        display.KEY_MAPPING[Config['key_clear']],
+        display.KEY_MAPPING[Config['key_next']],
+        display.KEY_MAPPING[Config['key_invert']],
+        display.KEY_MAPPING[Config['key_pause_play']],
+        display.KEY_MAPPING[Config['key_pause_play_alt']],
+        display.KEY_MAPPING[Config['key_seek_forward']],
+        display.KEY_MAPPING[Config['key_seek_forward_alt']],
+        display.KEY_MAPPING[Config['key_seek_backward']],
+        display.KEY_MAPPING[Config['key_seek_backward_alt']],
     ]
     for key in operation_keys:
         ret_val = perspective.handle_input(key)
@@ -177,9 +176,8 @@ def test_perspective_primary_create_player(display):
 def test_perspective_regression_11(display):
     perspective = get_primary_perspective(display)
 
-    old_ddir = display.config["custom_download_dir"]
-    display.config.data["custom_download_dir"] = os.path.join(my_dir,
-                                                              "downloaded")
+    old_ddir = Config["custom_download_dir"]
+    Config.data["custom_download_dir"] = os.path.join(my_dir, "downloaded")
 
     feed = Feed(file="%s/feeds/valid_enclosures.xml" % (my_dir))
     display.feeds["feed url"] = feed
@@ -191,8 +189,7 @@ def test_perspective_regression_11(display):
                                                   "myfeed_title",
                                                   "myfeed_item1_title.mp3")
 
-
-    display.config.data["custom_download_dir"] = old_ddir
+    Config.data["custom_download_dir"] = old_ddir
 
 
 def test_perspective_primary_invert_episodes(display):

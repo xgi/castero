@@ -137,7 +137,7 @@ def test_episode_delete(display):
     display.change_status = mock.MagicMock(name="change_status")
     episode = myfeed.episodes[1]
     assert episode.downloaded()
-    episode.delete(display.config, display=display)
+    episode.delete(display=display)
     display.change_status.assert_called_once()
     assert not episode.downloaded()
 

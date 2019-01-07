@@ -139,4 +139,5 @@ class _Config(DataFile):
                 conf_file.write(line)
         conf.read(self._path)
 
+
 Config = _Config()
