@@ -47,7 +47,7 @@ def main():
 
     # instantiate the display object
     stdscr = curses.initscr()
-    display = Display(stdscr, Config, feeds)
+    display = Display(stdscr, feeds)
     display.clear()
     display.update_parent_dimensions()
 
