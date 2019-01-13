@@ -58,6 +58,7 @@ class Display:
             'SPACE': 32
         }
     )
+    AVAILABLE_PLAYERS = {}
 
     def __init__(self, stdscr, feeds) -> None:
         """Initializes the object.
@@ -90,6 +91,7 @@ class Display:
         self.update_parent_dimensions()
         self.create_color_pairs()
         self._load_perspectives()
+        self._load_players()
         self._create_windows()
         self.create_menus()
 
@@ -145,8 +147,23 @@ class Display:
                 p_mod,
                 dir(p_mod)[[cls.lower() == name
                             for cls in dir(p_mod)].index(True)])
-            cls = p_cls(self)
-            self._perspectives[cls.ID] = cls
+            inst = p_cls(self)
+            self._perspectives[inst.ID] = inst
+
+    def _load_players(self) -> None:
+        """Load player classes from the `players` package.
+        """
+        # load a list of modules names by manually detecting .py files
+        module_files = glob.glob(dirname(__file__) + "/players/*.py")
+        module_names = [basename(f)[:-3] for f in module_files if isfile(f)]
+
+        for name in module_names:
+            p_mod = importlib.import_module("castero.players.%s" % name)
+            p_cls = getattr(
+                p_mod,
+                dir(p_mod)[[cls.lower() == name
+                            for cls in dir(p_mod)].index(True)])
+            self.AVAILABLE_PLAYERS[p_cls.NAME] = p_cls
 
     def _create_windows(self) -> None:
         """Creates and sets basic parameters for the windows.

@@ -255,17 +255,21 @@ class Primary(Perspective):
         if self._active_window == 0:
             if feed is not None:
                 for episode in feed.episodes:
-                    player = Player(str(episode),
-                                    episode.get_playable(),
-                                    episode)
+                    player = Player.create_instance(
+                        self._display.AVAILABLE_PLAYERS,
+                        str(episode),
+                        episode.get_playable(),
+                        episode)
                     self._display.queue.add(player)
         elif self._active_window == 1:
             episode_index = self._episode_menu.selected_index
             if feed is not None:
                 episode = feed.episodes[episode_index]
-                player = Player(str(episode),
-                                episode.get_playable(),
-                                episode)
+                player = Player.create_instance(
+                    self._display.AVAILABLE_PLAYERS,
+                    str(episode),
+                    episode.get_playable(),
+                    episode)
                 self._display.queue.add(player)
 
     def _invert_selected_menu(self) -> None:
