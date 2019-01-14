@@ -1,3 +1,5 @@
+dist: xenial
+
 language: python
 
 python:
@@ -6,7 +8,7 @@ python:
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install vlc mpv
+  - sudo apt-get install vlc mpv libmpv-dev
   - pip install --upgrade pip
 
 install:
