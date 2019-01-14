@@ -87,7 +87,7 @@ class Player:
 
         # Config had a bad/unsupported value; we'll instead try all implemented
         # options in order
-        for av_player in available_players:
+        for av_player in sorted(available_players):
             inst = available_players[av_player](title, path, episode)
             try:
                 inst.check_dependencies()
@@ -162,12 +162,12 @@ class Player:
     @property
     @abstractmethod
     def duration(self) -> int:
-        """int: the duration of the player"""
+        """int: the duration of the player, in ms"""
 
     @property
     @abstractmethod
     def time(self) -> int:
-        """int: the current time of the player"""
+        """int: the current time of the player, in ms"""
 
     @property
     @abstractmethod

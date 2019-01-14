@@ -4,6 +4,7 @@ import castero
 install_requires = [
     'requests',
     'python-vlc',
+    'pympv',
     'cjkwrap'
 ]
 
