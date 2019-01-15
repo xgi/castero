@@ -36,7 +36,7 @@ setuptools.setup(
     author_email=castero.__author_email__,
     license=castero.__license__,
     packages=[
-        'castero', 'castero.perspectives'
+        'castero', 'castero.perspectives', 'castero.players'
     ],
     package_data={
         'castero': ['templates/*'],
