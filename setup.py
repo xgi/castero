@@ -1,10 +1,12 @@
+import subprocess
+
 import setuptools
+
 import castero
 
 install_requires = [
     'requests',
     'python-vlc',
-    'pympv',
     'cjkwrap'
 ]
 
@@ -17,6 +19,16 @@ tests_require = [
 extras_require = {
     'test': tests_require
 }
+
+mpv_exists = False
+try:
+    subprocess.check_output("mpv --version", shell=True)
+    mpv_exists = True
+except subprocess.CalledProcessError:
+    pass
+
+if mpv_exists:
+    install_requires.append('pympv')
 
 
 def long_description():

@@ -1,5 +1,6 @@
 from abc import abstractmethod
 
+import castero
 from castero.config import Config
 from castero.episode import Episode
 
@@ -78,9 +79,10 @@ class Player:
             players was not met
         """
         if Config["player"] in available_players:
-            inst = available_players[Config["player"]](title, path, episode)
             try:
-                inst.check_dependencies()
+                available_players[Config["player"]].check_dependencies()
+                inst = available_players[Config["player"]](title, path,
+                                                           episode)
                 return inst
             except PlayerDependencyError:
                 pass
@@ -88,15 +90,17 @@ class Player:
         # Config had a bad/unsupported value; we'll instead try all implemented
         # options in order
         for av_player in sorted(available_players):
-            inst = available_players[av_player](title, path, episode)
             try:
-                inst.check_dependencies()
+                available_players[av_player].check_dependencies()
+                inst = available_players[av_player](title, path, episode)
                 return inst
             except PlayerDependencyError:
                 pass
 
         raise PlayerDependencyError("Sufficient dependencies were not met for"
-                                    " any players")
+                                    " any players. If you recently downloaded"
+                                    " a player, you may need to reinstall %s"
+                                    % castero.__title__)
 
     @staticmethod
     @abstractmethod

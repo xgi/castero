@@ -1,5 +1,6 @@
 import time
 
+import castero
 from castero.player import Player, PlayerDependencyError
 
 
@@ -26,10 +27,11 @@ class MPVPlayer(Player):
         """
         try:
             import mpv
-        except OSError:
+        except (OSError, ModuleNotFoundError):
             raise PlayerDependencyError(
                 "Dependency mpv not found, which is required for playing"
-                " media files"
+                " media files. If you recently downloaded it, you may need to"
+                " reinstall %s" % castero.__title__
             )
 
     def _create_player(self) -> None:
