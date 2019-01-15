@@ -1,7 +1,7 @@
 from .. import menu
 
 class EpisodeMenu(menu.Menu):
-    def __init__ (self, window, feeds, child = None, active = False, config = None) -> None:
+    def __init__ (self, window, feeds, child = None, active = False) -> None:
         """Adds flags to episode titles based on metadata before the name list is
         passed to the underlying Menu.  Currently only flags whether an episode
         has been downloaded."""
@@ -12,7 +12,7 @@ class EpisodeMenu(menu.Menu):
             items = []
             for ep in real_feed.episodes:
                 flags = []
-                if ep.downloaded(config):
+                if ep.downloaded():
                     flags.append("D")
 
                 if flags:

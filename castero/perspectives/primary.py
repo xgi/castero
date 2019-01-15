@@ -89,8 +89,7 @@ class Primary(Perspective):
                 str(feed)
             )
 
-        self._episode_menu = EpisodeMenu(self._episode_window, self._display._feeds,
-                                         config = self._display.config)
+        self._episode_menu = EpisodeMenu(self._episode_window, self._display._feeds)
         self._feed_menu = Menu(self._feed_window, feed_items,
                                child=self._episode_menu, active=True)
 
