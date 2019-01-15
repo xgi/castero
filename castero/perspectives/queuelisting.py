@@ -1,6 +1,7 @@
 import curses
 
 from castero import helpers
+from castero.config import Config
 from castero.menu import Menu
 from castero.perspective import Perspective
 
@@ -110,58 +111,57 @@ class QueueListing(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
-        config = self._display.config
         queue = self._display.queue
         key_mapping = self._display.KEY_MAPPING
 
         keep_running = True
-        if c == key_mapping[config['key_exit']]:
+        if c == key_mapping[Config['key_exit']]:
             self._display.terminate()
             keep_running = False
-        elif c == key_mapping[config['key_help']]:
+        elif c == key_mapping[Config['key_help']]:
             self._display.show_help()
-        elif c == key_mapping[config['key_right']]:
+        elif c == key_mapping[Config['key_right']]:
             self._change_active_window(1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_left']]:
+        elif c == key_mapping[Config['key_left']]:
             self._change_active_window(-1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_up']]:
+        elif c == key_mapping[Config['key_up']]:
             self._get_active_menu().move(1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_down']]:
+        elif c == key_mapping[Config['key_down']]:
             self._get_active_menu().move(-1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_scroll_up']]:
+        elif c == key_mapping[Config['key_scroll_up']]:
             self._get_active_menu().move_page(1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_scroll_down']]:
+        elif c == key_mapping[Config['key_scroll_down']]:
             self._get_active_menu().move_page(-1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_play_selected']]:
+        elif c == key_mapping[Config['key_play_selected']]:
             queue.stop()
             self._cycle_queue_to_selected()
             queue.play()
             self.create_menus()
-        elif c == key_mapping[config['key_pause_play']] or \
-                c == key_mapping[config['key_pause_play_alt']]:
+        elif c == key_mapping[Config['key_pause_play']] or \
+                c == key_mapping[Config['key_pause_play_alt']]:
             queue.toggle()
-        elif c == key_mapping[config['key_next']]:
+        elif c == key_mapping[Config['key_next']]:
             queue.stop()
             queue.next()
             queue.play()
             self.create_menus()
-        elif c == key_mapping[config['key_seek_forward']] or \
-                c == key_mapping[config['key_seek_forward_alt']]:
+        elif c == key_mapping[Config['key_seek_forward']] or \
+                c == key_mapping[Config['key_seek_forward_alt']]:
             queue.seek(1)
-        elif c == key_mapping[config['key_seek_backward']] or \
-                c == key_mapping[config['key_seek_backward_alt']]:
+        elif c == key_mapping[Config['key_seek_backward']] or \
+                c == key_mapping[Config['key_seek_backward_alt']]:
             queue.seek(-1)
-        elif c == key_mapping[config['key_clear']]:
+        elif c == key_mapping[Config['key_clear']]:
             queue.stop()
             queue.clear()
             self.create_menus()
-        elif c == key_mapping[config['key_delete']]:
+        elif c == key_mapping[Config['key_delete']]:
             self._remove_selected_from_queue()
 
         return keep_running

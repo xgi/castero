@@ -1,7 +1,6 @@
-import time
+from abc import abstractmethod
 
-import vlc
-
+from castero.config import Config
 from castero.episode import Episode
 
 
@@ -21,6 +20,9 @@ class PlayerCreateError(PlayerError):
 
 class Player:
     """The Player class.
+
+    This class is extended by players -- classes which offer methods to handle
+    media operations for a specific external player (i.e. VLC, mpv).
     """
 
     def __init__(self, title, path, episode) -> None:
@@ -56,22 +58,58 @@ class Player:
         return self._title
 
     @staticmethod
+    def create_instance(available_players, title, path, episode):
+        """Create an instance of an appropriate Player subclass.
+
+        This method attempts to create a player based on the user's config
+        option. If their option is not a key in available_players or
+        check_dependencies() fails on the instance, we instead try to
+        initialize the first working player using the order defined in
+        available_players.
+
+        Args:
+            available_players: a list of implemented Player subclasses
+            title: the title of the media (usually an episode title)
+            path: a URL or file-path of a media file (usually an audio file)
+            episode: the Episode which this is a player for
+
+        Raises:
+            PlayerDependencyError: at least one dependency per player for all
+            players was not met
+        """
+        if Config["player"] in available_players:
+            inst = available_players[Config["player"]](title, path, episode)
+            try:
+                inst.check_dependencies()
+                return inst
+            except PlayerDependencyError:
+                pass
+
+        # Config had a bad/unsupported value; we'll instead try all implemented
+        # options in order
+        for av_player in sorted(available_players):
+            inst = available_players[av_player](title, path, episode)
+            try:
+                inst.check_dependencies()
+                return inst
+            except PlayerDependencyError:
+                pass
+
+        raise PlayerDependencyError("Sufficient dependencies were not met for"
+                                    " any players")
+
+    @staticmethod
+    @abstractmethod
     def check_dependencies():
         """Checks whether dependencies are met for playing a player.
 
         Raises:
             PlayerDependencyError: a dependency was not met
         """
-        try:
-            vlc.Instance()
-        except NameError:
-            raise PlayerDependencyError(
-                "Dependency VLC not found, which is required for playing"
-                " media files"
-            )
 
+    @abstractmethod
     def _create_player(self) -> None:
-        """Creates the VLC player object while making sure it is a valid file.
+        """Creates the player object while making sure it is a valid file.
 
         Checks some basic properties of the file to ensure it will play
         properly, including:
@@ -81,42 +119,23 @@ class Player:
         Raises:
             PlayerCreateError: the player object could not be created
         """
-        vlc_instance = vlc.Instance("--no-video --quiet")
 
-        self._player = vlc_instance.media_player_new()
-        self._media = vlc_instance.media_new(self._path)
-        self._media.parse()  # may output some junk into the console
-        self._player.set_media(self._media)
-
-        self._duration = self._media.get_duration()
-
+    @abstractmethod
     def play(self) -> None:
         """Plays the media.
         """
-        if self._player is None:
-            self._create_player()
 
-        self._player.play()
-        self._state = 1
-
+    @abstractmethod
     def stop(self) -> None:
         """Stops the media.
         """
-        if self._player is not None:
-            if self._player.get_state() == vlc.State.Opening:
-                self._player.release()
-            else:
-                self._player.stop()
-                self._state = 0
 
+    @abstractmethod
     def pause(self) -> None:
         """Pauses the media.
         """
-        if self._player is not None:
-            if self._player.get_state() != vlc.State.Opening:
-                self._player.pause()
-                self._state = 2
 
+    @abstractmethod
     def seek(self, direction, amount) -> None:
         """Seek forward or backward in the media.
 
@@ -124,11 +143,6 @@ class Player:
             direction: 1 to seek forward, -1 to seek backward
             amount: the amount of seconds to seek
         """
-        assert direction == 1 or direction == -1
-        if self._player is not None:
-            self._player.set_time(
-                self._player.get_time() + (direction * amount * 1000)
-            )
 
     @property
     def state(self) -> int:
@@ -146,28 +160,16 @@ class Player:
         return self._episode
 
     @property
+    @abstractmethod
     def duration(self) -> int:
-        """int: the duration of the player"""
-        result = 0
-        if self._media is not None:
-            self._duration = self._media.get_duration()
-            result = self._duration
-        return result
+        """int: the duration of the player, in ms"""
 
     @property
+    @abstractmethod
     def time(self) -> int:
-        """int: the current time of the player"""
-        if self._player is not None:
-            return self._player.get_time()
+        """int: the current time of the player, in ms"""
 
     @property
+    @abstractmethod
     def time_str(self) -> str:
         """str: the formatted time and duration of the player"""
-        result = "00:00:00/00:00:00"
-        if self._player is not None:
-            time_seconds = int(self.time / 1000)
-            length_seconds = int(self.duration / 1000)
-            t = time.strftime('%H:%M:%S', time.gmtime(time_seconds))
-            d = time.strftime('%H:%M:%S', time.gmtime(length_seconds))
-            result = "%s/%s" % (t, d)
-        return result

@@ -1,6 +1,7 @@
 import curses
 
 from castero import helpers
+from castero.config import Config
 from castero.menu import Menu
 from castero.menus.episodemenu import EpisodeMenu
 from castero.perspective import Perspective
@@ -142,71 +143,70 @@ class Primary(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
-        config = self._display.config
         queue = self._display.queue
         key_mapping = self._display.KEY_MAPPING
 
         keep_running = True
-        if c == key_mapping[config['key_exit']]:
+        if c == key_mapping[Config['key_exit']]:
             self._display.terminate()
             keep_running = False
-        elif c == key_mapping[config['key_help']]:
+        elif c == key_mapping[Config['key_help']]:
             self._display.show_help()
-        elif c == key_mapping[config['key_right']]:
+        elif c == key_mapping[Config['key_right']]:
             self._change_active_window(1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_left']]:
+        elif c == key_mapping[Config['key_left']]:
             self._change_active_window(-1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_up']]:
+        elif c == key_mapping[Config['key_up']]:
             self._get_active_menu().move(1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_down']]:
+        elif c == key_mapping[Config['key_down']]:
             self._get_active_menu().move(-1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_scroll_up']]:
+        elif c == key_mapping[Config['key_scroll_up']]:
             self._get_active_menu().move_page(1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_scroll_down']]:
+        elif c == key_mapping[Config['key_scroll_down']]:
             self._get_active_menu().move_page(-1)
             self._metadata_updated = False
-        elif c == key_mapping[config['key_play_selected']]:
+        elif c == key_mapping[Config['key_play_selected']]:
             queue.stop()
             queue.clear()
             self._create_player_from_selected()
             queue.play()
-        elif c == key_mapping[config['key_add_selected']]:
+        elif c == key_mapping[Config['key_add_selected']]:
             self._create_player_from_selected()
             self._get_active_menu().move(-1)
-        elif c == key_mapping[config['key_clear']]:
+        elif c == key_mapping[Config['key_clear']]:
             queue.stop()
             queue.clear()
-        elif c == key_mapping[config['key_pause_play']] or \
-                c == key_mapping[config['key_pause_play_alt']]:
+        elif c == key_mapping[Config['key_pause_play']] or \
+                c == key_mapping[Config['key_pause_play_alt']]:
             queue.toggle()
-        elif c == key_mapping[config['key_next']]:
+        elif c == key_mapping[Config['key_next']]:
             queue.stop()
             queue.next()
             queue.play()
-        elif c == key_mapping[config['key_seek_forward']] or \
-                c == key_mapping[config['key_seek_forward_alt']]:
+        elif c == key_mapping[Config['key_seek_forward']] or \
+                c == key_mapping[Config['key_seek_forward_alt']]:
             queue.seek(1)
-        elif c == key_mapping[config['key_seek_backward']] or \
-                c == key_mapping[config['key_seek_backward_alt']]:
+        elif c == key_mapping[Config['key_seek_backward']] or \
+                c == key_mapping[Config['key_seek_backward_alt']]:
             queue.seek(-1)
-        elif c == key_mapping[config['key_add_feed']]:
+        elif c == key_mapping[Config['key_add_feed']]:
             self._display.add_feed()
-        elif c == key_mapping[config['key_delete']]:
+        elif c == key_mapping[Config['key_delete']]:
             if self._active_window == 0:
                 self._display.delete_feed(self._feed_menu.selected_index)
-        elif c == key_mapping[config['key_reload']]:
+        elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
-        elif c == key_mapping[config['key_save']]:
+        elif c == key_mapping[Config['key_save']]:
             feed_index = self._feed_menu.selected_index
             episode_index = self._episode_menu.selected_index if \
                 self._active_window == 1 else None
             self._display.save_episodes(feed_index, episode_index)
-        elif c == key_mapping[config['key_invert']]:
+        elif c == key_mapping[Config['key_invert']]:
             self._invert_selected_menu()
 
         return keep_running
@@ -253,14 +253,21 @@ class Primary(Perspective):
         if self._active_window == 0:
             if feed is not None:
                 for episode in feed.episodes:
-                    player = Player(str(episode), episode.get_playable(),
-                                    episode)
+                    player = Player.create_instance(
+                        self._display.AVAILABLE_PLAYERS,
+                        str(episode),
+                        episode.get_playable(),
+                        episode)
                     self._display.queue.add(player)
         elif self._active_window == 1:
             episode_index = self._episode_menu.selected_index
             if feed is not None:
                 episode = feed.episodes[episode_index]
-                player = Player(str(episode), episode.get_playable(), episode)
+                player = Player.create_instance(
+                    self._display.AVAILABLE_PLAYERS,
+                    str(episode),
+                    episode.get_playable(),
+                    episode)
                 self._display.queue.add(player)
 
     def _invert_selected_menu(self) -> None:

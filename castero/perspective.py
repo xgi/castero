@@ -161,7 +161,7 @@ class Perspective(ABC):
             self._append_metadata_lines(window, feed.copyright, output_lines,
                                         add_blank=True)
             # draw feed number of episodes
-            num_dl = sum([episode.downloaded(self._display.config) for
+            num_dl = sum([episode.downloaded() for
                           episode in feed.episodes])
             self._append_metadata_lines(window, "Episodes:", output_lines,
                                         attr=curses.A_BOLD)
@@ -199,8 +199,7 @@ class Perspective(ABC):
             self._append_metadata_lines(window,
                                         "Episode downloaded and available for"
                                         " offline playback." if
-                                        episode.downloaded(
-                                            self._display.config) else
+                                        episode.downloaded() else
                                         "Episode not downloaded.",
                                         output_lines)
 

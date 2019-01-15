@@ -123,6 +123,9 @@ def test_episode_playable_local():
                                     "myfeed_title",
                                     "myfeed_item1_title.mp3")
 
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
+                                                   "downloaded")
+
 
 def test_episode_delete(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
@@ -134,10 +137,12 @@ def test_episode_delete(display):
     display.change_status = mock.MagicMock(name="change_status")
     episode = myfeed.episodes[1]
     assert episode.downloaded()
-    episode.delete(display.config, display=display)
+    episode.delete(display=display)
     display.change_status.assert_called_once()
     assert not episode.downloaded()
 
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
+                                                   "downloaded")
 
 def test_episode_download():
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
@@ -148,6 +153,8 @@ def test_episode_download():
     myepisode.download(mydownloadqueue)
     DataFile.download_to_file.assert_called_once()
 
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
+                                                   "downloaded")
 
 def test_episode_download_with_display(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
@@ -159,6 +166,8 @@ def test_episode_download_with_display(display):
     myepisode.download(mydownloadqueue, display=display)
     DataFile.download_to_file.assert_called_once()
 
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
+                                                   "downloaded")
 
 def test_episode_download_with_display_no_enclosure(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
@@ -169,3 +178,6 @@ def test_episode_download_with_display_no_enclosure(display):
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)
     display.change_status.assert_called_once()
+
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
+                                                   "downloaded")

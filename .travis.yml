@@ -1,3 +1,5 @@
+dist: xenial
+
 language: python
 
 python:
@@ -5,8 +7,9 @@ python:
   - nightly
 
 before_install:
+  - sudo sed -i 's/xenial/cosmic/' /etc/apt/sources.list
   - sudo apt-get -qq update
-  - sudo apt-get install vlc
+  - sudo apt-get install vlc mpv libmpv-dev
   - pip install --upgrade pip
 
 install:

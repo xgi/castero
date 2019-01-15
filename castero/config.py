@@ -19,7 +19,7 @@ class ConfigDuplicateError(ConfigError):
     """
 
 
-class Config(DataFile):
+class _Config(DataFile):
     """The Config class.
 
     Reads the configuration file. Instances of this class can generally be
@@ -138,3 +138,6 @@ class Config(DataFile):
             for line in lines:
                 conf_file.write(line)
         conf.read(self._path)
+
+
+Config = _Config()

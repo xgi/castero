@@ -1,3 +1,4 @@
+from castero.config import Config
 from castero.player import Player
 
 
@@ -8,11 +9,10 @@ class Queue:
     class' main interface for accessing information about the current player.
     """
 
-    def __init__(self, config) -> None:
+    def __init__(self) -> None:
         """Initializes the object.
         """
         self._players = []
-        self._config = config
 
     def __getitem__(self, index):
         return self._players[index]
@@ -40,7 +40,7 @@ class Queue:
     def add(self, player) -> None:
         """Adds a player to the end of the queue.
         """
-        assert type(player) == Player
+        assert isinstance(player, Player)
 
         self._players.append(player)
 
@@ -79,7 +79,7 @@ class Queue:
         assert direction == 1 or direction == -1
 
         if self.first is not None:
-            self.first.seek(direction, int(self._config["seek_distance"]))
+            self.first.seek(direction, int(Config["seek_distance"]))
 
     def remove(self, player) -> int:
         """Remove a player from the queue, if it is currently in it.

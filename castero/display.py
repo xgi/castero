@@ -58,17 +58,16 @@ class Display:
             'SPACE': 32
         }
     )
+    AVAILABLE_PLAYERS = {}
 
-    def __init__(self, stdscr, config, feeds) -> None:
+    def __init__(self, stdscr, feeds) -> None:
         """Initializes the object.
 
         Args:
             stdscr: a stdscr from curses.initscr()
-            config: a loaded castero.Config object
             feeds: a loaded castero.Feeds object
         """
         self._stdscr = stdscr
-        self._config = config
         self._feeds = feeds
         self._parent_x = -1
         self._parent_y = -1
@@ -76,7 +75,7 @@ class Display:
         self._active_perspective = 1
         self._header_window = None
         self._footer_window = None
-        self._queue = Queue(config)
+        self._queue = Queue()
         self._download_queue = DownloadQueue(self)
         self._status = ""
         self._status_timer = self.STATUS_TIMEOUT
@@ -92,6 +91,7 @@ class Display:
         self.update_parent_dimensions()
         self.create_color_pairs()
         self._load_perspectives()
+        self._load_players()
         self._create_windows()
         self.create_menus()
 
@@ -104,39 +104,39 @@ class Display:
             - 3: background_alt, foreground_alt
             - 4: foreground_alt, background_alt
         """
-        assert self._config["color_foreground"] in self.AVAILABLE_COLORS
-        assert self._config["color_background"] in self.AVAILABLE_COLORS
-        assert self._config["color_foreground_alt"] in self.AVAILABLE_COLORS
-        assert self._config["color_background_alt"] in self.AVAILABLE_COLORS
+        assert Config["color_foreground"] in self.AVAILABLE_COLORS
+        assert Config["color_background"] in self.AVAILABLE_COLORS
+        assert Config["color_foreground_alt"] in self.AVAILABLE_COLORS
+        assert Config["color_background_alt"] in self.AVAILABLE_COLORS
 
-        if (self.AVAILABLE_COLORS[self._config["color_background"]] == -1 or self.AVAILABLE_COLORS[self._config["color_background_alt"]] == -1):
+        if (self.AVAILABLE_COLORS[Config["color_background"]] == -1 or
+                self.AVAILABLE_COLORS[Config["color_background_alt"]] == -1):
             curses.use_default_colors()
 
         curses.init_pair(
             1,
-            self.AVAILABLE_COLORS[self._config["color_foreground"]],
-            self.AVAILABLE_COLORS[self._config["color_background"]]
+            self.AVAILABLE_COLORS[Config["color_foreground"]],
+            self.AVAILABLE_COLORS[Config["color_background"]]
         )
         curses.init_pair(
             2,
-            self.AVAILABLE_COLORS[self._config["color_background"]],
-            self.AVAILABLE_COLORS[self._config["color_foreground"]]
+            self.AVAILABLE_COLORS[Config["color_background"]],
+            self.AVAILABLE_COLORS[Config["color_foreground"]]
         )
         curses.init_pair(
             3,
-            self.AVAILABLE_COLORS[self._config["color_background_alt"]],
-            self.AVAILABLE_COLORS[self._config["color_foreground_alt"]]
+            self.AVAILABLE_COLORS[Config["color_background_alt"]],
+            self.AVAILABLE_COLORS[Config["color_foreground_alt"]]
         )
         curses.init_pair(
             4,
-            self.AVAILABLE_COLORS[self._config["color_foreground_alt"]],
-            self.AVAILABLE_COLORS[self._config["color_background_alt"]]
+            self.AVAILABLE_COLORS[Config["color_foreground_alt"]],
+            self.AVAILABLE_COLORS[Config["color_background_alt"]]
         )
 
-    """Load instances of perspectives from the `perspectives` package.
-    """
-
     def _load_perspectives(self) -> None:
+        """Load instances of perspectives from the `perspectives` package.
+        """
         # load a list of modules names by manually detecting .py files
         module_files = glob.glob(dirname(__file__) + "/perspectives/*.py")
         module_names = [basename(f)[:-3] for f in module_files if isfile(f)]
@@ -147,8 +147,23 @@ class Display:
                 p_mod,
                 dir(p_mod)[[cls.lower() == name
                             for cls in dir(p_mod)].index(True)])
-            cls = p_cls(self)
-            self._perspectives[cls.ID] = cls
+            inst = p_cls(self)
+            self._perspectives[inst.ID] = inst
+
+    def _load_players(self) -> None:
+        """Load player classes from the `players` package.
+        """
+        # load a list of modules names by manually detecting .py files
+        module_files = glob.glob(dirname(__file__) + "/players/*.py")
+        module_names = [basename(f)[:-3] for f in module_files if isfile(f)]
+
+        for name in module_names:
+            p_mod = importlib.import_module("castero.players.%s" % name)
+            p_cls = getattr(
+                p_mod,
+                dir(p_mod)[[cls.lower() == name
+                            for cls in dir(p_mod)].index(True)])
+            self.AVAILABLE_PLAYERS[p_cls.NAME] = p_cls
 
     def _create_windows(self) -> None:
         """Creates and sets basic parameters for the windows.
@@ -267,7 +282,7 @@ class Display:
         else:
             footer_str = self._status
 
-        footer_str += " -- Press %s for help" % self._config["key_help"]
+        footer_str += " -- Press %s for help" % Config["key_help"]
         self._footer_window.attron(curses.A_BOLD)
         self._footer_window.addstr(
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
@@ -285,6 +300,8 @@ class Display:
         self._perspectives[self._active_perspective].display()
 
     def _get_active_perspective(self) -> Perspective:
+        """Retrieve the active/visible Perspective.
+        """
         return self._perspectives[self._active_perspective]
 
     def _change_active_perspective(self, perspective_id) -> None:
@@ -454,12 +471,12 @@ class Display:
             index: the index of the feed to delete within self._feeds
         """
         should_delete = True
-        if helpers.is_true(self._config["delete_feed_confirmation"]):
+        if helpers.is_true(Config["delete_feed_confirmation"]):
             should_delete = self._get_y_n(
                 "Are you sure you want to delete this feed? (y/n): "
             )
         if should_delete:
-            deleted = self._feeds.del_at(index, self._config)
+            deleted = self._feeds.del_at(index)
             if deleted:
                 self._feeds.write()
                 self.create_menus()
@@ -474,7 +491,7 @@ class Display:
         This method starts the reloading in a new un-managed thread.
         """
         should_reload = True
-        if len(self._feeds) >= int(self._config["reload_feeds_threshold"]):
+        if len(self._feeds) >= int(Config["reload_feeds_threshold"]):
             should_reload = self._get_y_n(
                 "Are you sure you want to reload all of your feeds?"
                 " (y/n): "
@@ -512,7 +529,7 @@ class Display:
                         "Are you sure you want to delete the downloaded"
                         " episode? (y/n): ")
                     if should_delete:
-                        episode.delete(self._config, self)
+                        episode.delete(self)
                 else:
                     self._download_queue.add(episode)
 
@@ -621,11 +638,6 @@ class Display:
     def parent_y(self) -> int:
         """int: the height of the parent screen, in characters"""
         return self._parent_y
-
-    @property
-    def config(self) -> Config:
-        """Config: the user's config"""
-        return self._config
 
     @property
     def feeds(self) -> Feeds:

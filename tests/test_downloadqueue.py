@@ -35,7 +35,6 @@ def test_downloadqueue_start():
     episode1.download = mock.MagicMock(name="download")
     mydownloadqueue.start()
     episode1.download.assert_called_with(mydownloadqueue,
-                                         mydownloadqueue._display.config,
                                          mydownloadqueue._display, )
 
 
