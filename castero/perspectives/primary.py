@@ -89,7 +89,8 @@ class Primary(Perspective):
                 str(feed)
             )
 
-        self._episode_menu = EpisodeMenu(self._episode_window, self._display._feeds)
+        self._episode_menu = EpisodeMenu(self._episode_window,
+                                         self._display._feeds)
         self._feed_menu = Menu(self._feed_window, feed_items,
                                child=self._episode_menu, active=True)
 
@@ -111,15 +112,19 @@ class Primary(Perspective):
 
         # add window borders
         self._feed_window.hline(1, 0,
-                                0, self._feed_window.getmaxyx()[1] - 1)
-        self._feed_window.vline(0, self._feed_window.getmaxyx()[1] - 1,
-                                0, self._feed_window.getmaxyx()[0] - 2)
+                                0, self._feed_window.getmaxyx()[1])
+
         self._episode_window.hline(1, 0,
-                                   0, self._episode_window.getmaxyx()[1] - 1)
-        self._episode_window.vline(0, self._episode_window.getmaxyx()[1] - 1,
-                                   0, self._episode_window.getmaxyx()[0] - 2)
+                                   0, self._episode_window.getmaxyx()[1])
         self._metadata_window.hline(1, 0,
                                     0, self._metadata_window.getmaxyx()[1] - 1)
+        if not helpers.is_true(Config["disable_vertical_borders"]):
+            self._feed_window.vline(0, self._feed_window.getmaxyx()[1] - 1,
+                                    0, self._feed_window.getmaxyx()[0] - 2)
+            self._episode_window.vline(0,
+                                       self._episode_window.getmaxyx()[1] - 1,
+                                       0,
+                                       self._episode_window.getmaxyx()[0] - 2)
 
         # display menu content
         self._feed_menu.display()

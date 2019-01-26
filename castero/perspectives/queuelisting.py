@@ -90,11 +90,12 @@ class QueueListing(Perspective):
 
         # add window borders
         self._queue_window.hline(1, 0,
-                                 0, self._queue_window.getmaxyx()[1] - 1)
-        self._queue_window.vline(0, self._queue_window.getmaxyx()[1] - 1,
-                                 0, self._queue_window.getmaxyx()[0] - 2)
+                                 0, self._queue_window.getmaxyx()[1])
         self._metadata_window.hline(1, 0,
                                     0, self._metadata_window.getmaxyx()[1] - 1)
+        if not helpers.is_true(Config["disable_vertical_borders"]):
+            self._queue_window.vline(0, self._queue_window.getmaxyx()[1] - 1,
+                                     0, self._queue_window.getmaxyx()[0] - 2)
 
         # display menu content
         self._queue_menu.display()
