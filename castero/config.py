@@ -130,7 +130,7 @@ class _Config(DataFile):
                     if line.startswith(key + " "):
                         if key in conf_dict:
                             lines[lines.index(line)] = "%s = %s\n" % (
-                                line.split(" = ")[0],
+                                line.split(" =")[0],
                                 conf_dict[key]
                             )
 
