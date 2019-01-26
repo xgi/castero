@@ -12,6 +12,26 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.4.0 - 2019-01-26
+**Added**
+* Added support for playback with mpv as an alternative to VLC.
+* Added foundational support for displaying metadata in menus (i.e. download
+status) - Thanks @nbastin!
+* Added support for background transparency (if available on your terminal
+emulator) - Thanks @aneum7!
+* Added an option for disabling vertical bars/borders between menus.
+
+**Fixed**
+* Fixed an issue where the client would attempt to download remote media while
+offline - Thanks @nbastin!
+* Fixed an issue where the client would sometimes break your config while
+trying to migrate items with blank values.
+* Prevented crashing on some download errors; instead, a status/error message
+is displayed - Thanks @nbastin!
+* Improved wrapping support for CJK text - Thanks @Rand01ph!
+* Updated Requests version in response to CVE-2018-18074.
+
+
 ## 0.3.1 - 2018-09-15
 **Fixed**
 * Fixed an issue where config files would not properly migrate when a new
