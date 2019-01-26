@@ -5,6 +5,7 @@ from unittest import mock
 
 import pytest
 
+import castero.config
 from castero.config import Config
 from castero.datafile import DataFile
 from castero.display import Display
@@ -110,6 +111,7 @@ def stdscr():
 def prevent_modification():
     Helpers.hide_user_feeds()
     Helpers.hide_user_config()
+    castero.config.Config = castero.config._Config()
     yield
     Helpers.restore_user_feeds()
     Helpers.restore_user_config()
