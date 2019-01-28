@@ -35,7 +35,7 @@ Running castero requires the following external dependencies:
 
 * **One** of the following media players:
   * vlc >= 2.2.3
-  * mpv and libmpv
+  * (mpv and libmpv) >= 0.29.0
   
 ## Usage
 
