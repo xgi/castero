@@ -31,7 +31,6 @@ def test_player_play():
     myplayer._player = mock.MagicMock()
 
     myplayer.play()
-    myplayer._player.set_property.assert_called_with('pause', False)
     assert myplayer.state == 1
 
 
@@ -40,7 +39,6 @@ def test_player_pause():
     myplayer._player = mock.MagicMock()
 
     myplayer.pause()
-    myplayer._player.set_property.assert_called_with('pause', True)
     assert myplayer.state == 2
 
 
@@ -49,7 +47,6 @@ def test_player_stop():
     myplayer._player = mock.MagicMock()
 
     myplayer.stop()
-    myplayer._player.shutdown.assert_called_once()
     assert myplayer.state == 0
 
 
@@ -65,7 +62,7 @@ def test_player_seek():
     myplayer._player = mock.MagicMock()
 
     myplayer.seek(1, 10)
-    myplayer._player.command.assert_called_with('seek', 10)
+    myplayer._player.seek.assert_called_with(10)
 
 
 def test_player_str():
@@ -87,7 +84,7 @@ def test_player_time():
     myplayer = MPVPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
 
-    myplayer._player.get_property = mock.MagicMock(return_value=5)
+    myplayer._player.time_pos = 5
     assert myplayer.time == 5000
 
 
@@ -96,5 +93,5 @@ def test_player_time_str():
     myplayer._player = mock.MagicMock()
     myplayer._media = mock.MagicMock()
 
-    myplayer._player.get_property = mock.MagicMock(return_value=5)
-    assert myplayer.time_str == "00:00:05/00:00:05"
+    myplayer._player.time_pos = 2
+    assert myplayer.time_str == "00:00:02/00:00:01"

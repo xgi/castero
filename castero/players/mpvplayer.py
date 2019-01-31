@@ -1,6 +1,5 @@
 import time
 
-import castero
 from castero.player import Player, PlayerDependencyError
 
 
@@ -30,8 +29,7 @@ class MPVPlayer(Player):
         except (OSError, ModuleNotFoundError):
             raise PlayerDependencyError(
                 "Dependency mpv not found, which is required for playing"
-                " media files. If you recently downloaded it, you may need to"
-                " reinstall %s" % castero.__title__
+                " media files"
             )
 
     def _create_player(self) -> None:
@@ -39,14 +37,13 @@ class MPVPlayer(Player):
 
         Overrides method from Player; see documentation in that class.
         """
-        self._player = self.mpv.Context()
-        self._player.initialize()
-        self._player.set_option('vid', False)
-        self._player.set_property('pause', True)
+        self._player = self.mpv.MPV()
+        self._player.vid = False
+        self._player.pause = False
 
-        self._player.command('loadfile', self._path)
+        self._player.play(self._path)
 
-        self._duration = self._player.time
+        self._duration = 5
 
     def play(self) -> None:
         """Plays the media.
@@ -56,7 +53,7 @@ class MPVPlayer(Player):
         if self._player is None:
             self._create_player()
 
-        self._player.set_property('pause', False)
+        self._player.pause = False
         self._state = 1
 
     def stop(self) -> None:
@@ -65,7 +62,7 @@ class MPVPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
-            self._player.shutdown()
+            self._player.terminate()
             self._state = 0
 
     def pause(self) -> None:
@@ -74,7 +71,7 @@ class MPVPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
-            self._player.set_property('pause', True)
+            self._player.pause = True
             self._state = 2
 
     def seek(self, direction, amount) -> None:
@@ -84,24 +81,21 @@ class MPVPlayer(Player):
         """
         assert direction == 1 or direction == -1
         if self._player is not None:
-            self._player.command('seek', direction * amount)
+            self._player.seek(direction * amount)
 
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
-        try:
-            return self._player.get_property('duration') * 1000
-        except self.mpv.MPVError:
-            return 5000
+        if self._player is not None:
+            d = self._player.duration
+            return 5000 if d is None else d * 1000
 
     @property
     def time(self) -> int:
         """int: the current time of the player"""
         if self._player is not None:
-            try:
-                return self._player.get_property('playback-time') * 1000
-            except self.mpv.MPVError:
-                return 0
+            t = self._player.time_pos
+            return 0 if t is None else t * 1000
 
     @property
     def time_str(self) -> str:
