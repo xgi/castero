@@ -1,5 +1,5 @@
 python-vlc==3.0.4106
 python-mpv==0.3.9
 requests==2.21.0
-pytest==4.0.2
+pytest==4.2.0
 CJKwrap==2.2
