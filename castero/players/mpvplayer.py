@@ -86,9 +86,11 @@ class MPVPlayer(Player):
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
+        result = 0
         if self._player is not None:
             d = self._player.duration
-            return 5000 if d is None else d * 1000
+            result = 5000 if d is None else d * 1000
+        return result
 
     @property
     def time(self) -> int:
