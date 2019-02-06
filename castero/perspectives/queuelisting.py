@@ -204,8 +204,9 @@ class QueueListing(Perspective):
         """Remove the selected player from the queue.
         """
         selected_index = self._queue_menu.selected_index
-        selected_player = self._display.queue[selected_index]
-        index = self._display.queue.remove(selected_player)
-        self.create_menus()
-        for i in range(index):
-            self._get_active_menu().move(-1)
+        if selected_index < self._display.queue.length:
+            selected_player = self._display.queue[selected_index]
+            index = self._display.queue.remove(selected_player)
+            self.create_menus()
+            for i in range(index):
+                self._get_active_menu().move(-1)
