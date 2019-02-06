@@ -1,5 +1,6 @@
 import configparser
 import os
+import sys
 
 from castero.datafile import DataFile
 
@@ -35,6 +36,11 @@ class _Config(DataFile):
         """Initializes the object.
         """
         super().__init__(self.PATH, self.DEFAULT_PATH)
+
+        # strictly use default path when testing
+        if "pytest" in sys.modules:
+            self._path = self._default_path
+
         self.load()
 
     def __setitem__(self, key, value):

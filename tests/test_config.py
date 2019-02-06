@@ -7,6 +7,14 @@ import castero.config as config
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
+config_default_path = config._Config.DEFAULT_PATH
+
+
+@pytest.fixture(autouse=True)
+def restore_default_path():
+    yield
+    config._Config.DEFAULT_PATH = config_default_path
+
 
 def test_config_default(prevent_modification):
     myconfig = config._Config()
@@ -14,7 +22,7 @@ def test_config_default(prevent_modification):
 
 
 def test_config_parse_error(prevent_modification):
-    copyfile(my_dir + "/datafiles/parse_error.conf", config._Config.PATH)
+    config._Config.DEFAULT_PATH = my_dir + "/datafiles/parse_error.conf"
     with pytest.raises(config.ConfigParseError):
         config._Config()
 

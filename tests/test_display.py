@@ -42,7 +42,7 @@ def test_display_display_footer_empty(display):
     display._footer_window.attron.assert_called_with(curses.A_BOLD)
     display._footer_window.addstr.assert_called_with(
         1, 0,
-        "Processed 1 feeds with 0 total episodes (avg. 0 episodes, med. 0)"
+        "Found 1 feeds with 0 total episodes (avg. 0 episodes, med. 0)"
         " -- Press h for help"
     )
 

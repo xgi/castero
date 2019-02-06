@@ -5,8 +5,6 @@ from unittest import mock
 
 import pytest
 
-import castero.config
-from castero.config import Config
 from castero.datafile import DataFile
 from castero.display import Display
 from castero.feeds import Feeds
@@ -35,22 +33,6 @@ class Helpers:
         DataFile.ensure_path(Feeds.PATH)
         if os.path.exists(Feeds.PATH + ".tmp"):
             os.rename(Feeds.PATH + ".tmp", Feeds.PATH)
-
-    @staticmethod
-    def hide_user_config():
-        """Moves the user's config file, if it exists, to make it unreachable.
-        """
-        DataFile.ensure_path(Config.PATH)
-        if os.path.exists(Config.PATH):
-            os.rename(Config.PATH, Config.PATH + ".tmp")
-        copyfile(Config.DEFAULT_PATH, Config.PATH)
-
-    @staticmethod
-    def restore_user_config():
-        """Restores the user's config file if it has been hidden."""
-        DataFile.ensure_path(Config.PATH)
-        if os.path.exists(Config.PATH + ".tmp"):
-            os.rename(Config.PATH + ".tmp", Config.PATH)
 
 
 class MockStdscr(mock.MagicMock):
@@ -110,11 +92,8 @@ def stdscr():
 @pytest.yield_fixture()
 def prevent_modification():
     Helpers.hide_user_feeds()
-    Helpers.hide_user_config()
-    castero.config.Config = castero.config._Config()
     yield
     Helpers.restore_user_feeds()
-    Helpers.restore_user_config()
 
 
 @pytest.yield_fixture()

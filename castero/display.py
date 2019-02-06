@@ -243,35 +243,34 @@ class Display:
         self.update_parent_dimensions()
 
         # add header
-        playing_str = ""
+        playing_str = castero.__title__
         if self._queue.first is not None:
             state = self._queue.first.state
-            if state == 0:
-                playing_str = " - Stopped [%s]: " % self._queue.first.time_str
-            elif state == 1:
-                playing_str = " - Playing [%s]: " % self._queue.first.time_str
-            elif state == 2:
-                playing_str = " - Paused [%s]: " % self._queue.first.time_str
-            playing_str += self._queue.first.title
+            playing_str = ["Stopped", "Playing", "Paused"][state] + \
+                          ": %s" % self._queue.first.title
             if self._queue.length > 1:
                 playing_str += " (+%d in queue)" % (self._queue.length - 1)
 
+            playing_str += ("[%s]" % self._queue.first.time_str).rjust(
+                self._header_window.getmaxyx()[1] - len(playing_str))
+
         self._header_window.attron(curses.A_BOLD)
         self._header_window.addstr(0, 0, " " * self._parent_x)
-        self._header_window.addstr(0, 0, castero.__title__ + playing_str)
+        self._header_window.addstr(0, 0, playing_str)
 
         # add footer
         footer_str = ""
-        if self._status == "":  # always display the status instead if needed
+        if self._status == "" and not \
+                helpers.is_true(Config["disable_default_status"]):
             if len(self._feeds) > 0:
                 total_feeds = len(self._feeds)
-                lengths_of_feeds = [len(self._feeds[key].episodes) for key in
-                                    self._feeds]
+                lengths_of_feeds = \
+                    [len(self._feeds[key].episodes) for key in self._feeds]
                 total_episodes = sum(lengths_of_feeds)
                 median_episodes = helpers.median(lengths_of_feeds)
 
-                footer_str += "Processed %d feeds with %d total episodes (av" \
-                              "g. %d episodes, med. %d)" % (
+                footer_str += "Found %d feeds with %d total episodes (avg." \
+                              " %d episodes, med. %d)" % (
                                   total_feeds,
                                   total_episodes,
                                   total_episodes / total_feeds,
@@ -282,7 +281,9 @@ class Display:
         else:
             footer_str = self._status
 
-        footer_str += " -- Press %s for help" % Config["key_help"]
+        if footer_str != "":
+            footer_str += " -- Press %s for help" % Config["key_help"]
+
         self._footer_window.attron(curses.A_BOLD)
         self._footer_window.addstr(
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
