@@ -40,6 +40,7 @@ Commands
     {key_pause_play|key_pause_play_alt} - pause/play the current episode
     {key_seek_forward|key_seek_forward_alt} - seek forward
     {key_seek_backward|key_seek_backward_alt} - seek backward
+    {1-2} - change between client layouts
 """ % (
     __title__,
     __version__,

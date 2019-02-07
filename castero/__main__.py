@@ -1,6 +1,7 @@
 import curses
 import sys
 import threading
+import re
 
 import castero
 from castero import helpers
@@ -29,6 +30,11 @@ def main():
                     "{%s|%s}" % (field, field2),
                     ("%s or %s" % (Config[field], Config[field2])).ljust(9)
                 )
+    remaining_brace_fields = re.compile('\{.*?\}').findall(castero.__help__)
+    for field in remaining_brace_fields:
+        adjusted = field.replace("{", "").replace("}", "").ljust(9)
+        castero.__help__ = \
+            castero.__help__.replace(field, adjusted)
 
     # check if user is running the client with an info flag
     info_flags = {

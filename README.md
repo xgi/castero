@@ -9,11 +9,13 @@ castero is a podcast client for the command line.
 ## Installation
 
 Install from [PyPi](https://pypi.org/project/castero) with pip:
+
 ```bash
 $ pip install castero
 ```
 
 Upgrading:
+
 ```bash
 $ pip install castero --upgrade
 ```
@@ -41,11 +43,14 @@ Running castero requires the following external dependencies:
 ## Usage
 
 After installing castero, it can be run with simply:
+
 ```bash
 $ castero
 ```
 
-The help menu provides a list of controls and can be accessed by pressing <kbd>h</kbd>. Alternatively, see the list below:
+The help menu provides a list of controls and can be accessed by pressing
+<kbd>h</kbd>. Alternatively, see the list below:
+
 ```
 Commands
     h            - show this help screen
@@ -64,23 +69,34 @@ Commands
     p or k       - pause/play the current episode
     f or l       - seek forward
     b or j       - seek backward
+    1-2          - change between client layouts
 ```
 
 ## Configuration
 
-The configuration file is located at `{HOME}/.config/castero/` after the client has been run at least once.
+The configuration file is located at `{HOME}/.config/castero/castero.conf`
+after the client has been run at least once.
 
-Please see [castero.conf](https://github.com/xgi/castero/blob/master/castero/templates/castero.conf) for a list of available settings.
+Please see the default [castero.conf](https://github.com/xgi/castero/blob/master/castero/templates/castero.conf)
+for a list of available settings.
 
-Additionally, a file containing your list of feeds is located at `{HOME}/.local/share/castero/feeds`. This file is provided to avoid redownloading feeds on every startup. However, it is not intended to be manually modified. Removing this file will simply cause castero to replace it with an empty list next time you run the client.
+Additionally, a file containing your list of feeds is located at
+`{HOME}/.local/share/castero/feeds`. This file is provided to avoid
+redownloading feeds on every startup. However, it is not intended to be
+manually modified. Removing this file will simply cause castero to replace
+it with an empty list next time you run the client.
 
 ## Testing
 
-This project uses [pytest](https://pytest.org) for testing. To run tests, run the following command in the project's root directory:
+This project uses [pytest](https://pytest.org) for testing. To run tests, run
+the following command in the project's root directory:
+
 ```bash
 $ python -m pytest tests
 ```
+
 You can also run tests for an individual unit, i.e.:
+
 ```bash
 $ python -m pytest tests/test_feed.py
 ```
