@@ -1,3 +1,4 @@
+from bs4 import BeautifulSoup
 import re
 
 
@@ -65,3 +66,16 @@ def is_true(string) -> bool:
     assert type(string) == str
 
     return string in ['True', 'true', '1']
+
+
+def html_to_plain(html) -> str:
+    """Converts a potentially HTML-formatted string to user-friendly plaintext.
+    
+    Args:
+        html: the text to convert with potential html tags
+
+    Returns:
+        str: the given text with html tags removed
+    """
+    soup = BeautifulSoup(html, 'html.parser')
+    return soup.get_text()

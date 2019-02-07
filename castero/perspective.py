@@ -3,6 +3,8 @@ from abc import ABC, abstractmethod
 
 import cjkwrap
 
+from castero import helpers
+from castero.config import Config
 from castero.menu import Menu
 
 
@@ -141,67 +143,68 @@ class Perspective(ABC):
 
         if feed is not None:
             # draw feed title
-            self._append_metadata_lines(window, feed.title, output_lines,
-                                        attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window, feed.title, output_lines, attr=curses.A_BOLD)
             # draw feed lastBuildDate
-            self._append_metadata_lines(window, feed.last_build_date,
-                                        output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, feed.last_build_date, output_lines, add_blank=True)
             # draw feed link
-            self._append_metadata_lines(window, feed.link, output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, feed.link, output_lines, add_blank=True)
             # draw feed description
-            self._append_metadata_lines(window, "Description:", output_lines,
-                                        attr=curses.A_BOLD)
-            self._append_metadata_lines(window, feed.description, output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, "Description:", output_lines, attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window,
+                helpers.html_to_plain(feed.description) if
+                helpers.is_true(Config["clean_html_descriptions"]) else
+                feed.description, output_lines, add_blank=True)
             # draw feed copyright
-            self._append_metadata_lines(window, "Copyright:", output_lines,
-                                        attr=curses.A_BOLD)
-            self._append_metadata_lines(window, feed.copyright, output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, "Copyright:", output_lines, attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window, feed.copyright, output_lines, add_blank=True)
             # draw feed number of episodes
             num_dl = sum([episode.downloaded() for
                           episode in feed.episodes])
-            self._append_metadata_lines(window, "Episodes:", output_lines,
-                                        attr=curses.A_BOLD)
-            self._append_metadata_lines(window,
-                                        "Found %d episodes (%d downloaded)" % (
-                                            len(feed.episodes), num_dl
-                                        ), output_lines
-                                        )
+            self._append_metadata_lines(
+                window, "Episodes:", output_lines, attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window, "Found %d episodes (%d downloaded)" % (
+                    len(feed.episodes), num_dl
+                ), output_lines)
         elif episode is not None:
             # draw episode title
-            self._append_metadata_lines(window, episode.title, output_lines,
-                                        attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window, episode.title, output_lines, attr=curses.A_BOLD)
             # draw episode pubdate
-            self._append_metadata_lines(window, episode.pubdate, output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, episode.pubdate, output_lines, add_blank=True)
             # draw episode link
-            self._append_metadata_lines(window, episode.link, output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, episode.link, output_lines, add_blank=True)
             # draw episode description
-            self._append_metadata_lines(window, "Description:", output_lines,
-                                        attr=curses.A_BOLD)
-            self._append_metadata_lines(window, episode.description,
-                                        output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, "Description:", output_lines, attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window,
+                helpers.html_to_plain(episode.description) if
+                helpers.is_true(Config["clean_html_descriptions"]) else
+                episode.description, output_lines, add_blank=True)
             # draw episode copyright
-            self._append_metadata_lines(window, "Copyright:", output_lines,
-                                        attr=curses.A_BOLD)
-            self._append_metadata_lines(window, episode.copyright,
-                                        output_lines,
-                                        add_blank=True)
+            self._append_metadata_lines(
+                window, "Copyright:", output_lines, attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window, episode.copyright, output_lines, add_blank=True)
 
             # draw episode downloaded
-            self._append_metadata_lines(window, "Downloaded:", output_lines,
-                                        attr=curses.A_BOLD)
-            self._append_metadata_lines(window,
-                                        "Episode downloaded and available for"
-                                        " offline playback." if
-                                        episode.downloaded() else
-                                        "Episode not downloaded.",
-                                        output_lines)
+            self._append_metadata_lines(
+                window, "Downloaded:", output_lines, attr=curses.A_BOLD)
+            self._append_metadata_lines(
+                window,
+                "Episode downloaded and available for offline playback."
+                if episode.downloaded() else "Episode not downloaded.",
+                output_lines)
 
         y = 2
         for line in output_lines[:max_lines]:
