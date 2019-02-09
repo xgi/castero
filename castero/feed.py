@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ElementTree
 
 import requests
 
+from castero.config import Config
 from castero.episode import Episode
 
 
@@ -301,6 +302,11 @@ class Feed:
                               copyright=item_copyright_str,
                               enclosure=item_enclosure_str)
             self._episodes.append(episode)
+
+        # restrict number of episodes, if necessary
+        max_episodes = int(Config["max_episodes"])
+        if max_episodes > -1:
+            self._episodes = self._episodes[:max_episodes]
 
     def invert_episodes(self) -> None:
         """Invert this feed's list of episodes.
