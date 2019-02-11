@@ -139,7 +139,7 @@ class Primary(Perspective):
                     self._draw_metadata(self._metadata_window, feed=feed)
                 elif self._active_window == 1:
                     selected_episode_index = self._episode_menu.selected_index
-                    if 0 < selected_episode_index < len(feed.episodes):
+                    if 0 <= selected_episode_index < len(feed.episodes):
                         episode = feed.episodes[selected_episode_index]
                         self._draw_metadata(
                             self._metadata_window, episode=episode)
