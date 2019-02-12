@@ -251,8 +251,11 @@ class Display:
             if self._queue.length > 1:
                 playing_str += " (+%d in queue)" % (self._queue.length - 1)
 
-            playing_str += ("[%s]" % self._queue.first.time_str).rjust(
-                self._header_window.getmaxyx()[1] - len(playing_str))
+            if helpers.is_true(Config["right_align_time"]):
+                playing_str += ("[%s]" % self._queue.first.time_str).rjust(
+                    self._header_window.getmaxyx()[1] - len(playing_str))
+            else:
+                playing_str += " [%s]" % self._queue.first.time_str
 
         self._header_window.attron(curses.A_BOLD)
         self._header_window.addstr(0, 0, " " * self._parent_x)
