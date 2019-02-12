@@ -26,7 +26,8 @@ class MPVPlayer(Player):
         """
         try:
             import mpv
-        except (OSError, ModuleNotFoundError):
+            mpv.MPV()
+        except (OSError, AttributeError, ModuleNotFoundError):
             raise PlayerDependencyError(
                 "Dependency mpv not found, which is required for playing"
                 " media files"
