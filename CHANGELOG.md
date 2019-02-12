@@ -12,6 +12,26 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.4.1 - 2019-02-12
+**Added**
+* Added support for extracting plaintext from HTML metadata descriptions (can
+be disabled in config).
+* Added an option for right-aligning episode time/duration.
+* Added an option to limit the number of episodes in a feed.
+* Added an option to disable the default status message.
+* Added perspective keys to help menu.
+
+**Fixed**
+* mpv support now uses the python-mpv library instead of pympv, which may fix
+installation problems for some users.
+* Fixed an issue where client could crash when adding episodes to queue while
+using mpv.
+* Fixed a crash when trying to determine whether mpv/libmpv was available.
+* Fixed a crash when trying to delete nothing on queuelisting perspective.
+* Fixed a crash when going to episodes menu for a feed with no episodes.
+* Fixed incomplete metadata being displayed when viewing a feed with a single
+episode.
+
 ## 0.4.0 - 2019-01-26
 **Added**
 * Added support for playback with mpv as an alternative to VLC.

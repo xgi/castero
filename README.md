@@ -21,6 +21,7 @@ $ pip install castero --upgrade
 ```
 
 ### Manual Installation
+
 Warning: the documentation on this page refers to the latest official release.
 The behavior of the current code may be different from what is described here
 (i.e. different dependencies, changed commands).
@@ -51,7 +52,7 @@ $ castero
 The help menu provides a list of controls and can be accessed by pressing
 <kbd>h</kbd>. Alternatively, see the list below:
 
-```
+```text
 Commands
     h            - show this help screen
     q            - exit the client
