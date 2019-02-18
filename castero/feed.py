@@ -4,6 +4,7 @@ import requests
 
 from castero.config import Config
 from castero.episode import Episode
+from castero.net import Net
 
 
 class FeedError(Exception):
@@ -114,7 +115,7 @@ class Feed:
         if self._url is not None:
             # handle feed from url
             try:
-                response = requests.get(self._url)
+                response = Net.Get(self._url)
                 if response.status_code == 200:
                     try:
                         self._tree = ElementTree.fromstring(response.text)

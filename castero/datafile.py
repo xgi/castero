@@ -5,6 +5,7 @@ from shutil import copyfile
 import requests
 
 import castero
+from castero.net import Net
 
 
 class DataFile:
@@ -87,7 +88,7 @@ class DataFile:
         chunk_size = 1024
         chuck_size_label = "KB"
 
-        response = requests.get(url, stream=True)
+        response = Net.Get(url, stream=True)
         handle = open(file, "wb")
         downloaded = 0
         for chunk in response.iter_content(chunk_size=chunk_size):
