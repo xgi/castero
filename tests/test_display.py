@@ -149,7 +149,7 @@ def test_display_add_feed_errors(display):
     for test_input in test_inputs:
         display._get_input_str = mock.MagicMock(return_value=test_input)
         display.add_feed()
-        assert display._status.startswith("Error:")
+        assert "Error" in display._status
         display._status = ""
         assert len(display.feeds) == 0
 

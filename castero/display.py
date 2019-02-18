@@ -443,24 +443,23 @@ class Display:
         except FeedError as e:
             if type(e) == FeedLoadError:
                 self.change_status(
-                    "Error: An error occurred while loading the file"
+                    "FeedLoadError: %s" % str(e)
                 )
             elif type(e) == FeedDownloadError:
                 self.change_status(
-                    "Error: An error occurred while downloading the feed"
+                    "FeedDownloadError: %s" % str(e)
                 )
             elif type(e) == FeedParseError:
                 self.change_status(
-                    "Error: An error occurred while parsing the feed"
+                    "FeedParseError: %s" % str(e)
                 )
             elif type(e) == FeedStructureError:
                 self.change_status(
-                    "Error: The provided feed is not a valid RSS document"
+                    "FeedStructureError: %s" % str(e)
                 )
             else:
                 self.change_status(
-                    "Error: An ambiguous error occurred while handling the"
-                    " feed"
+                    "FeedError [ambiguous]: %s" % str(e)
                 )
 
     def delete_feed(self, index) -> None:
@@ -616,7 +615,7 @@ class Display:
         try:
             self._download_queue.update()
         except OSError as e:
-            self.change_status("OSError: %s" % (str(e)))
+            self.change_status("OSError: %s" % str(e))
             return
 
         # update the status timer
