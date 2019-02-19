@@ -560,6 +560,8 @@ class Display:
         a "wrapping up" method for any actions which need to be performed
         before the object is destroyed.
         """
+        self._queue.stop()
+
         curses.nocbreak()
         self._stdscr.keypad(False)
         curses.echo()
