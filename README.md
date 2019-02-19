@@ -2,7 +2,7 @@
 
 [![GitHub release](https://img.shields.io/github/release/xgi/castero.svg)](https://github.com/xgi/castero/releases) [![Build Status](https://travis-ci.org/xgi/castero.svg?branch=master)](https://travis-ci.org/xgi/castero) [![codecov](https://codecov.io/gh/xgi/castero/branch/master/graph/badge.svg)](https://codecov.io/gh/xgi/castero)
 
-castero is a podcast client for the command line.
+castero is a TUI podcast client for the terminal.
 
 ![example client screenshot](https://raw.githubusercontent.com/xgi/castero/master/res/client_example.png)
 

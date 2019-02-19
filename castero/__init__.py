@@ -1,6 +1,6 @@
 __title__ = "castero"
-__description__ = "Command line podcast client"
-__keywords__ = "podcast commandline terminal curses"
+__description__ = "A TUI podcast client for the terminal"
+__keywords__ = "podcast commandline terminal tui curses"
 __author__ = "Jake Robertson"
 __author_email__ = "jake@faltro.com"
 __version__ = "0.4.1"
