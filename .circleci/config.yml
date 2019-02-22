@@ -1,0 +1,53 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.2
+
+jobs:
+  build:
+    docker:
+      - image: circleci/python:3.6-stretch
+
+    working_directory: ~/castero
+
+    steps:
+      - checkout
+
+      - run:
+          name: install pre dependencies
+          command: |
+            sudo sed -i 's/xenial/cosmic/' /etc/apt/sources.list
+            sudo apt-get -qq update
+            sudo apt-get install vlc mpv libmpv-dev
+            sudo pip install --upgrade pip
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "setup.py" }}
+            - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            python3 -m venv venv
+            . venv/bin/activate
+            pip install .[test]
+            pip install .
+
+      - save_cache:
+          paths:
+            - ./venv
+          key: v1-dependencies-{{ checksum "setup.py" }}
+
+      - run:
+          name: run tests
+          command: |
+            . venv/bin/activate
+            coverage run -m pytest tests
+
+      - store_artifacts:
+          path: .coverage
+
+      - codecov/upload:
+          conf: codecov.yml
+          file: .coverage
