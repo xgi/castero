@@ -1,7 +1,5 @@
 import time
 
-import vlc
-
 from castero.player import Player, PlayerDependencyError
 
 
@@ -17,6 +15,9 @@ class VLCPlayer(Player):
         """
         super().__init__(title, path, episode)
 
+        import vlc
+        self.vlc = vlc
+
     @staticmethod
     def check_dependencies():
         """Checks whether dependencies are met for playing a player.
@@ -24,8 +25,9 @@ class VLCPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         try:
+            import vlc
             vlc.Instance()
-        except NameError:
+        except (ImportError, OSError, AttributeError, ModuleNotFoundError):
             raise PlayerDependencyError(
                 "Dependency VLC not found, which is required for playing"
                 " media files"
@@ -36,7 +38,7 @@ class VLCPlayer(Player):
 
         Overrides method from Player; see documentation in that class.
         """
-        vlc_instance = vlc.Instance("--no-video --quiet")
+        vlc_instance = self.vlc.Instance("--no-video --quiet")
 
         self._player = vlc_instance.media_player_new()
         self._media = vlc_instance.media_new(self._path)
@@ -62,7 +64,7 @@ class VLCPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
-            if self._player.get_state() == vlc.State.Opening:
+            if self._player.get_state() == self.vlc.State.Opening:
                 self._player.release()
             else:
                 self._player.stop()
@@ -74,7 +76,7 @@ class VLCPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
-            if self._player.get_state() != vlc.State.Opening:
+            if self._player.get_state() != self.vlc.State.Opening:
                 self._player.pause()
                 self._state = 2
 
