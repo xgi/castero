@@ -79,7 +79,8 @@ class Queue:
         assert direction == 1 or direction == -1
 
         if self.first is not None:
-            self.first.seek(direction, int(Config["seek_distance"]))
+            distance = int(Config["seek_distance_forward" if direction == 1 else "seek_distance_backward"])
+            self.first.seek(direction, distance)
 
     def remove(self, player) -> int:
         """Remove a player from the queue, if it is currently in it.

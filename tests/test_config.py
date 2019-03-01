@@ -40,7 +40,8 @@ def test_config_excessive_migrate():
     copyfile(my_dir + "/datafiles/excessive_error.conf", config._Config.PATH)
     myconfig = config._Config()
     assert "this_should_not_be_here" not in myconfig
-    assert "seek_distance" in myconfig
+    assert "seek_distance_forward" in myconfig
+    assert "seek_distance_backward" in myconfig
 
 
 def test_config_length():
@@ -56,8 +57,8 @@ def test_config_iter():
 
 def test_config_get_item():
     myconfig = config._Config()
-    seek_distance = myconfig["seek_distance"]
-    assert seek_distance is not None
+    seek_distance_forward = myconfig["seek_distance_forward"]
+    assert seek_distance_forward is not None
 
 
 def test_config_try_set_item():
@@ -68,8 +69,8 @@ def test_config_try_set_item():
 
 def test_config_del_item():
     myconfig = config._Config()
-    del myconfig["seek_distance"]
-    assert "seek_distance" not in myconfig
+    del myconfig["seek_distance_forward"]
+    assert "seek_distance_forward" not in myconfig
 
 
 def test_migrate_stability():
