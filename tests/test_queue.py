@@ -140,10 +140,18 @@ def test_queue_toggle():
     player1.pause.assert_called_once()
 
 
-def test_queue_seek():
+def test_queue_seek_forward():
     myqueue = Queue()
     player1 = mock.MagicMock(spec=Player)
 
     myqueue.add(player1)
     myqueue.seek(1)
-    player1.seek.assert_called_with(1, int(Config["seek_distance"]))
+    player1.seek.assert_called_with(1, int(Config["seek_distance_forward"]))
+
+def test_queue_seek_backward():
+    myqueue = Queue()
+    player1 = mock.MagicMock(spec=Player)
+
+    myqueue.add(player1)
+    myqueue.seek(-1)
+    player1.seek.assert_called_with(-1, int(Config["seek_distance_backward"]))
