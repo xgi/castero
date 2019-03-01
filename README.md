@@ -1,6 +1,6 @@
 # castero
 
-[![GitHub release](https://img.shields.io/github/release/xgi/castero.svg)](https://github.com/xgi/castero/releases) [![CircleCI](https://circleci.com/gh/xgi/castero/tree/master.svg?style=svg)](https://circleci.com/gh/xgi/castero/tree/master) [![codecov](https://codecov.io/gh/xgi/castero/branch/master/graph/badge.svg)](https://codecov.io/gh/xgi/castero)
+[![GitHub release](https://img.shields.io/github/release/xgi/castero.svg)](https://github.com/xgi/castero/releases) [![CircleCI](https://circleci.com/gh/xgi/castero/tree/master.svg?style=svg)](https://circleci.com/gh/xgi/castero/tree/master) [![Codacy Grade](https://api.codacy.com/project/badge/Grade/f67d09d07b1d4d1aa1c97db3cbed5d1f)](https://www.codacy.com/app/xgi/castero) [![Codacy Coverage](https://api.codacy.com/project/badge/Coverage/f67d09d07b1d4d1aa1c97db3cbed5d1f)](https://www.codacy.com/app/xgi/castero)
 
 castero is a TUI podcast client for the terminal.
 
