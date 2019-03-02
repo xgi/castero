@@ -1,0 +1,18 @@
+create table feed (
+    title           text primary key,
+    description     text,
+    link            text,
+    last_build_date text,
+    copyright       text
+);
+
+create table episode (
+    key         text primary key,
+    title       text,
+    feed        text,
+    description text,
+    link        text,
+    pubdate     text,
+    copyright   text,
+    enclosure   text
+);
