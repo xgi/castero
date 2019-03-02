@@ -12,6 +12,20 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.4.2 - 2019-03-02
+**Added**
+* Added a separate config option for seeking forwards/backwards - Thanks
+@mtostenson!
+
+**Changed**
+* FeedErrors will give more descriptive information in the status bar.
+
+**Fixed**
+* Fixed a potential crash when trying to run without libmpv.
+* Fixed a crash when an unused player library is uninstalled.
+* Fixed an issue where some websites would block the client since it did not
+send requests with a user agent.
+
 ## 0.4.1 - 2019-02-12
 **Added**
 * Added support for extracting plaintext from HTML metadata descriptions (can
