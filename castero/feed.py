@@ -320,6 +320,11 @@ class Feed:
         return self._validated
 
     @property
+    def key(self) -> str:
+        """str: either the url or file of the feed, whichever is set"""
+        return self._url if self._url is not None else self._file
+
+    @property
     def title(self) -> str:
         """str: the title of the feed"""
         return self._title
