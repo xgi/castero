@@ -8,7 +8,7 @@ create table feed (
 );
 
 create table episode (
-    key         text primary key,
+    id          integer primary key,
     title       text,
     feed        text,
     description text,

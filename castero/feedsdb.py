@@ -10,6 +10,7 @@ from castero.feed import Feed
 
 class FeedsDB():
     PATH = os.path.join(DataFile.DATA_DIR, 'feeds.db')
+    OLD_PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
     SCHEMA = os.path.join(DataFile.PACKAGE, 'templates/feeds.schema')
 
     def __init__(self):
@@ -24,9 +25,7 @@ class FeedsDB():
             self._migrate_from_old_feeds()
 
     def _migrate_from_old_feeds(self):
-        path = os.path.join(DataFile.DATA_DIR, 'feeds')
-
-        with open(path, 'r') as f:
+        with open(self.OLD_PATH, 'r') as f:
             content = json.loads(f.read())
 
         for key in content:
@@ -44,10 +43,9 @@ class FeedsDB():
             ))
 
             for episode_dict in feed_dict["episodes"]:
-                sql = "insert into episode (key, title, feed, description, link, pubdate, copyright, enclosure)\n" \
-                      "values (?,?,?,?,?,?,?,?)"
+                sql = "insert into episode (title, feed, description, link, pubdate, copyright, enclosure)\n" \
+                      "values (?,?,?,?,?,?,?)"
                 self._cursor.execute(sql, (
-                    episode_dict["description"] if episode_dict["title"] == "" else episode_dict["title"],
                     episode_dict["title"],
                     key,
                     episode_dict["description"],
@@ -73,10 +71,9 @@ class FeedsDB():
         self._conn.commit()
 
     def replace_episode(self, feed: Feed, episode: Episode) -> None:
-        sql = "replace into episode (key, title, feed, description, link, pubdate, copyright, enclosure)\n" \
-              "values (?,?,?,?,?,?,?,?)"
+        sql = "replace into episode (title, feed, description, link, pubdate, copyright, enclosure)\n" \
+              "values (?,?,?,?,?,?,?)"
         self._cursor.execute(sql, (
-            episode.key,
             episode.title,
             feed.key,
             episode.description,
@@ -87,7 +84,6 @@ class FeedsDB():
         ))
         self._conn.commit()
 
-    @property
     def feeds(self) -> List[Feed]:
         sql = "select key, title, description, link, last_build_date, copyright from feed"
         self._cursor.execute(sql)
@@ -106,7 +102,6 @@ class FeedsDB():
             ))
         return feeds
 
-    @property
     def episodes(self, feed: Feed) -> List[Episode]:
         sql = "select title, description, link, pubdate, copyright, enclosure from episode where feed=?"
         self._cursor.execute(sql, (feed.key,))
