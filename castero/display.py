@@ -333,7 +333,7 @@ class Display:
             str: the user's input
         """
         assert self._footer_window is not None
-        assert type(prompt) == str
+        assert isinstance(prompt, str)
 
         curses.curs_set(1)
         self._stdscr.timeout(-1)  # disable timeouts while waiting for entry
@@ -393,7 +393,7 @@ class Display:
             bool: true if the user presses y, false otherwise
         """
         assert self._footer_window is not None
-        assert type(prompt) == str
+        assert isinstance(prompt, str)
 
         curses.echo()
         curses.curs_set(1)
@@ -441,19 +441,19 @@ class Display:
             self.create_menus()
             self.change_status("Feed '%s\' successfully added" % str(feed))
         except FeedError as e:
-            if type(e) == FeedLoadError:
+            if isinstance(e, FeedLoadError):
                 self.change_status(
                     "FeedLoadError: %s" % str(e)
                 )
-            elif type(e) == FeedDownloadError:
+            elif isinstance(e, FeedDownloadError):
                 self.change_status(
                     "FeedDownloadError: %s" % str(e)
                 )
-            elif type(e) == FeedParseError:
+            elif isinstance(e, FeedParseError):
                 self.change_status(
                     "FeedParseError: %s" % str(e)
                 )
-            elif type(e) == FeedStructureError:
+            elif isinstance(e, FeedStructureError):
                 self.change_status(
                     "FeedStructureError: %s" % str(e)
                 )
@@ -600,7 +600,7 @@ class Display:
         Args:
             status: the status message to display
         """
-        assert type(status) == str
+        assert isinstance(status, str)
 
         self._status = status
         self._status_timer = self.STATUS_TIMEOUT

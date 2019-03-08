@@ -46,7 +46,7 @@ def test_config_excessive_migrate():
 
 def test_config_length():
     myconfig = config._Config()
-    assert type(len(myconfig) == int) and len(myconfig) > 0
+    assert isinstance(len(myconfig), int) and len(myconfig) > 0
 
 
 def test_config_iter():

@@ -34,9 +34,9 @@ class Player:
             path: a URL or file-path of a media file (usually an audio file)
             episode: the Episode which this is a player for
         """
-        assert type(title) == str and title != ""
-        assert type(path) == str and path != ""
-        assert type(episode) == Episode and episode is not None
+        assert isinstance(title, str) and title != ""
+        assert isinstance(path, str) and path != ""
+        assert isinstance(episode, Episode) and episode is not None
 
         self._title = title
         self._path = path
