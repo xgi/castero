@@ -63,7 +63,7 @@ def is_true(string) -> bool:
     Args:
         string: the string to evaluate
     """
-    assert type(string) == str
+    assert isinstance(string, str)
 
     return string in ['True', 'true', '1']
 

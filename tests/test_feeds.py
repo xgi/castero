@@ -28,7 +28,7 @@ def test_feeds_write(prevent_modification):
 def test_feeds_length(prevent_modification):
     copyfile(my_dir + "/datafiles/feeds_working", feeds.Feeds.PATH)
     myfeeds = feeds.Feeds()
-    assert type(len(myfeeds) == int) and len(myfeeds) == 2
+    assert isinstance(len(myfeeds), int) and len(myfeeds) == 2
 
 
 def test_feeds_iter(prevent_modification):

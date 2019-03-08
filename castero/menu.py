@@ -23,7 +23,7 @@ class Menu:
         """
         assert window.getmaxyx()[0] >= 3
         assert child is None or isinstance(child, Menu)
-        assert type(active) == bool
+        assert isinstance(active, bool)
 
         self._window = window
         self._items = items
@@ -140,7 +140,7 @@ class Menu:
         Args:
             active: whether this menu is active or not
         """
-        assert type(active) == bool
+        assert isinstance(active, bool)
 
         self._active = active
 

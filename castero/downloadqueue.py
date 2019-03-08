@@ -25,7 +25,7 @@ class DownloadQueue:
     def add(self, episode) -> None:
         """Adds an episode to the end of the queue.
         """
-        assert type(episode) == Episode
+        assert isinstance(episode, Episode)
 
         if episode not in self._episodes:
             self._episodes.append(episode)

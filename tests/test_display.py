@@ -140,7 +140,7 @@ def test_display_add_feed(display):
     display._get_input_str = mock.MagicMock(return_value=feed_dir)
     display.add_feed()
     assert len(display.feeds) == 1
-    assert type(display.feeds[feed_dir]) == Feed
+    assert isinstance(display.feeds[feed_dir], Feed)
 
 
 def test_display_add_feed_errors(display):
