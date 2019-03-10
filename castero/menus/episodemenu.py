@@ -6,16 +6,16 @@ class EpisodeMenu(Menu):
     def __init__(self, window, source, child=None, active=False) -> None:
         super().__init__(window, source, child=child, active=active)
 
-        self._parent_feed = None
+        self._episode_names = []
 
     def _items(self):
-        return [str(episode) for episode in
-                self._source.episodes(self._parent_feed)]
+        return self._episode_names
 
     def update_items(self, feed: Feed):
         assert isinstance(feed, Feed)
 
-        self._parent_feed = feed
+        self._episode_names = [str(episode) for episode in \
+            self._source.episodes(feed)]
 
     def update_child(self):
         pass
