@@ -13,6 +13,8 @@ class FeedMenu(Menu):
         return [str(feed) for feed in self._feeds]
 
     def update_items(self, obj):
+        super().update_items(obj)
+        
         self._feeds = self._source.feeds()
 
     def update_child(self):

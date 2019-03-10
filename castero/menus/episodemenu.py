@@ -14,6 +14,8 @@ class EpisodeMenu(Menu):
     def update_items(self, feed: Feed):
         assert isinstance(feed, Feed)
 
+        super().update_items(feed)
+
         self._episode_names = [str(episode) for episode in \
             self._source.episodes(feed)]
 

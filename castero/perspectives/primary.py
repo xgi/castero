@@ -83,13 +83,6 @@ class Primary(Perspective):
             del self._episode_menu
             self._episode_menu = None
 
-        feed_items = [[]]
-        for key in self._display.feeds:
-            feed = self._display.feeds[key]
-            feed_items[0].append(
-                str(feed)
-            )
-
         self._episode_menu = EpisodeMenu(self._episode_window, self._display.database)
         self._feed_menu = FeedMenu(self._feed_window, self._display.database,
                                child=self._episode_menu, active=True)

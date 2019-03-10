@@ -3,7 +3,7 @@ import curses
 from castero import helpers
 from castero.config import Config
 from castero.menu import Menu
-from castero.menus.episodemenu import EpisodeMenu
+from castero.menus.queuemenu import QueueMenu
 from castero.perspective import Perspective
 
 
@@ -69,11 +69,7 @@ class QueueListing(Perspective):
             del self._queue_menu
             self._queue_menu = None
 
-        queue_items = [[]]
-        for player in self._display.queue:
-            queue_items[0].append(str(player))
-
-        self._queue_menu = EpisodeMenu(self._queue_window, self._display.database, active=True)
+        self._queue_menu = QueueMenu(self._queue_window, self._display.queue, active=True)
 
         # force reset active window to prevent starting in the episodes menu
         self._active_window = 0
