@@ -6,6 +6,7 @@ import re
 import castero
 from castero import helpers
 from castero.config import Config
+from castero.database import Database
 from castero.display import Display
 from castero.feeds import Feeds
 from castero.player import Player
@@ -14,6 +15,7 @@ from castero.player import Player
 def main():
     # instantiate DataFile-based objects
     feeds = Feeds()
+    database = Database()
 
     # update fields in help menu text
     for field in Config:
@@ -53,7 +55,7 @@ def main():
 
     # instantiate the display object
     stdscr = curses.initscr()
-    display = Display(stdscr, feeds)
+    display = Display(stdscr, feeds, database)
     display.clear()
     display.update_parent_dimensions()
 

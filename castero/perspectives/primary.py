@@ -4,6 +4,7 @@ from castero import helpers
 from castero.config import Config
 from castero.menu import Menu
 from castero.menus.episodemenu import EpisodeMenu
+from castero.menus.feedmenu import FeedMenu
 from castero.perspective import Perspective
 from castero.player import Player
 
@@ -89,9 +90,8 @@ class Primary(Perspective):
                 str(feed)
             )
 
-        self._episode_menu = EpisodeMenu(self._episode_window,
-                                         self._display._feeds)
-        self._feed_menu = Menu(self._feed_window, feed_items,
+        self._episode_menu = EpisodeMenu(self._episode_window, self._display.database)
+        self._feed_menu = FeedMenu(self._feed_window, self._display.database,
                                child=self._episode_menu, active=True)
 
         # force reset active window to prevent starting in the episodes menu

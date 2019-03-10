@@ -7,6 +7,7 @@ from os.path import dirname, basename, isfile
 import castero
 from castero import helpers
 from castero.config import Config
+from castero.database import Database
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
@@ -60,7 +61,7 @@ class Display:
     )
     AVAILABLE_PLAYERS = {}
 
-    def __init__(self, stdscr, feeds) -> None:
+    def __init__(self, stdscr, feeds, database) -> None:
         """Initializes the object.
 
         Args:
@@ -69,6 +70,7 @@ class Display:
         """
         self._stdscr = stdscr
         self._feeds = feeds
+        self._database = database
         self._parent_x = -1
         self._parent_y = -1
         self._perspectives = {}
@@ -648,6 +650,11 @@ class Display:
     def feeds(self) -> Feeds:
         """Feeds: the user's feeds"""
         return self._feeds
+
+    @property
+    def database(self) -> Database:
+        """Database: the user's database"""
+        return self._database
 
     @property
     def perspectives(self) -> dict:
