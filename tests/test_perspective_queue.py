@@ -25,21 +25,21 @@ queue.add(player1)
 queue.add(player2)
 
 
-def get_queuelisting_perspective(display):
-    """Retrieve the QueueListing perspective.
+def get_queue_perspective(display):
+    """Retrieve the Queue perspective.
 
     Args:
         display: the display containing the loaded perspective
 
     Returns:
-        QueueListing: the loaded QueueListing perspective
+        Queue: the loaded Queue perspective
     """
     display._active_perspective = 2
     return display.perspectives[2]
 
 
-def test_perspective_queuelisting_borders(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_borders(display):
+    perspective = get_queue_perspective(display)
 
     display.display()
     assert perspective._queue_window.hline.call_count == 1
@@ -48,8 +48,8 @@ def test_perspective_queuelisting_borders(display):
     display._stdscr.reset_mock()
 
 
-def test_perspective_queuelisting_display_episode_metadata(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_display_episode_metadata(display):
+    perspective = get_queue_perspective(display)
 
     display._queue = queue
 
@@ -60,8 +60,8 @@ def test_perspective_queuelisting_display_episode_metadata(display):
     display._stdscr.reset_mock()
 
 
-def test_perspective_queuelisting_input_keys(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_input_keys(display):
+    perspective = get_queue_perspective(display)
 
     display._queue = queue
     display._footer_window.getch = mock.MagicMock(return_value=10)
@@ -108,8 +108,8 @@ def test_perspective_queuelisting_input_keys(display):
         assert ret_val
 
 
-def test_perspective_queuelisting_draw_metadata(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_draw_metadata(display):
+    perspective = get_queue_perspective(display)
 
     feed.episodes.append(episode)
     display.feeds["feed url"] = feed
@@ -117,15 +117,15 @@ def test_perspective_queuelisting_draw_metadata(display):
     perspective._draw_metadata(perspective._metadata_window, episode=episode)
 
 
-def test_perspective_queuelisting_get_active_menu(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_get_active_menu(display):
+    perspective = get_queue_perspective(display)
 
     perspective._active_window = 0
     assert perspective._get_active_menu() == perspective._queue_menu
 
 
-def test_perspective_queuelisting_cycle_queue_to_selected_first(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_cycle_queue_to_selected_first(display):
+    perspective = get_queue_perspective(display)
 
     perspective._queue_menu._selected = 0
     queue1 = Queue()
@@ -138,8 +138,8 @@ def test_perspective_queuelisting_cycle_queue_to_selected_first(display):
     assert queue1.length == 3
 
 
-def test_perspective_queuelisting_cycle_queue_to_selected_middle(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_cycle_queue_to_selected_middle(display):
+    perspective = get_queue_perspective(display)
 
     perspective._queue_menu._selected = 1
     queue1 = Queue()
@@ -152,8 +152,8 @@ def test_perspective_queuelisting_cycle_queue_to_selected_middle(display):
     assert queue1.length == 2
 
 
-def test_perspective_queuelisting_remove_selected_first(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_remove_selected_first(display):
+    perspective = get_queue_perspective(display)
 
     perspective._queue_menu._selected = 0
     queue1 = Queue()
@@ -166,8 +166,8 @@ def test_perspective_queuelisting_remove_selected_first(display):
     assert queue1.length == 2
 
 
-def test_perspective_queuelisting_remove_selected_middle(display):
-    perspective = get_queuelisting_perspective(display)
+def test_perspective_queue_remove_selected_middle(display):
+    perspective = get_queue_perspective(display)
 
     perspective._queue_menu._selected = 1
     queue1 = Queue()

@@ -6,8 +6,8 @@ from castero.menu import Menu
 from castero.perspective import Perspective
 
 
-class QueueListing(Perspective):
-    """The QueueListing class.
+class QueuePerspective(Perspective):
+    """The QueuePerspective class.
 
     This class handles display elements while in the queue perspective, which
     is a listing of the user's current Queue in which they can directly modify

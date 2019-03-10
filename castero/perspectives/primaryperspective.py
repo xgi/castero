@@ -8,8 +8,8 @@ from castero.perspective import Perspective
 from castero.player import Player
 
 
-class Primary(Perspective):
-    """The Primary class.
+class PrimaryPerspective(Perspective):
+    """The PrimaryPerspective class.
 
     This class handles display elements while in the primary perspective, which
     is the default perspective.
