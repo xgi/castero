@@ -8,8 +8,8 @@ from castero.episode import Episode
 from castero.feed import Feed
 
 
-class FeedsDB():
-    PATH = os.path.join(DataFile.DATA_DIR, 'feeds.db')
+class Database():
+    PATH = os.path.join(DataFile.DATA_DIR, 'castero.db')
     OLD_PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
     SCHEMA = os.path.join(DataFile.PACKAGE, 'templates/feeds.schema')
 
