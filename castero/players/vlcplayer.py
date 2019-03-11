@@ -27,7 +27,8 @@ class VLCPlayer(Player):
         try:
             import vlc
             vlc.Instance()
-        except (ImportError, OSError, AttributeError, ModuleNotFoundError):
+        except (ImportError, NameError, OSError, AttributeError,
+                ModuleNotFoundError):
             raise PlayerDependencyError(
                 "Dependency VLC not found, which is required for playing"
                 " media files"
