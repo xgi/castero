@@ -140,12 +140,13 @@ class Perspective(ABC):
 
         lines = []
         for line in temp_lines:
-            parts = cjkwrap.wrap(line, window.getmaxyx()[1] - 1)
+            parts = cjkwrap.wrap(line, window.getmaxyx()[1] - 1,
+                                 replace_whitespace=True)
             if len(parts) == 0:
                 lines.append('')
             else:
                 for part in parts:
-                    lines.append(part)
+                    lines.append(part.strip())
 
         # truncate to at most 70% of the total lines on the screen
         lines = lines[:max_lines]
@@ -157,6 +158,6 @@ class Perspective(ABC):
                 line = line[3:]
             else:
                 window.attrset(curses.color_pair(1))
-            
+
             window.addstr(y, 0, line)
             y += 1

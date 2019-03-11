@@ -15,6 +15,9 @@ class EpisodeMenu(Menu):
         return [pair[1] for pair in self._episode_tuples]
 
     def metadata(self):
+        if len(self._episode_tuples) == 0:
+            return ""
+
         pair = self._episode_tuples[self._selected]
         episode = self._source.episode(pair[0])
 
