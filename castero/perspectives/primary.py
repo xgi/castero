@@ -125,17 +125,7 @@ class Primary(Perspective):
 
         # draw metadata
         if not self._metadata_updated:
-            selected_feed_index = self._feed_menu.selected_index
-            feed = self._display.feeds.at(selected_feed_index)
-            if feed is not None:
-                if self._active_window == 0:
-                    self._draw_metadata(self._metadata_window, feed=feed)
-                elif self._active_window == 1:
-                    selected_episode_index = self._episode_menu.selected_index
-                    if 0 <= selected_episode_index < len(feed.episodes):
-                        episode = feed.episodes[selected_episode_index]
-                        self._draw_metadata(
-                            self._metadata_window, episode=episode)
+            self._draw_metadata(self._metadata_window)
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.

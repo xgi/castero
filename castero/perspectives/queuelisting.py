@@ -98,11 +98,8 @@ class QueueListing(Perspective):
         self._queue_menu.display()
 
         # draw metadata
-        queue = self._display.queue
-        if not self._metadata_updated and queue.length > 0:
-            selected_index = self._queue_menu.selected_index
-            episode = queue[selected_index].episode
-            self._draw_metadata(self._metadata_window, episode=episode)
+        if not self._metadata_updated:
+            self._draw_metadata(self._metadata_window)
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.

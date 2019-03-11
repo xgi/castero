@@ -55,8 +55,7 @@ def test_perspective_queuelisting_display_episode_metadata(display):
 
     perspective._draw_metadata = mock.MagicMock()
     display.display()
-    perspective._draw_metadata.assert_called_with(perspective._metadata_window,
-                                                  episode=queue.first.episode)
+    perspective._draw_metadata.assert_called_with(perspective._metadata_window)
     display._stdscr.reset_mock()
 
 
@@ -113,8 +112,8 @@ def test_perspective_queuelisting_draw_metadata(display):
 
     feed.episodes.append(episode)
     display.feeds["feed url"] = feed
-    perspective._draw_metadata(perspective._metadata_window, feed=feed)
-    perspective._draw_metadata(perspective._metadata_window, episode=episode)
+    perspective._draw_metadata(perspective._metadata_window)
+    perspective._draw_metadata(perspective._metadata_window)
 
 
 def test_perspective_queuelisting_get_active_menu(display):

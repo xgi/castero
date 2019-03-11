@@ -45,6 +45,11 @@ class Menu(ABC):
     def _items(self) -> List[str]:
         """List[str]: the current items in this menu"""
 
+    @abstractproperty
+    @property
+    def metadata(self) -> str:
+        """str: metadata for the selected item"""
+
     @abstractmethod
     def update_items(self, obj) -> None:
         """Called by the parent menu (if we have one) to update our items.

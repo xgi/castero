@@ -1,5 +1,8 @@
+from castero import helpers
+from castero.config import Config
 from castero.menu import Menu
 from castero.menus.episodemenu import EpisodeMenu
+
 
 class FeedMenu(Menu):
     def __init__(self, window, source, child=None, active=False) -> None:
@@ -12,9 +15,25 @@ class FeedMenu(Menu):
     def _items(self):
         return [str(feed) for feed in self._feeds]
 
+    def metadata(self):
+        feed = self._feeds[self._selected]
+
+        description = helpers.html_to_plain(feed.description) if \
+            helpers.is_true(Config["clean_html_descriptions"]) else \
+            feed.description
+
+        return \
+            f"\cb{feed.title}\n" \
+            f"{feed.last_build_date}\n\n" \
+            f"{feed.link}\n\n" \
+            f"\cbDescription:\n" \
+            f"{description}\n\n" \
+            f"\cbCopyright:\n" \
+            f"{feed.copyright}\n"
+
     def update_items(self, obj):
         super().update_items(obj)
-        
+
         self._feeds = self._source.feeds()
 
     def update_child(self):

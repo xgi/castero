@@ -1,3 +1,5 @@
+from castero import helpers
+from castero.config import Config
 from castero.feed import Feed
 from castero.menu import Menu
 
@@ -6,10 +8,31 @@ class QueueMenu(Menu):
     def __init__(self, window, source, child=None, active=False) -> None:
         super().__init__(window, source, child=child, active=active)
 
-        self._player_names = []
-
     def _items(self):
         return [str(player) for player in self._source]
+
+    def metadata(self):
+        if self._source.length == 0:
+            return ""
+
+        episode = self._source[self._selected].episode
+
+        description = helpers.html_to_plain(episode.description) if \
+            helpers.is_true(Config["clean_html_descriptions"]) else \
+            episode.description
+        downloaded = "Episode downloaded and available for offline playback." \
+            if episode.downloaded() else "Episode not downloaded."
+
+        return \
+            f"\cb{episode.title}\n" \
+            f"{episode.pubdate}\n\n" \
+            f"{episode.link}\n\n" \
+            f"\cbDescription:\n" \
+            f"{description}\n\n" \
+            f"\cbCopyright:\n" \
+            f"{episode.copyright}\n\n" \
+            f"\cbDownloaded:\n" \
+            f"{downloaded}\n"
 
     def update_items(self, obj):
         super().update_items(obj)

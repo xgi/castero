@@ -41,8 +41,7 @@ def test_perspective_primary_display_feed_metadata(display):
 
     perspective._draw_metadata = mock.MagicMock()
     display.display()
-    perspective._draw_metadata.assert_called_with(perspective._metadata_window,
-                                                  feed=feed)
+    perspective._draw_metadata.assert_called_with(perspective._metadata_window)
     display._stdscr.reset_mock()
 
 
@@ -55,8 +54,7 @@ def test_perspective_primary_display_episode_metadata(display):
 
     perspective._draw_metadata = mock.MagicMock()
     display.display()
-    perspective._draw_metadata.assert_called_with(perspective._metadata_window,
-                                                  episode=feed.episodes[0])
+    perspective._draw_metadata.assert_called_with(perspective._metadata_window)
     display._stdscr.reset_mock()
 
 
@@ -129,8 +127,8 @@ def test_perspective_primary_draw_metadata(display):
                       enclosure="episode enclosure")
     feed.episodes.append(episode)
     display.feeds["feed url"] = feed
-    perspective._draw_metadata(perspective._metadata_window, feed=feed)
-    perspective._draw_metadata(perspective._metadata_window, episode=episode)
+    perspective._draw_metadata(perspective._metadata_window)
+    perspective._draw_metadata(perspective._metadata_window)
 
 
 def test_perspective_primary_get_active_menu(display):
