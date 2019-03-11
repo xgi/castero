@@ -1,7 +1,7 @@
 import json
 import os
 import sqlite3
-from typing import List
+from typing import List, Tuple
 
 from castero.datafile import DataFile
 from castero.episode import Episode
@@ -102,19 +102,36 @@ class Database():
             ))
         return feeds
 
-    def episodes(self, feed: Feed) -> List[Episode]:
-        sql = "select title, description, link, pubdate, copyright, enclosure from episode where feed=?"
+    def episodes(self, feed: Feed) -> List[Tuple[int, Episode]]:
+        sql = "select id, title, description, link, pubdate, copyright, enclosure from episode where feed=?"
         self._cursor.execute(sql, (feed.key,))
 
         episodes = []
         for row in self._cursor.fetchall():
-            episodes.append(Episode(
+            episodes.append((row[0], Episode(
                 feed,
-                title=row[0],
-                description=row[1],
-                link=row[2],
-                pubdate=row[3],
-                copyright=row[4],
-                enclosure=row[5]
-            ))
+                title=row[1],
+                description=row[2],
+                link=row[3],
+                pubdate=row[4],
+                copyright=row[5],
+                enclosure=row[6]
+            )))
         return episodes
+
+    def episode(self, ep_id: int) -> Episode:
+        sql = "select feed, title, description, link, pubdate, copyright, enclosure from episode where id=?"
+        self._cursor.execute(sql, (ep_id,))
+
+        episodes = []
+        result = self._cursor.fetchone()
+
+        return Episode(
+            result[0],
+            title=result[1],
+            description=result[2],
+            link=result[3],
+            pubdate=result[4],
+            copyright=result[5],
+            enclosure=result[6]
+        )
