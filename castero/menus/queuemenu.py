@@ -8,6 +8,9 @@ class QueueMenu(Menu):
     def __init__(self, window, source, child=None, active=False) -> None:
         super().__init__(window, source, child=child, active=active)
 
+    def __len__(self) -> int:
+        return self._source.length
+
     def _items(self):
         return [str(player) for player in self._source]
 

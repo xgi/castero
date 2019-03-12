@@ -83,9 +83,10 @@ class Primary(Perspective):
             del self._episode_menu
             self._episode_menu = None
 
-        self._episode_menu = EpisodeMenu(self._episode_window, self._display.database)
+        self._episode_menu = EpisodeMenu(
+            self._episode_window, self._display.database)
         self._feed_menu = FeedMenu(self._feed_window, self._display.database,
-                               child=self._episode_menu, active=True)
+                                   child=self._episode_menu, active=True)
 
         # force reset active window to prevent starting in the episodes menu
         self._active_window = 0
@@ -191,10 +192,11 @@ class Primary(Perspective):
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
         elif c == key_mapping[Config['key_save']]:
-            feed_index = self._feed_menu.selected_index
-            episode_index = self._episode_menu.selected_index if \
-                self._active_window == 1 else None
-            self._display.save_episodes(feed_index, episode_index)
+            if self._active_window == 0:
+                self._display.save_episodes(feed=self._feed_menu.item())
+            elif self._active_window == 1:
+                self._display.save_episodes(episode=self._episode_menu.item())
+            
         elif c == key_mapping[Config['key_invert']]:
             self._invert_selected_menu()
 
@@ -237,41 +239,24 @@ class Primary(Perspective):
         This method will not clear the queue prior to adding the new player(s),
         nor will it play the episodes after running.
         """
-        feed_index = self._feed_menu.selected_index
-        feed = self._display.feeds.at(feed_index)
         if self._active_window == 0:
+            feed = self._feed_menu.item()
             if feed is not None:
-                for episode in feed.episodes:
+                for ep_id, episode in self._display.database.episodes(feed):
                     player = Player.create_instance(
-                        self._display.AVAILABLE_PLAYERS,
-                        str(episode),
-                        episode.get_playable(),
-                        episode)
+                        self._display.AVAILABLE_PLAYERS, str(episode),
+                        episode.get_playable(), episode)
                     self._display.queue.add(player)
         elif self._active_window == 1:
-            episode_index = self._episode_menu.selected_index
-            if feed is not None:
-                episode = feed.episodes[episode_index]
+            episode = self._episode_menu.item()
+            if episode is not None:
                 player = Player.create_instance(
-                    self._display.AVAILABLE_PLAYERS,
-                    str(episode),
-                    episode.get_playable(),
-                    episode)
+                    self._display.AVAILABLE_PLAYERS, str(episode),
+                    episode.get_playable(), episode)
                 self._display.queue.add(player)
 
     def _invert_selected_menu(self) -> None:
         """Inverts the contents of the selected menu.
         """
-        feed_index = self._feed_menu.selected_index
-        if self._active_window == 0:
-            self._display.feeds.sort(toggle_invert=True)
-            self.create_menus()
-        elif self._active_window == 1:
-            feed = self._display.feeds.at(feed_index)
-            if feed is not None:
-                feed.invert_episodes()
-                self._display.feeds.write()
-                self.create_menus()
-                for i in range(feed_index):
-                    self._feed_menu.move(-1)
-                self._change_active_window(1)
+        # TODO: call an invert method on the menu itself
+        pass

@@ -13,6 +13,9 @@ class FeedMenu(Menu):
 
         super().__init__(window, source, child=child, active=active)
 
+    def __len__(self) -> int:
+        return len(self._feeds)
+
     def _items(self):
         return [str(feed) for feed in self._feeds]
 

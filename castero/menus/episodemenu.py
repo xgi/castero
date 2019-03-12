@@ -12,6 +12,9 @@ class EpisodeMenu(Menu):
         self._feed = None
         self._episode_tuples = []  # episodes in the form (id, title)
 
+    def __len__(self) -> int:
+        return len(self._episode_tuples)
+
     def _items(self):
         return [pair[1] for pair in self._episode_tuples]
 

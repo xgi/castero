@@ -189,18 +189,16 @@ class QueueListing(Perspective):
     def _cycle_queue_to_selected(self) -> None:
         """Remove all players in the queue preceding the selected one.
         """
-        selected_index = self._queue_menu.selected_index
-        selected_player = self._display.queue[selected_index]
-        while self._display.queue.first != selected_player:
+        target = self._queue_menu.item()
+        while self._display.queue.first != target:
             self._display.queue.next()
 
     def _remove_selected_from_queue(self) -> None:
         """Remove the selected player from the queue.
         """
-        selected_index = self._queue_menu.selected_index
-        if selected_index < self._display.queue.length:
-            selected_player = self._display.queue[selected_index]
-            index = self._display.queue.remove(selected_player)
-            self.create_menus()
+        player = self._queue_menu.item()
+        if player is not None:
+            index = self._display.queue.remove(player)
+            self._queue_menu.update_items(None)
             for i in range(index):
                 self._get_active_menu().move(-1)

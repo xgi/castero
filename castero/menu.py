@@ -40,6 +40,10 @@ class Menu(ABC):
         if child is not None:
             self.update_child()
 
+    @abstractmethod
+    def __len__(self) -> int:
+        """int: the number of items in the menu"""
+
     @abstractproperty
     @property
     def _items(self) -> List[str]:

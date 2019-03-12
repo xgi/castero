@@ -11,7 +11,6 @@ from castero.database import Database
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
-from castero.feeds import Feeds
 from castero.perspective import Perspective
 from castero.queue import Queue
 
@@ -61,15 +60,14 @@ class Display:
     )
     AVAILABLE_PLAYERS = {}
 
-    def __init__(self, stdscr, feeds, database) -> None:
+    def __init__(self, stdscr, database) -> None:
         """Initializes the object.
 
         Args:
             stdscr: a stdscr from curses.initscr()
-            feeds: a loaded castero.Feeds object
+            database: a connected castero.Database
         """
         self._stdscr = stdscr
-        self._feeds = feeds
         self._database = database
         self._parent_x = -1
         self._parent_y = -1
@@ -267,10 +265,11 @@ class Display:
         footer_str = ""
         if self._status == "" and not \
                 helpers.is_true(Config["disable_default_status"]):
-            if len(self._feeds) > 0:
-                total_feeds = len(self._feeds)
+            feeds = self.database.feeds()
+            if len(feeds) > 0:
+                total_feeds = len(feeds)
                 lengths_of_feeds = \
-                    [len(self._feeds[key].episodes) for key in self._feeds]
+                    [len(self.database.episodes(feed)) for feed in feeds]
                 total_episodes = sum(lengths_of_feeds)
                 median_episodes = helpers.median(lengths_of_feeds)
 
@@ -438,8 +437,7 @@ class Display:
             else:
                 feed = Feed(file=path)
             if feed.validated:
-                self._feeds[path] = feed
-            self._feeds.write()
+                self.database.replace_feed(feed)
             self.create_menus()
             self.change_status("Feed '%s\' successfully added" % str(feed))
         except FeedError as e:
@@ -481,11 +479,13 @@ class Display:
                 "Are you sure you want to delete this feed? (y/n): "
             )
         if should_delete:
-            deleted = self._feeds.del_at(index)
-            if deleted:
-                self._feeds.write()
-                self.create_menus()
-                self.change_status("Feed successfully deleted")
+            # TODO: use database.delete_feed, when it exists
+            pass
+            # deleted = self._feeds.del_at(index)
+            # if deleted:
+            #     self._feeds.write()
+            #     self.create_menus()
+            #     self.change_status("Feed successfully deleted")
 
     def reload_feeds(self) -> None:
         """Reloads the users' feeds.
@@ -496,17 +496,19 @@ class Display:
         This method starts the reloading in a new un-managed thread.
         """
         should_reload = True
-        if len(self._feeds) >= int(Config["reload_feeds_threshold"]):
+        if len(self.sa) >= int(Config["reload_feeds_threshold"]):
             should_reload = self._get_y_n(
                 "Are you sure you want to reload all of your feeds?"
                 " (y/n): "
             )
         if should_reload:
-            t = threading.Thread(target=self._feeds.reload, args=[self])
-            t.start()
+            # TODO: implement reload
+            pass
+            # t = threading.Thread(target=self._feeds.reload, args=[self])
+            # t.start()
 
-    def save_episodes(self, feed_index, episode_index=None) -> None:
-        """Saves the current selected feed or episode.
+    def save_episodes(self, feed=None, episode=None) -> None:
+        """Save a feed or episode.
 
         If the user is saving an episode and the episode is already saved, this
         method will instead ask the user if they would like to delete the
@@ -514,29 +516,27 @@ class Display:
         prompt to delete episodes, even if some are downloaded. In this case,
         downloaded episodes are simply skipped.
 
+        Exactly one of either feed or episode must be given.
+
         Args:
-            feed_index: the index of the feed to delete in self._feeds
-            episode_index: (optional) the index of the episode to delete in the
-            feed's episode list, if saving an individual episode
+            feed: (optional) a feed to download all episodes of
+            episode: (optional) an episode to download or delete
         """
-        if episode_index is None:
-            feed = self._feeds.at(feed_index)
-            if feed is not None:
-                for episode in feed.episodes:
-                    if not episode.downloaded():
-                        self._download_queue.add(episode)
-        else:
-            feed = self._feeds.at(feed_index)
-            if feed is not None:
-                episode = feed.episodes[episode_index]
-                if episode.downloaded():
-                    should_delete = self._get_y_n(
-                        "Are you sure you want to delete the downloaded"
-                        " episode? (y/n): ")
-                    if should_delete:
-                        episode.delete(self)
-                else:
+        assert (feed is None or episode is None) and (feed is not episode)
+
+        if feed is not None:
+            for ep_id, episode in self.database.episodes(feed):
+                if not episode.downloaded():
                     self._download_queue.add(episode)
+        else:
+            if episode.downloaded():
+                should_delete = self._get_y_n(
+                    "Are you sure you want to delete the downloaded"
+                    " episode? (y/n): ")
+                if should_delete:
+                    episode.delete(self)
+            else:
+                self._download_queue.add(episode)
 
     def clear(self) -> None:
         """Clear the screen.
@@ -645,11 +645,6 @@ class Display:
     def parent_y(self) -> int:
         """int: the height of the parent screen, in characters"""
         return self._parent_y
-
-    @property
-    def feeds(self) -> Feeds:
-        """Feeds: the user's feeds"""
-        return self._feeds
 
     @property
     def database(self) -> Database:
