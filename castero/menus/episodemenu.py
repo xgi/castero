@@ -1,5 +1,6 @@
 from castero import helpers
 from castero.config import Config
+from castero.episode import Episode
 from castero.feed import Feed
 from castero.menu import Menu
 
@@ -14,12 +15,17 @@ class EpisodeMenu(Menu):
     def _items(self):
         return [pair[1] for pair in self._episode_tuples]
 
-    def metadata(self):
+    def item(self) -> Episode:
         if len(self._episode_tuples) == 0:
-            return ""
-
+            return None
+        
         pair = self._episode_tuples[self._selected]
-        episode = self._source.episode(pair[0])
+        return self._source.episode(pair[0])
+
+    def metadata(self):
+        episode = self.item()
+        if episode is None:
+            return ""
 
         description = helpers.html_to_plain(episode.description) if \
             helpers.is_true(Config["clean_html_descriptions"]) else \

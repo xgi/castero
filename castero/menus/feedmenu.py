@@ -1,5 +1,6 @@
 from castero import helpers
 from castero.config import Config
+from castero.feed import Feed
 from castero.menu import Menu
 from castero.menus.episodemenu import EpisodeMenu
 
@@ -15,8 +16,16 @@ class FeedMenu(Menu):
     def _items(self):
         return [str(feed) for feed in self._feeds]
 
+    def item(self) -> Feed:
+        if len(self._feeds) == 0:
+            return None
+        
+        return self._feeds[self._selected]
+
     def metadata(self):
-        feed = self._feeds[self._selected]
+        feed = self.item()
+        if feed is None:
+            return ""
 
         description = helpers.html_to_plain(feed.description) if \
             helpers.is_true(Config["clean_html_descriptions"]) else \

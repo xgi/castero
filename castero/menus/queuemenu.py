@@ -11,11 +11,17 @@ class QueueMenu(Menu):
     def _items(self):
         return [str(player) for player in self._source]
 
-    def metadata(self):
+    def item(self) -> Feed:
         if self._source.length == 0:
-            return ""
+            return None
+        
+        return self._source[self._selected]
 
-        episode = self._source[self._selected].episode
+    def metadata(self):
+        player = self.item()
+        if player is None:
+            return ""
+        episode = player.episode
 
         description = helpers.html_to_plain(episode.description) if \
             helpers.is_true(Config["clean_html_descriptions"]) else \

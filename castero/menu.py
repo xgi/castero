@@ -47,6 +47,11 @@ class Menu(ABC):
 
     @abstractproperty
     @property
+    def item(self):
+        """the selected item"""
+
+    @abstractproperty
+    @property
     def metadata(self) -> str:
         """str: metadata for the selected item"""
 
