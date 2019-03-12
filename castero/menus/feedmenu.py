@@ -47,8 +47,15 @@ class FeedMenu(Menu):
         super().update_items(obj)
 
         self._feeds = self._source.feeds()
+        if self._inverted:
+            self._feeds.reverse()
 
     def update_child(self):
         if self._feeds is None:
             self.update_items(None)
         self._child.update_items(self._feeds[self._selected])
+
+    def invert(self):
+        super().invert()
+
+        self.update_items(None)

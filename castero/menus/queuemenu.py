@@ -48,3 +48,6 @@ class QueueMenu(Menu):
 
     def update_child(self):
         pass
+
+    def invert(self):
+        pass

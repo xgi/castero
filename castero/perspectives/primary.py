@@ -258,5 +258,5 @@ class Primary(Perspective):
     def _invert_selected_menu(self) -> None:
         """Inverts the contents of the selected menu.
         """
-        # TODO: call an invert method on the menu itself
-        pass
+        self._get_active_menu().invert()
+        self._feed_menu.update_child()

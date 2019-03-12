@@ -56,6 +56,13 @@ class EpisodeMenu(Menu):
 
         self._episode_tuples = \
             [(pair[0], str(pair[1])) for pair in self._source.episodes(feed)]
+        if self._inverted:
+            self._episode_tuples.reverse()
 
     def update_child(self):
         pass
+
+    def invert(self):
+        super().invert()
+
+        self.update_items(self._feed)

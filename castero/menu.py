@@ -36,6 +36,7 @@ class Menu(ABC):
         self._display_start_y = 2
         self._top_index = 0
         self._max_displayed_items = self._window.getmaxyx()[0] - 4
+        self._inverted = False
 
         if child is not None:
             self.update_child()
@@ -78,6 +79,15 @@ class Menu(ABC):
         This method calls the child's update_items with an
         implementation-specific object understood by the child.
         """
+
+    @abstractmethod
+    def invert(self) -> None:
+        """Invert the menu order.
+
+        Inversion is not just a visual effect -- the contents of the items list
+        must also be reversed.
+        """
+        self._inverted = not self._inverted
 
     def _pad_text(self, text) -> str:
         """Pads an item string with spaces to be the full length of the menu.
