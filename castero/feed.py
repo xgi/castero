@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ElementTree
 
 import requests
+from typing import List
 
 from castero.config import Config
 from castero.episode import Episode
@@ -72,7 +73,6 @@ class Feed:
         self._link = kwargs.get('link', None)
         self._last_build_date = kwargs.get('last_build_date', None)
         self._copyright = kwargs.get('copyright', None)
-        self._episodes = kwargs.get('episodes', [])
 
         # assume that if we have been passed the title then we have also been
         # passed everything else and that the feed is valid
@@ -81,8 +81,8 @@ class Feed:
             self._download_feed()
             # check that the XML document is a properly structured RSS feed
             self._validate_feed()
-            # set this object's metadata using rss feed, and creates episodes
-            self._process_feed()
+            # set this object's metadata using rss feed
+            self._parse_metadata()
         else:
             self._validated = True
 
@@ -125,8 +125,8 @@ class Feed:
                 else:
                     raise FeedDownloadError(
                         "Did not receive an acceptable status code while"
-                        " downloading the page. Expected 200, got: " +
-                        str(response.status_code))
+                        " downloading the page. Expected 200, got: "
+                        + str(response.status_code))
             except requests.exceptions.RequestException:
                 raise FeedDownloadError(
                     "An exception occurred when attempting to download the"
@@ -191,8 +191,8 @@ class Feed:
         if len(root_children) > 0:
             if len(root_children) > 1:
                 raise FeedStructureError(
-                    "RSS feed has too many children; expected 1, was: " +
-                    str(len(root_children)))
+                    "RSS feed has too many children; expected 1, was: "
+                    + str(len(root_children)))
             else:
                 if root_children[0].tag != 'channel':
                     raise FeedStructureError(
@@ -210,25 +210,25 @@ class Feed:
                         if len(chan_title_tags) != 1:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
-                                " title tags; expected 1, was: " +
-                                str(len(chan_title_tags)))
+                                " title tags; expected 1, was: "
+                                + str(len(chan_title_tags)))
                         if len(chan_link_tags) != 1:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
-                                " link tags; expected 1, was: " +
-                                str(len(chan_link_tags)))
+                                " link tags; expected 1, was: "
+                                + str(len(chan_link_tags)))
                         if len(chan_description_tags) != 1:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
-                                " description tags; expected 1, was: " +
-                                str(len(chan_description_tags)))
+                                " description tags; expected 1, was: "
+                                + str(len(chan_description_tags)))
 
                         # if the channel has any items, each item should have
                         # at least a title or description tag
                         channel_item_tags = channel.findall('item')
                         for item in channel_item_tags:
-                            if len(item.findall('title') +
-                                   item.findall('description')) < 1:
+                            if len(item.findall('title')
+                                   + item.findall('description')) < 1:
                                 raise FeedStructureError(
                                     "An item in the RSS feed's channel did not"
                                     " have at least one of a title or a"
@@ -236,8 +236,8 @@ class Feed:
                     else:
                         raise FeedStructureError(
                             "RSS feed's channel does not have enough required"
-                            " children; expected >=3, was: " +
-                            str(len(channel_children)))
+                            " children; expected >=3, was: "
+                            + str(len(channel_children)))
         else:
             raise FeedStructureError(
                 "RSS feed does not have any children; expected 1 (a channel"
@@ -245,8 +245,8 @@ class Feed:
 
         self._validated = True
 
-    def _process_feed(self):
-        """Processes the RSS feed to set metadata and create episodes.
+    def _parse_metadata(self):
+        """Process the RSS feed to set metadata fields.
 
         It is required that _validate_feed be run prior to running this method.
         """
@@ -265,7 +265,18 @@ class Feed:
         if copyright_tag is not None:
             self._copyright = copyright_tag.text
 
-        # process items into episodes
+    def parse_episodes(self) -> List[Episode]:
+        """Process the RSS feed to retrieve episodes.
+
+        It is required that _validate_feed be run prior to running this method.
+
+        Returns:
+            List[Episode]: the episodes in this feed, which need to be added to
+            the database
+        """
+        channel = list(self._tree)[0]
+
+        episodes = []
         for item in channel.findall('item'):
             item_title = item.find('title')
             item_description = item.find('description')
@@ -295,24 +306,17 @@ class Feed:
                 if 'url' in item_enclosure.attrib.keys():
                     item_enclosure_str = item_enclosure.attrib['url']
 
-            episode = Episode(self,
-                              title=item_title_str,
-                              description=item_description_str,
-                              link=item_link_str,
-                              pubdate=item_pubdate_str,
-                              copyright=item_copyright_str,
-                              enclosure=item_enclosure_str)
-            self._episodes.append(episode)
-
-        # restrict number of episodes, if necessary
-        max_episodes = int(Config["max_episodes"])
-        if max_episodes > -1:
-            self._episodes = self._episodes[:max_episodes]
-
-    def invert_episodes(self) -> None:
-        """Invert this feed's list of episodes.
-        """
-        self._episodes = self._episodes[::-1]
+            episodes.append(
+                Episode(self,
+                        title=item_title_str,
+                        description=item_description_str,
+                        link=item_link_str,
+                        pubdate=item_pubdate_str,
+                        copyright=item_copyright_str,
+                        enclosure=item_enclosure_str
+                        )
+            )
+        return episodes
 
     @property
     def validated(self) -> bool:
@@ -333,11 +337,6 @@ class Feed:
     def description(self) -> str:
         """str: the description of the feed"""
         return self._description
-
-    @property
-    def episodes(self) -> list:
-        """list: a list of this feed's castero.episode.Episode's"""
-        return self._episodes
 
     @property
     def link(self) -> str:

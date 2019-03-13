@@ -437,6 +437,7 @@ class Display:
             else:
                 feed = Feed(file=path)
             if feed.validated:
+                self.database.replace_episodes(feed, feed.parse_episodes())
                 self.database.replace_feed(feed)
             self.create_menus()
             self.change_status("Feed '%s\' successfully added" % str(feed))

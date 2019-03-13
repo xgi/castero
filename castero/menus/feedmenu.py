@@ -53,7 +53,8 @@ class FeedMenu(Menu):
     def update_child(self):
         if self._feeds is None:
             self.update_items(None)
-        self._child.update_items(self._feeds[self._selected])
+        if len(self._feeds) > 0:
+            self._child.update_items(self._feeds[self._selected])
 
     def invert(self):
         super().invert()

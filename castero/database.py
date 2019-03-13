@@ -84,6 +84,11 @@ class Database():
         ))
         self._conn.commit()
 
+    def replace_episodes(self, feed: Feed, episodes: List[Episode]) -> None:
+        for episode in episodes:
+            self.replace_episode(feed, episode)
+        self._conn.commit()
+
     def feeds(self) -> List[Feed]:
         sql = "select key, title, description, link, last_build_date, copyright from feed"
         self._cursor.execute(sql)
