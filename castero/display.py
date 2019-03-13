@@ -497,16 +497,14 @@ class Display:
         This method starts the reloading in a new un-managed thread.
         """
         should_reload = True
-        if len(self.sa) >= int(Config["reload_feeds_threshold"]):
+        if len(self.database.feeds()) >= int(Config["reload_feeds_threshold"]):
             should_reload = self._get_y_n(
                 "Are you sure you want to reload all of your feeds?"
                 " (y/n): "
             )
         if should_reload:
-            # TODO: implement reload
-            pass
-            # t = threading.Thread(target=self._feeds.reload, args=[self])
-            # t.start()
+            t = threading.Thread(target=self.database.reload, args=[self])
+            t.start()
 
     def save_episodes(self, feed=None, episode=None) -> None:
         """Save a feed or episode.

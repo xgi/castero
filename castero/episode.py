@@ -12,7 +12,7 @@ class Episode:
     This class represents a single episode from a podcast feed.
     """
 
-    def __init__(self, feed, title=None, description=None, link=None,
+    def __init__(self, feed, ep_id=None, title=None, description=None, link=None,
                  pubdate=None, copyright=None, enclosure=None) -> None:
         """Initializes the object.
 
@@ -30,6 +30,7 @@ class Episode:
         assert title is not None or description is not None
 
         self._feed = feed
+        self._ep_id = ep_id
         self._title = title
         self._description = description
         self._link = link
@@ -162,6 +163,15 @@ class Episode:
                 if File.startswith(episode_partial_filename + '.'):
                     found_downloaded = True
         return found_downloaded
+
+    @property
+    def ep_id(self) -> int:
+        """int: the database id of the episode"""
+        return self._ep_id
+
+    @ep_id.setter
+    def ep_id(self, ep_id) -> None:
+        self._ep_id = ep_id
 
     @property
     def title(self) -> str:

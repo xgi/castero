@@ -15,16 +15,17 @@ class Database():
 
     def __init__(self):
         existed = os.path.exists(self.PATH)
-        self._conn = sqlite3.connect(self.PATH)
-        self._cursor = self._conn.cursor()
+        self._conn = sqlite3.connect(self.PATH, check_same_thread=False)
 
         if not existed:
             with open(self.SCHEMA, 'rt') as f:
                 schema = f.read()
-            self._cursor.executescript(schema)
+            self._conn.cursor().executescript(schema)
             self._migrate_from_old_feeds()
 
     def _migrate_from_old_feeds(self):
+        cursor = self._conn.cursor()
+
         with open(self.OLD_PATH, 'r') as f:
             content = json.loads(f.read())
 
@@ -33,7 +34,7 @@ class Database():
 
             sql = "insert into feed (key, title, description, link, last_build_date, copyright)\n" \
                   "values (?,?,?,?,?,?)"
-            self._cursor.execute(sql, (
+            cursor.execute(sql, (
                 key,
                 feed_dict["title"],
                 feed_dict["description"],
@@ -45,7 +46,7 @@ class Database():
             for episode_dict in feed_dict["episodes"]:
                 sql = "insert into episode (title, feed, description, link, pubdate, copyright, enclosure)\n" \
                       "values (?,?,?,?,?,?,?)"
-                self._cursor.execute(sql, (
+                cursor.execute(sql, (
                     episode_dict["title"],
                     key,
                     episode_dict["description"],
@@ -60,7 +61,8 @@ class Database():
     def replace_feed(self, feed: Feed) -> None:
         sql = "replace into feed (key, title, description, link, last_build_date, copyright)\n" \
               "values (?,?,?,?,?,?)"
-        self._cursor.execute(sql, (
+        cursor = self._conn.cursor()
+        cursor.execute(sql, (
             feed.key,
             feed.title,
             feed.description,
@@ -71,17 +73,35 @@ class Database():
         self._conn.commit()
 
     def replace_episode(self, feed: Feed, episode: Episode) -> None:
-        sql = "replace into episode (title, feed, description, link, pubdate, copyright, enclosure)\n" \
-              "values (?,?,?,?,?,?,?)"
-        self._cursor.execute(sql, (
-            episode.title,
-            feed.key,
-            episode.description,
-            episode.link,
-            episode.pubdate,
-            episode.copyright,
-            episode.enclosure
-        ))
+        cursor = self._conn.cursor()
+        if episode.ep_id is None:
+            sql = "replace into episode (title, feed, description, link, pubdate, copyright, enclosure)\n" \
+                "values (?,?,?,?,?,?,?)"
+
+            cursor.execute(sql, (
+                episode.title,
+                feed.key,
+                episode.description,
+                episode.link,
+                episode.pubdate,
+                episode.copyright,
+                episode.enclosure
+            ))
+            episode.ep_id = self._cursor.lastrowid
+        else:
+            sql = "replace into episode (id, title, feed, description, link, pubdate, copyright, enclosure)\n" \
+                "values (?,?,?,?,?,?,?,?)"
+
+            cursor.execute(sql, (
+                episode.ep_id,
+                episode.title,
+                feed.key,
+                episode.description,
+                episode.link,
+                episode.pubdate,
+                episode.copyright,
+                episode.enclosure
+            ))
         self._conn.commit()
 
     def replace_episodes(self, feed: Feed, episodes: List[Episode]) -> None:
@@ -91,10 +111,11 @@ class Database():
 
     def feeds(self) -> List[Feed]:
         sql = "select key, title, description, link, last_build_date, copyright from feed"
-        self._cursor.execute(sql)
+        cursor = self._conn.cursor()
+        cursor.execute(sql)
 
         feeds = []
-        for row in self._cursor.fetchall():
+        for row in cursor.fetchall():
             feeds.append(Feed(
                 url=row[0] if row[0].startswith('http') else None,
                 file=row[0] if not row[0].startswith('http') else None,
@@ -109,12 +130,14 @@ class Database():
 
     def episodes(self, feed: Feed) -> List[Tuple[int, Episode]]:
         sql = "select id, title, description, link, pubdate, copyright, enclosure from episode where feed=?"
-        self._cursor.execute(sql, (feed.key,))
+        cursor = self._conn.cursor()
+        cursor.execute(sql, (feed.key,))
 
         episodes = []
-        for row in self._cursor.fetchall():
+        for row in cursor.fetchall():
             episodes.append((row[0], Episode(
                 feed,
+                ep_id=row[0],
                 title=row[1],
                 description=row[2],
                 link=row[3],
@@ -125,18 +148,46 @@ class Database():
         return episodes
 
     def episode(self, ep_id: int) -> Episode:
-        sql = "select feed, title, description, link, pubdate, copyright, enclosure from episode where id=?"
-        self._cursor.execute(sql, (ep_id,))
+        sql = "select feed, id, title, description, link, pubdate, copyright, enclosure from episode where id=?"
+        cursor = self._conn.cursor()
+        cursor.execute(sql, (ep_id,))
 
-        episodes = []
-        result = self._cursor.fetchone()
+        result = cursor.fetchone()
+        if result is None:
+            return None
+        else:
+            return Episode(
+                result[0],
+                ep_id=result[1],
+                title=result[2],
+                description=result[3],
+                link=result[4],
+                pubdate=result[5],
+                copyright=result[6],
+                enclosure=result[7]
+            )
 
-        return Episode(
-            result[0],
-            title=result[1],
-            description=result[2],
-            link=result[3],
-            pubdate=result[4],
-            copyright=result[5],
-            enclosure=result[6]
-        )
+    def reload(self, display=None) -> None:
+        feeds = self.feeds()
+        total_feeds = len(feeds)
+        current_feed = 1
+
+        for feed in self.feeds():
+            if display is not None:
+                display.change_status(
+                    "Reloading feeds (%d/%d)" % (current_feed, total_feeds)
+                )
+
+            # assume urls have http in them
+            if "http" in feed.key:
+                new_feed = Feed(url=feed.key)
+            else:
+                new_feed = Feed(file=feed.key)
+
+            episodes = [pair[1] for pair in self.episodes(new_feed)]
+            self.replace_episodes(new_feed, episodes)
+            self.replace_feed(new_feed)
+
+        if display is not None:
+            display.change_status("Feeds successfully reloaded")
+            display.create_menus()
