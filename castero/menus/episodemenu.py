@@ -55,7 +55,7 @@ class EpisodeMenu(Menu):
         self._feed = feed
 
         self._episode_tuples = \
-            [(pair[0], str(pair[1])) for pair in self._source.episodes(feed)]
+            [(episode.ep_id, str(episode)) for episode in self._source.episodes(feed)]
         if self._inverted:
             self._episode_tuples.reverse()
 

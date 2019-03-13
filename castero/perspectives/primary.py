@@ -242,7 +242,7 @@ class Primary(Perspective):
         if self._active_window == 0:
             feed = self._feed_menu.item()
             if feed is not None:
-                for ep_id, episode in self._display.database.episodes(feed):
+                for episode in self._display.database.episodes(feed):
                     player = Player.create_instance(
                         self._display.AVAILABLE_PLAYERS, str(episode),
                         episode.get_playable(), episode)

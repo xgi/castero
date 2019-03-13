@@ -128,14 +128,14 @@ class Database():
             ))
         return feeds
 
-    def episodes(self, feed: Feed) -> List[Tuple[int, Episode]]:
+    def episodes(self, feed: Feed) -> List[Episode]:
         sql = "select id, title, description, link, pubdate, copyright, enclosure from episode where feed=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (feed.key,))
 
         episodes = []
         for row in cursor.fetchall():
-            episodes.append((row[0], Episode(
+            episodes.append(Episode(
                 feed,
                 ep_id=row[0],
                 title=row[1],
@@ -144,7 +144,7 @@ class Database():
                 pubdate=row[4],
                 copyright=row[5],
                 enclosure=row[6]
-            )))
+            ))
         return episodes
 
     def episode(self, ep_id: int) -> Episode:
@@ -184,8 +184,7 @@ class Database():
             else:
                 new_feed = Feed(file=feed.key)
 
-            episodes = [pair[1] for pair in self.episodes(new_feed)]
-            self.replace_episodes(new_feed, episodes)
+            self.replace_episodes(new_feed, self.episodes(new_feed))
             self.replace_feed(new_feed)
 
         if display is not None:

@@ -524,7 +524,7 @@ class Display:
         assert (feed is None or episode is None) and (feed is not episode)
 
         if feed is not None:
-            for ep_id, episode in self.database.episodes(feed):
+            for episode in self.database.episodes(feed):
                 if not episode.downloaded():
                     self._download_queue.add(episode)
         else:
