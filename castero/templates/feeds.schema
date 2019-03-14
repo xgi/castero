@@ -9,11 +9,12 @@ create table feed (
 
 create table episode (
     id          integer primary key,
+    feed_key    text,
     title       text,
-    feed        text,
     description text,
     link        text,
     pubdate     text,
     copyright   text,
-    enclosure   text
+    enclosure   text,
+    FOREIGN KEY (feed_key) REFERENCES feed(key) ON DELETE CASCADE
 );

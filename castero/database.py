@@ -16,6 +16,7 @@ class Database():
     def __init__(self):
         existed = os.path.exists(self.PATH)
         self._conn = sqlite3.connect(self.PATH, check_same_thread=False)
+        self._conn.execute("PRAGMA foreign_keys = ON")
 
         if not existed:
             with open(self.SCHEMA, 'rt') as f:
@@ -44,11 +45,11 @@ class Database():
             ))
 
             for episode_dict in feed_dict["episodes"]:
-                sql = "insert into episode (title, feed, description, link, pubdate, copyright, enclosure)\n" \
+                sql = "insert into episode (feed_key, title, description, link, pubdate, copyright, enclosure)\n" \
                       "values (?,?,?,?,?,?,?)"
                 cursor.execute(sql, (
-                    episode_dict["title"],
                     key,
+                    episode_dict["title"],
                     episode_dict["description"],
                     episode_dict["link"],
                     episode_dict["pubdate"],
@@ -56,6 +57,12 @@ class Database():
                     episode_dict["enclosure"]
                 ))
 
+        self._conn.commit()
+
+    def delete_feed(self, feed: Feed) -> None:
+        sql = "delete from feed where key=?"
+        cursor = self._conn.cursor()
+        cursor.execute(sql, (feed.key,))
         self._conn.commit()
 
     def replace_feed(self, feed: Feed) -> None:
@@ -75,9 +82,8 @@ class Database():
     def replace_episode(self, feed: Feed, episode: Episode) -> None:
         cursor = self._conn.cursor()
         if episode.ep_id is None:
-            sql = "replace into episode (title, feed, description, link, pubdate, copyright, enclosure)\n" \
+            sql = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure)\n" \
                 "values (?,?,?,?,?,?,?)"
-
             cursor.execute(sql, (
                 episode.title,
                 feed.key,
@@ -87,9 +93,9 @@ class Database():
                 episode.copyright,
                 episode.enclosure
             ))
-            episode.ep_id = self._cursor.lastrowid
+            episode.ep_id = cursor.lastrowid
         else:
-            sql = "replace into episode (id, title, feed, description, link, pubdate, copyright, enclosure)\n" \
+            sql = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure)\n" \
                 "values (?,?,?,?,?,?,?,?)"
 
             cursor.execute(sql, (
@@ -129,7 +135,7 @@ class Database():
         return feeds
 
     def episodes(self, feed: Feed) -> List[Episode]:
-        sql = "select id, title, description, link, pubdate, copyright, enclosure from episode where feed=?"
+        sql = "select id, title, description, link, pubdate, copyright, enclosure from episode where feed_key=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (feed.key,))
 
@@ -147,8 +153,28 @@ class Database():
             ))
         return episodes
 
+    def feed(self, key) -> Feed:
+        sql = "select key, title, description, link, last_build_date, copyright from feed"
+        cursor = self._conn.cursor()
+        cursor.execute(sql)
+
+        result = cursor.fetchone()
+        if result is None:
+            return None
+        else:
+            return Feed(
+                url=result[0] if result[0].startswith('http') else None,
+                file=result[0] if not result[0].startswith('http') else None,
+                title=result[1],
+                description=result[2],
+                link=result[3],
+                last_build_date=result[4],
+                copyright=result[5],
+                episodes=[],
+            )
+
     def episode(self, ep_id: int) -> Episode:
-        sql = "select feed, id, title, description, link, pubdate, copyright, enclosure from episode where id=?"
+        sql = "select feed_key, id, title, description, link, pubdate, copyright, enclosure from episode where id=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (ep_id,))
 
@@ -156,8 +182,9 @@ class Database():
         if result is None:
             return None
         else:
+            feed = self.feed(result[0])
             return Episode(
-                result[0],
+                feed,
                 ep_id=result[1],
                 title=result[2],
                 description=result[3],

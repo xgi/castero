@@ -463,8 +463,8 @@ class Display:
                     "FeedError [ambiguous]: %s" % str(e)
                 )
 
-    def delete_feed(self, index) -> None:
-        """Deletes the feed at the given index.
+    def delete_feed(self, feed: Feed) -> None:
+        """Deletes the given feed from the database.
 
         If the delete_feed_confirmation config option is true, this method will
         first ask for y/n confirmation before deleting the feed.
@@ -472,7 +472,7 @@ class Display:
         Deleting a feed also deletes all downloaded/saved episodes.
 
         Args:
-            index: the index of the feed to delete within self._feeds
+            feed: the Feed to delete
         """
         should_delete = True
         if helpers.is_true(Config["delete_feed_confirmation"]):
@@ -480,13 +480,9 @@ class Display:
                 "Are you sure you want to delete this feed? (y/n): "
             )
         if should_delete:
-            # TODO: use database.delete_feed, when it exists
-            pass
-            # deleted = self._feeds.del_at(index)
-            # if deleted:
-            #     self._feeds.write()
-            #     self.create_menus()
-            #     self.change_status("Feed successfully deleted")
+            self.database.delete_feed(feed)
+            self.create_menus()
+            self.change_status("Feed successfully deleted")
 
     def reload_feeds(self) -> None:
         """Reloads the users' feeds.

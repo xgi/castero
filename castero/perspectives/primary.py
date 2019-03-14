@@ -188,7 +188,7 @@ class Primary(Perspective):
             self._display.add_feed()
         elif c == key_mapping[Config['key_delete']]:
             if self._active_window == 0:
-                self._display.delete_feed(self._feed_menu.selected_index)
+                self._display.delete_feed(self._feed_menu.item())
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
         elif c == key_mapping[Config['key_save']]:
