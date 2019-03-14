@@ -33,6 +33,7 @@ class FeedMenu(Menu):
         description = helpers.html_to_plain(feed.description) if \
             helpers.is_true(Config["clean_html_descriptions"]) else \
             feed.description
+        description = description.replace('\n', '')
 
         return \
             f"\cb{feed.title}\n" \

@@ -33,6 +33,7 @@ class EpisodeMenu(Menu):
         description = helpers.html_to_plain(episode.description) if \
             helpers.is_true(Config["clean_html_descriptions"]) else \
             episode.description
+        description = description.replace('\n', '')
         downloaded = "Episode downloaded and available for offline playback." \
             if episode.downloaded() else "Episode not downloaded."
 
