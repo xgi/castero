@@ -22,7 +22,9 @@ class Database():
             with open(self.SCHEMA, 'rt') as f:
                 schema = f.read()
             self._conn.cursor().executescript(schema)
-            self._migrate_from_old_feeds()
+
+            if os.path.exists(self.OLD_PATH):
+                self._migrate_from_old_feeds()
 
     def _migrate_from_old_feeds(self):
         cursor = self._conn.cursor()
