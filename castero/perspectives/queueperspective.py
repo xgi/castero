@@ -3,6 +3,7 @@ import curses
 from castero import helpers
 from castero.config import Config
 from castero.menu import Menu
+from castero.menus.queuemenu import QueueMenu
 from castero.perspective import Perspective
 
 
@@ -53,29 +54,14 @@ class QueuePerspective(Perspective):
         self._metadata_window.attron(curses.color_pair(1))
 
     def create_menus(self) -> None:
-        """Create the menus used in each window, if necessary.
+        """Create the menus used in each window.
 
         Overrides method from Perspective; see documentation in that class.
         """
         assert self._queue_window is not None
 
-        # this method could change a lot of screen content - probably
-        # reasonable to simply clear the whole screen
-        self._display.clear()
-
-        # delete old menus if they exist
-        if self._queue_menu is not None:
-            del self._queue_menu
-            self._queue_menu = None
-
-        queue_items = [[]]
-        for player in self._display.queue:
-            queue_items[0].append(str(player))
-
-        self._queue_menu = Menu(self._queue_window, queue_items, active=True)
-
-        # force reset active window to prevent starting in the episodes menu
-        self._active_window = 0
+        self._queue_menu = QueueMenu(self._queue_window, self._display.queue,
+                                     active=True)
 
     def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
@@ -101,11 +87,8 @@ class QueuePerspective(Perspective):
         self._queue_menu.display()
 
         # draw metadata
-        queue = self._display.queue
-        if not self._metadata_updated and queue.length > 0:
-            selected_index = self._queue_menu.selected_index
-            episode = queue[selected_index].episode
-            self._draw_metadata(self._metadata_window, episode=episode)
+        if not self._metadata_updated:
+            self._draw_metadata(self._metadata_window)
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
@@ -143,7 +126,7 @@ class QueuePerspective(Perspective):
             queue.stop()
             self._cycle_queue_to_selected()
             queue.play()
-            self.create_menus()
+            self._display.menus_valid = False
         elif c == key_mapping[Config['key_pause_play']] or \
                 c == key_mapping[Config['key_pause_play_alt']]:
             queue.toggle()
@@ -151,7 +134,7 @@ class QueuePerspective(Perspective):
             queue.stop()
             queue.next()
             queue.play()
-            self.create_menus()
+            self._display.menus_valid = False
         elif c == key_mapping[Config['key_seek_forward']] or \
                 c == key_mapping[Config['key_seek_forward_alt']]:
             queue.seek(1)
@@ -161,7 +144,7 @@ class QueuePerspective(Perspective):
         elif c == key_mapping[Config['key_clear']]:
             queue.stop()
             queue.clear()
-            self.create_menus()
+            self._display.menus_valid = False
         elif c == key_mapping[Config['key_delete']]:
             self._remove_selected_from_queue()
 
@@ -180,8 +163,14 @@ class QueuePerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
-        # recreate the menu since queue data may have changed
-        self.create_menus()
+        pass
+
+    def update_menus(self) -> None:
+        """Update/refresh the contents of all menus.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._queue_menu.update_items(None)
 
     def _get_active_menu(self) -> Menu:
         """Retrieve the active Menu, if there is one.
@@ -195,18 +184,16 @@ class QueuePerspective(Perspective):
     def _cycle_queue_to_selected(self) -> None:
         """Remove all players in the queue preceding the selected one.
         """
-        selected_index = self._queue_menu.selected_index
-        selected_player = self._display.queue[selected_index]
-        while self._display.queue.first != selected_player:
+        target = self._queue_menu.item()
+        while self._display.queue.first != target:
             self._display.queue.next()
 
     def _remove_selected_from_queue(self) -> None:
         """Remove the selected player from the queue.
         """
-        selected_index = self._queue_menu.selected_index
-        if selected_index < self._display.queue.length:
-            selected_player = self._display.queue[selected_index]
-            index = self._display.queue.remove(selected_player)
-            self.create_menus()
+        player = self._queue_menu.item()
+        if player is not None:
+            index = self._display.queue.remove(player)
+            self._queue_menu.update_items(None)
             for i in range(index):
                 self._get_active_menu().move(-1)

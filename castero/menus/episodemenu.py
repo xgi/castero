@@ -1,24 +1,59 @@
-from .. import menu
+from castero import helpers
+from castero.config import Config
+from castero.episode import Episode
+from castero.feed import Feed
+from castero.menu import Menu
 
-class EpisodeMenu(menu.Menu):
-    def __init__ (self, window, feeds, child = None, active = False) -> None:
-        """Adds flags to episode titles based on metadata before the name list is
-        passed to the underlying Menu.  Currently only flags whether an episode
-        has been downloaded."""
 
-        feed_ep_array = []
-        for fkey in feeds:
-            real_feed = feeds[fkey]
-            items = []
-            for ep in real_feed.episodes:
-                flags = []
-                if ep.downloaded():
-                    flags.append("D")
+class EpisodeMenu(Menu):
+    def __init__(self, window, source, child=None, active=False) -> None:
+        super().__init__(window, source, child=child, active=active)
 
-                if flags:
-                    items.append("[%s] %s" % ("".join(flags), str(ep)))
-                else:
-                    items.append(str(ep))
-            feed_ep_array.append(items)
+        self._feed = None
+        self._episode_tuples = []  # episodes in the form (id, title)
 
-        super().__init__(window, feed_ep_array, child, active)
+    def __len__(self) -> int:
+        return len(self._episode_tuples)
+
+    def _items(self):
+        return [tpl[1] for tpl in self._episode_tuples]
+
+    def item(self) -> Episode:
+        if len(self._episode_tuples) == 0:
+            return None
+        
+        tpl = self._episode_tuples[self._selected]
+        return self._source.episode(tpl[0])
+
+    def metadata(self):
+        if len(self._episode_tuples) == 0:
+            return ""
+
+        tpl = self._episode_tuples[self._selected]
+        if tpl is None:
+            return ""
+        
+        return tpl[2]
+
+    def update_items(self, feed: Feed):
+        assert isinstance(feed, Feed) or feed is None
+
+        super().update_items(feed)
+
+        self._feed = feed
+
+        if feed is None:
+            self._episode_tuples = []
+        else:
+            self._episode_tuples = \
+                [(episode.ep_id, str(episode), episode.metadata) for episode in self._source.episodes(feed)]
+            if self._inverted:
+                self._episode_tuples.reverse()
+
+    def update_child(self):
+        pass
+
+    def invert(self):
+        super().invert()
+
+        self.update_items(self._feed)

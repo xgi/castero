@@ -107,7 +107,7 @@ def test_episode_missing_property_enclosure():
 
 def test_episode_playable_remote():
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
-    episode = myfeed.episodes[0]
+    episode = myfeed.parse_episodes()[0]
     playable = episode.get_playable()
     assert not episode.downloaded()
     assert playable == "http://example.com/myfeed_item1_title.mp3"
@@ -116,7 +116,7 @@ def test_episode_playable_remote():
 def test_episode_playable_local():
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
-    episode = myfeed.episodes[0]
+    episode = myfeed.parse_episodes()[0]
     playable = episode.get_playable()
     assert episode.downloaded()
     assert playable == os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
@@ -135,7 +135,7 @@ def test_episode_delete(display):
         file.write("temp file for test_episode.test_episode_delete")
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     display.change_status = mock.MagicMock(name="change_status")
-    episode = myfeed.episodes[1]
+    episode = myfeed.parse_episodes()[1]
     assert episode.downloaded()
     episode.delete(display=display)
     display.change_status.assert_called_once()
@@ -148,7 +148,7 @@ def test_episode_download():
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     mydownloadqueue = DownloadQueue()
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
-    myepisode = myfeed.episodes[1]
+    myepisode = myfeed.parse_episodes()[1]
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     myepisode.download(mydownloadqueue)
     DataFile.download_to_file.assert_called_once()
@@ -160,7 +160,7 @@ def test_episode_download_with_display(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     mydownloadqueue = DownloadQueue()
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
-    myepisode = myfeed.episodes[1]
+    myepisode = myfeed.parse_episodes()[1]
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)
@@ -173,7 +173,7 @@ def test_episode_download_with_display_no_enclosure(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     mydownloadqueue = DownloadQueue()
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    myepisode = myfeed.episodes[1]
+    myepisode = myfeed.parse_episodes()[1]
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)

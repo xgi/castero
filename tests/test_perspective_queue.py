@@ -55,8 +55,7 @@ def test_perspective_queue_display_episode_metadata(display):
 
     perspective._draw_metadata = mock.MagicMock()
     display.display()
-    perspective._draw_metadata.assert_called_with(perspective._metadata_window,
-                                                  episode=queue.first.episode)
+    perspective._draw_metadata.assert_called_with(perspective._metadata_window)
     display._stdscr.reset_mock()
 
 
@@ -111,10 +110,11 @@ def test_perspective_queue_input_keys(display):
 def test_perspective_queue_draw_metadata(display):
     perspective = get_queue_perspective(display)
 
-    feed.episodes.append(episode)
-    display.feeds["feed url"] = feed
-    perspective._draw_metadata(perspective._metadata_window, feed=feed)
-    perspective._draw_metadata(perspective._metadata_window, episode=episode)
+    display.database.replace_feed(feed)
+    display.database.replace_episodes(feed, [episode])
+    display.menus_valid = False
+    perspective._draw_metadata(perspective._metadata_window)
+    perspective._draw_metadata(perspective._metadata_window)
 
 
 def test_perspective_queue_get_active_menu(display):
@@ -127,7 +127,7 @@ def test_perspective_queue_get_active_menu(display):
 def test_perspective_queue_cycle_queue_to_selected_first(display):
     perspective = get_queue_perspective(display)
 
-    perspective._queue_menu._selected = 0
+    perspective._queue_menu.item = mock.MagicMock(return_value=player1)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
@@ -141,7 +141,7 @@ def test_perspective_queue_cycle_queue_to_selected_first(display):
 def test_perspective_queue_cycle_queue_to_selected_middle(display):
     perspective = get_queue_perspective(display)
 
-    perspective._queue_menu._selected = 1
+    perspective._queue_menu.item = mock.MagicMock(return_value=player2)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
@@ -155,7 +155,7 @@ def test_perspective_queue_cycle_queue_to_selected_middle(display):
 def test_perspective_queue_remove_selected_first(display):
     perspective = get_queue_perspective(display)
 
-    perspective._queue_menu._selected = 0
+    perspective._queue_menu.item = mock.MagicMock(return_value=player1)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
@@ -169,7 +169,7 @@ def test_perspective_queue_remove_selected_first(display):
 def test_perspective_queue_remove_selected_middle(display):
     perspective = get_queue_perspective(display)
 
-    perspective._queue_menu._selected = 1
+    perspective._queue_menu.item = mock.MagicMock(return_value=player2)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)

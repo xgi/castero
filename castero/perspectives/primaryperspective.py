@@ -4,6 +4,7 @@ from castero import helpers
 from castero.config import Config
 from castero.menu import Menu
 from castero.menus.episodemenu import EpisodeMenu
+from castero.menus.feedmenu import FeedMenu
 from castero.perspective import Perspective
 from castero.player import Player
 
@@ -62,7 +63,7 @@ class PrimaryPerspective(Perspective):
         self._metadata_window.attron(curses.color_pair(1))
 
     def create_menus(self) -> None:
-        """Create the menus used in each window, if necessary.
+        """Create the menus used in each window.
 
         Overrides method from Perspective; see documentation in that class.
         """
@@ -70,32 +71,10 @@ class PrimaryPerspective(Perspective):
             self._feed_window, self._episode_window
         ])
 
-        # this method could change a lot of screen content - probably
-        # reasonable to simply clear the whole screen
-        self._display.clear()
-
-        # delete old menus if they exist
-        if self._feed_menu is not None:
-            del self._feed_menu
-            self._feed_menu = None
-        if self._episode_menu is not None:
-            del self._episode_menu
-            self._episode_menu = None
-
-        feed_items = [[]]
-        for key in self._display.feeds:
-            feed = self._display.feeds[key]
-            feed_items[0].append(
-                str(feed)
-            )
-
-        self._episode_menu = EpisodeMenu(self._episode_window,
-                                         self._display._feeds)
-        self._feed_menu = Menu(self._feed_window, feed_items,
-                               child=self._episode_menu, active=True)
-
-        # force reset active window to prevent starting in the episodes menu
-        self._active_window = 0
+        self._episode_menu = EpisodeMenu(
+            self._episode_window, self._display.database)
+        self._feed_menu = FeedMenu(self._feed_window, self._display.database,
+                                   child=self._episode_menu, active=True)
 
     def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
@@ -132,17 +111,7 @@ class PrimaryPerspective(Perspective):
 
         # draw metadata
         if not self._metadata_updated:
-            selected_feed_index = self._feed_menu.selected_index
-            feed = self._display.feeds.at(selected_feed_index)
-            if feed is not None:
-                if self._active_window == 0:
-                    self._draw_metadata(self._metadata_window, feed=feed)
-                elif self._active_window == 1:
-                    selected_episode_index = self._episode_menu.selected_index
-                    if 0 <= selected_episode_index < len(feed.episodes):
-                        episode = feed.episodes[selected_episode_index]
-                        self._draw_metadata(
-                            self._metadata_window, episode=episode)
+            self._draw_metadata(self._metadata_window)
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
@@ -204,14 +173,15 @@ class PrimaryPerspective(Perspective):
             self._display.add_feed()
         elif c == key_mapping[Config['key_delete']]:
             if self._active_window == 0:
-                self._display.delete_feed(self._feed_menu.selected_index)
+                self._display.delete_feed(self._feed_menu.item())
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
         elif c == key_mapping[Config['key_save']]:
-            feed_index = self._feed_menu.selected_index
-            episode_index = self._episode_menu.selected_index if \
-                self._active_window == 1 else None
-            self._display.save_episodes(feed_index, episode_index)
+            if self._active_window == 0 and self._feed_menu.item():
+                self._display.save_episodes(feed=self._feed_menu.item())
+            elif self._active_window == 1 and self._episode_menu.item():
+                self._display.save_episodes(episode=self._episode_menu.item())
+            
         elif c == key_mapping[Config['key_invert']]:
             self._invert_selected_menu()
 
@@ -222,6 +192,14 @@ class PrimaryPerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
+
+    def update_menus(self) -> None:
+        """Update/refresh the contents of all menus.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._feed_menu.update_items(None)
+        self._feed_menu.update_child()
 
     def refresh(self) -> None:
         """Refresh the screen and all windows.
@@ -254,41 +232,25 @@ class PrimaryPerspective(Perspective):
         This method will not clear the queue prior to adding the new player(s),
         nor will it play the episodes after running.
         """
-        feed_index = self._feed_menu.selected_index
-        feed = self._display.feeds.at(feed_index)
         if self._active_window == 0:
+            feed = self._feed_menu.item()
             if feed is not None:
-                for episode in feed.episodes:
+                for episode in self._display.database.episodes(feed):
                     player = Player.create_instance(
-                        self._display.AVAILABLE_PLAYERS,
-                        str(episode),
-                        episode.get_playable(),
-                        episode)
+                        self._display.AVAILABLE_PLAYERS, str(episode),
+                        episode.get_playable(), episode)
                     self._display.queue.add(player)
         elif self._active_window == 1:
-            episode_index = self._episode_menu.selected_index
-            if feed is not None:
-                episode = feed.episodes[episode_index]
+            episode = self._episode_menu.item()
+            if episode is not None:
                 player = Player.create_instance(
-                    self._display.AVAILABLE_PLAYERS,
-                    str(episode),
-                    episode.get_playable(),
-                    episode)
+                    self._display.AVAILABLE_PLAYERS, str(episode),
+                    episode.get_playable(), episode)
                 self._display.queue.add(player)
 
     def _invert_selected_menu(self) -> None:
         """Inverts the contents of the selected menu.
         """
-        feed_index = self._feed_menu.selected_index
-        if self._active_window == 0:
-            self._display.feeds.sort(toggle_invert=True)
-            self.create_menus()
-        elif self._active_window == 1:
-            feed = self._display.feeds.at(feed_index)
-            if feed is not None:
-                feed.invert_episodes()
-                self._display.feeds.write()
-                self.create_menus()
-                for i in range(feed_index):
-                    self._feed_menu.move(-1)
-                self._change_active_window(1)
+        self._get_active_menu().invert()
+        if self._feed_menu:
+            self._feed_menu.update_child()
