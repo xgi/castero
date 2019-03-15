@@ -11,22 +11,32 @@ from castero.feed import Feed
 class Database():
     PATH = os.path.join(DataFile.DATA_DIR, 'castero.db')
     OLD_PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
-    SCHEMA = os.path.join(DataFile.PACKAGE, 'templates/feeds.schema')
+    MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
 
     def __init__(self):
         existed = os.path.exists(self.PATH)
         self._conn = sqlite3.connect(self.PATH, check_same_thread=False)
         self._conn.execute("PRAGMA foreign_keys = ON")
 
-        if not existed:
-            with open(self.SCHEMA, 'rt') as f:
-                schema = f.read()
-            self._conn.cursor().executescript(schema)
+        if not existed and os.path.exists(self.OLD_PATH):
+            self._create_from_old_feeds()
 
-            if os.path.exists(self.OLD_PATH):
-                self._migrate_from_old_feeds()
+        self.migrate()
 
-    def _migrate_from_old_feeds(self):
+    def migrate(self):
+        cursor = self._conn.cursor()
+        cur_version = cursor.execute('pragma user_version').fetchone()[0]
+
+        migration_files = list(os.listdir(self.MIGRATIONS_DIR))
+        for migration in sorted(migration_files):
+            version = int(migration.split("-")[0])
+            if version > cur_version:
+                path = os.path.join(self.MIGRATIONS_DIR, migration)
+                with open(path, 'rt') as f:
+                    cursor.executescript(f.read())
+
+    def _create_from_old_feeds(self):
+        self.migrate()
         cursor = self._conn.cursor()
 
         with open(self.OLD_PATH, 'r') as f:

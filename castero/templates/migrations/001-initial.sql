@@ -1,3 +1,5 @@
+PRAGMA user_version=1;
+
 create table feed (
     key             text primary key,
     title           text,
