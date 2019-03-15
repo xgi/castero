@@ -472,17 +472,18 @@ class Display:
         Deleting a feed also deletes all downloaded/saved episodes.
 
         Args:
-            feed: the Feed to delete
+            feed: the Feed to delete, which can be None
         """
-        should_delete = True
-        if helpers.is_true(Config["delete_feed_confirmation"]):
-            should_delete = self._get_y_n(
-                "Are you sure you want to delete this feed? (y/n): "
-            )
-        if should_delete:
-            self.database.delete_feed(feed)
-            self.create_menus()
-            self.change_status("Feed successfully deleted")
+        if feed is not None:
+            should_delete = True
+            if helpers.is_true(Config["delete_feed_confirmation"]):
+                should_delete = self._get_y_n(
+                    "Are you sure you want to delete this feed? (y/n): "
+                )
+            if should_delete:
+                self.database.delete_feed(feed)
+                self.create_menus()
+                self.change_status("Feed successfully deleted")
 
     def reload_feeds(self) -> None:
         """Reloads the users' feeds.

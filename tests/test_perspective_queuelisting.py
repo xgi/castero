@@ -110,8 +110,9 @@ def test_perspective_queuelisting_input_keys(display):
 def test_perspective_queuelisting_draw_metadata(display):
     perspective = get_queuelisting_perspective(display)
 
-    feed.episodes.append(episode)
-    display.feeds["feed url"] = feed
+    display.database.replace_feed(feed)
+    display.database.replace_episodes(feed, [episode])
+    display.create_menus()
     perspective._draw_metadata(perspective._metadata_window)
     perspective._draw_metadata(perspective._metadata_window)
 
@@ -126,7 +127,7 @@ def test_perspective_queuelisting_get_active_menu(display):
 def test_perspective_queuelisting_cycle_queue_to_selected_first(display):
     perspective = get_queuelisting_perspective(display)
 
-    perspective._queue_menu._selected = 0
+    perspective._queue_menu.item = mock.MagicMock(return_value=player1)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
@@ -140,7 +141,7 @@ def test_perspective_queuelisting_cycle_queue_to_selected_first(display):
 def test_perspective_queuelisting_cycle_queue_to_selected_middle(display):
     perspective = get_queuelisting_perspective(display)
 
-    perspective._queue_menu._selected = 1
+    perspective._queue_menu.item = mock.MagicMock(return_value=player2)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
@@ -154,7 +155,7 @@ def test_perspective_queuelisting_cycle_queue_to_selected_middle(display):
 def test_perspective_queuelisting_remove_selected_first(display):
     perspective = get_queuelisting_perspective(display)
 
-    perspective._queue_menu._selected = 0
+    perspective._queue_menu.item = mock.MagicMock(return_value=player1)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)
@@ -168,7 +169,7 @@ def test_perspective_queuelisting_remove_selected_first(display):
 def test_perspective_queuelisting_remove_selected_middle(display):
     perspective = get_queuelisting_perspective(display)
 
-    perspective._queue_menu._selected = 1
+    perspective._queue_menu.item = mock.MagicMock(return_value=player2)
     queue1 = Queue()
     queue1.add(player1)
     queue1.add(player2)

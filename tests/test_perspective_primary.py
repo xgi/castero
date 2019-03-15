@@ -37,7 +37,7 @@ def test_perspective_primary_display_feed_metadata(display):
     perspective._active_window = 0
 
     feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    display.feeds["feed url"] = feed
+    display.database.replace_feed(feed)
 
     perspective._draw_metadata = mock.MagicMock()
     display.display()
@@ -50,7 +50,7 @@ def test_perspective_primary_display_episode_metadata(display):
     perspective._active_window = 1
 
     feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    display.feeds["feed url"] = feed
+    display.database.replace_feed(feed)
 
     perspective._draw_metadata = mock.MagicMock()
     display.display()
@@ -125,8 +125,8 @@ def test_perspective_primary_draw_metadata(display):
                       pubdate="episode pubdate",
                       copyright="episode copyright",
                       enclosure="episode enclosure")
-    feed.episodes.append(episode)
-    display.feeds["feed url"] = feed
+    display.database.replace_feed(feed)
+    display.database.replace_episode(feed, episode)
     perspective._draw_metadata(perspective._metadata_window)
     perspective._draw_metadata(perspective._metadata_window)
 
@@ -150,20 +150,28 @@ def test_perspective_primary_create_player(display):
                 last_build_date="feed last_build_date",
                 copyright="feed copyright",
                 episodes=[])
-    episode = Episode(feed,
-                      title="episode title",
-                      description="episode description",
-                      link="episode link",
-                      pubdate="episode pubdate",
-                      copyright="episode copyright",
-                      enclosure="episode enclosure")
-    feed.episodes.append(episode)
-    feed.episodes.append(episode)
-    feed.episodes.append(episode)
-    display.feeds["feed url"] = feed
+    episode1 = Episode(feed,
+                      title="episode1 title",
+                      description="episode1 description",
+                      link="episode1 link",
+                      pubdate="episode1 pubdate",
+                      copyright="episode1 copyright",
+                      enclosure="episode1 enclosure")
+    episode2 = Episode(feed,
+                      title="episode2 title",
+                      description="episode2 description",
+                      link="episode2 link",
+                      pubdate="episode2 pubdate",
+                      copyright="episode2 copyright",
+                      enclosure="episode2 enclosure")
+    display.display()
+    display.database.replace_feed(feed)
+    display.database.replace_episodes(feed, [episode1, episode2])
+    perspective._feed_menu.update_items(None)
+    perspective._episode_menu.update_items(feed)
     perspective._active_window = 0
     perspective._create_player_from_selected()
-    assert display.queue.length == 3
+    assert display.queue.length == 2
     display.queue.clear()
     assert display.queue.length == 0
     perspective._active_window = 1
@@ -178,7 +186,9 @@ def test_perspective_regression_11(display):
     Config.data["custom_download_dir"] = os.path.join(my_dir, "downloaded")
 
     feed = Feed(file="%s/feeds/valid_enclosures.xml" % (my_dir))
-    display.feeds["feed url"] = feed
+    display.database.replace_feed(feed)
+    display.database.replace_episodes(feed, feed.parse_episodes())
+    display.create_menus()
     display.queue.clear()
     perspective._active_window = 1
     perspective._create_player_from_selected()
@@ -192,12 +202,19 @@ def test_perspective_regression_11(display):
 
 def test_perspective_primary_invert_episodes(display):
     perspective = get_primary_perspective(display)
-    perspective._active_window = 1
 
     feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    display.feeds["feed url"] = feed
+    display.database.replace_feed(feed)
+    display.database.replace_episodes(feed, feed.parse_episodes())
+    display.create_menus()
 
-    display.feeds.at(0).invert_episodes = mock.MagicMock()
+    perspective._feed_menu.invert = mock.MagicMock()
+    perspective._episode_menu.invert = mock.MagicMock()
+
+    perspective._active_window = 0
     perspective._invert_selected_menu()
-    display.feeds.at(0).invert_episodes.assert_called_once()
+    perspective._feed_menu.invert.assert_called_once()
+    perspective._active_window = 1
+    perspective._invert_selected_menu()
+    perspective._episode_menu.invert.assert_called_once()
     display._stdscr.reset_mock()

@@ -35,9 +35,8 @@ def test_display_display_footer_empty(display):
                 description="feed description",
                 link="feed link",
                 last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
-    display.feeds["feed url"] = feed
+                copyright="feed copyright")
+    display.database.feeds = mock.MagicMock(return_value=[feed])
     display.display()
     display._footer_window.attron.assert_called_with(curses.A_BOLD)
     display._footer_window.addstr.assert_called_with(
@@ -120,7 +119,7 @@ def test_display_update(display):
 
 def test_display_nonempty(display):
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
-    display.feeds[myfeed._file] = myfeed
+    display.database.feeds = mock.MagicMock(return_value=[myfeed])
     display.create_menus()
     display.display()
 
@@ -139,8 +138,7 @@ def test_display_add_feed(display):
     feed_dir = my_dir + "/feeds/valid_enclosures.xml"
     display._get_input_str = mock.MagicMock(return_value=feed_dir)
     display.add_feed()
-    assert len(display.feeds) == 1
-    assert isinstance(display.feeds[feed_dir], Feed)
+    assert len(display.database.feeds()) == 1
 
 
 def test_display_add_feed_errors(display):
@@ -151,7 +149,7 @@ def test_display_add_feed_errors(display):
         display.add_feed()
         assert "Error" in display._status
         display._status = ""
-        assert len(display.feeds) == 0
+        assert len(display.database.feeds()) == 0
 
 
 def test_display_delete_feed(display):
@@ -162,7 +160,7 @@ def test_display_delete_feed(display):
                 last_build_date="feed last_build_date",
                 copyright="feed copyright",
                 episodes=[])
-    display.feeds["feed url"] = feed
-    assert len(display.feeds) == 1
-    display.delete_feed(0)
-    assert len(display.feeds) == 0
+    display.database.replace_feed(feed)
+    assert len(display.database.feeds()) == 1
+    display.delete_feed(feed)
+    assert len(display.database.feeds()) == 0

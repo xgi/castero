@@ -192,9 +192,9 @@ class Primary(Perspective):
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
         elif c == key_mapping[Config['key_save']]:
-            if self._active_window == 0:
+            if self._active_window == 0 and self._feed_menu.item():
                 self._display.save_episodes(feed=self._feed_menu.item())
-            elif self._active_window == 1:
+            elif self._active_window == 1 and self._episode_menu.item():
                 self._display.save_episodes(episode=self._episode_menu.item())
             
         elif c == key_mapping[Config['key_invert']]:
@@ -259,4 +259,5 @@ class Primary(Perspective):
         """Inverts the contents of the selected menu.
         """
         self._get_active_menu().invert()
-        self._feed_menu.update_child()
+        if self._feed_menu:
+            self._feed_menu.update_child()
