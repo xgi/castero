@@ -120,7 +120,7 @@ def test_display_update(display):
 def test_display_nonempty(display):
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     display.database.feeds = mock.MagicMock(return_value=[myfeed])
-    display.create_menus()
+    display.menus_valid = False
     display.display()
 
 

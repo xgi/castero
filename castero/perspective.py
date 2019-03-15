@@ -49,13 +49,10 @@ class Perspective(ABC):
 
     @abstractmethod
     def create_menus(self) -> None:
-        """Create the menus used in each window, if necessary.
+        """Create the menus used in each window.
 
         Windows which have menus should be created prior to running this method
         (using _create_windows).
-
-        If the menus already exist when this method is run, this method will
-        delete them and create new ones.
         """
 
     @abstractmethod
@@ -82,6 +79,11 @@ class Perspective(ABC):
     @abstractmethod
     def made_active(self) -> None:
         """Called each time the perspective is made active (switched to).
+        """
+
+    @abstractmethod
+    def update_menus(self) -> None:
+        """Update/refresh the contents of all menus.
         """
 
     @abstractmethod

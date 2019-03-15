@@ -112,7 +112,7 @@ def test_perspective_queuelisting_draw_metadata(display):
 
     display.database.replace_feed(feed)
     display.database.replace_episodes(feed, [episode])
-    display.create_menus()
+    display.menus_valid = False
     perspective._draw_metadata(perspective._metadata_window)
     perspective._draw_metadata(perspective._metadata_window)
 

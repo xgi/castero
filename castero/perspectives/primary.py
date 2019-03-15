@@ -63,7 +63,7 @@ class Primary(Perspective):
         self._metadata_window.attron(curses.color_pair(1))
 
     def create_menus(self) -> None:
-        """Create the menus used in each window, if necessary.
+        """Create the menus used in each window.
 
         Overrides method from Perspective; see documentation in that class.
         """
@@ -71,25 +71,10 @@ class Primary(Perspective):
             self._feed_window, self._episode_window
         ])
 
-        # this method could change a lot of screen content - probably
-        # reasonable to simply clear the whole screen
-        self._display.clear()
-
-        # delete old menus if they exist
-        if self._feed_menu is not None:
-            del self._feed_menu
-            self._feed_menu = None
-        if self._episode_menu is not None:
-            del self._episode_menu
-            self._episode_menu = None
-
         self._episode_menu = EpisodeMenu(
             self._episode_window, self._display.database)
         self._feed_menu = FeedMenu(self._feed_window, self._display.database,
                                    child=self._episode_menu, active=True)
-
-        # force reset active window to prevent starting in the episodes menu
-        self._active_window = 0
 
     def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
@@ -207,6 +192,14 @@ class Primary(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
+
+    def update_menus(self) -> None:
+        """Update/refresh the contents of all menus.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._feed_menu.update_items(None)
+        self._feed_menu.update_child()
 
     def refresh(self) -> None:
         """Refresh the screen and all windows.

@@ -188,7 +188,8 @@ def test_perspective_regression_11(display):
     feed = Feed(file="%s/feeds/valid_enclosures.xml" % (my_dir))
     display.database.replace_feed(feed)
     display.database.replace_episodes(feed, feed.parse_episodes())
-    display.create_menus()
+    display.menus_valid = False
+    display.display()
     display.queue.clear()
     perspective._active_window = 1
     perspective._create_player_from_selected()
@@ -206,7 +207,7 @@ def test_perspective_primary_invert_episodes(display):
     feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     display.database.replace_feed(feed)
     display.database.replace_episodes(feed, feed.parse_episodes())
-    display.create_menus()
+    display.menus_valid = False
 
     perspective._feed_menu.invert = mock.MagicMock()
     perspective._episode_menu.invert = mock.MagicMock()

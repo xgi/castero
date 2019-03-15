@@ -70,7 +70,6 @@ class Menu(ABC):
         """
         self._selected = 0
         self._top_index = 0
-        self.clear()
 
     @abstractmethod
     def update_child(self) -> None:
@@ -137,35 +136,24 @@ class Menu(ABC):
         Checks that _selected and _top_index are valid (inside all boundaries),
         setting them to appropriate extremes if they are not.
         """
-        if len(self._items()) > 0:
-            num_my_items = len(self._items())
+        num_my_items = len(self._items())
 
-            # _selected cannot be outside range of items
-            if self._selected < 0:
-                self._selected = 0
-            if self._selected > num_my_items - 1:
-                self._selected = num_my_items - 1
+        # _selected cannot be outside range of items
+        if self._selected < 0:
+            self._selected = 0
+        if self._selected > num_my_items - 1:
+            self._selected = num_my_items - 1
 
-            # if there is no next page, then the current page should be as full
-            # as possible
-            if self._top_index + self._max_displayed_items > num_my_items:
-                self._top_index = num_my_items - self._max_displayed_items
+        # if there is no next page, then the current page should be as full
+        # as possible
+        if self._top_index + self._max_displayed_items > num_my_items:
+            self._top_index = num_my_items - self._max_displayed_items
 
-            # _top_index cannot be outside range of items
-            if self._top_index < 0:
-                self._top_index = 0
-            if self._top_index > num_my_items - 1:
-                self._top_index = num_my_items - 1
-
-    def clear(self) -> None:
-        """Clears the menu.
-
-        Clears by writing blank lines the width of the entire menu. Very
-        inefficient, and should not be used frequently.
-        """
-        for i in range(0, self._max_displayed_items):
-            self._window.addstr(self._display_start_y + i, 0,
-                                self._pad_text(""))
+        # _top_index cannot be outside range of items
+        if self._top_index > num_my_items - 1:
+            self._top_index = num_my_items - 1
+        if self._top_index < 0:
+            self._top_index = 0
 
     def display(self) -> None:
         """Draw all visible items on this menu to the window.
@@ -174,14 +162,17 @@ class Menu(ABC):
         _top_index but less than _max_displayed_items greater than _top_index.
         That is, all items that can fit on the screen starting from _top_index.
         """
-        if len(self._items()) > 0:
-            if len(self._items()) > 0:
-                position = 0
-                for i in range(self._top_index,
-                               self._top_index + self._max_displayed_items):
-                    if i <= len(self._items()) - 1:
-                        self._draw_item(i, position)
-                        position += 1
+        position = 0
+        for i in range(self._top_index,
+                       self._top_index + self._max_displayed_items):
+            if i <= len(self._items()) - 1:
+                self._draw_item(i, position)
+                position += 1
+
+        # fill unused rows with blank lines
+        for y in range(self._display_start_y + position,
+                       self._display_start_y + self._max_displayed_items):
+            self._window.addstr(y, 0, self._pad_text(""))
 
     def set_active(self, active) -> None:
         """Sets whether this menu is active.

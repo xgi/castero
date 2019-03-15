@@ -199,9 +199,6 @@ class Display:
 
         Windows which have menus should be created prior to running this method
         (using _create_windows).
-
-        If the menus already exist when this method is run, this method will
-        delete them and create new ones.
         """
         for perspective_id in self._perspectives:
             self._perspectives[perspective_id].create_menus()
@@ -245,7 +242,8 @@ class Display:
 
         # check to see if menu contents have been invalidated
         if not self.menus_valid:
-            self.create_menus()
+            for perspective_id in self._perspectives:
+                self._perspectives[perspective_id].update_menus()
             self.menus_valid = True
 
         # add header
@@ -445,7 +443,7 @@ class Display:
             if feed.validated:
                 self.database.replace_feed(feed)
                 self.database.replace_episodes(feed, feed.parse_episodes())
-            self.create_menus()
+            self.menus_valid = False
             self.change_status("Feed '%s\' successfully added" % str(feed))
         except FeedError as e:
             if isinstance(e, FeedLoadError):
@@ -488,7 +486,7 @@ class Display:
                 )
             if should_delete:
                 self.database.delete_feed(feed)
-                self.create_menus()
+                self.menus_valid = False
                 self.change_status("Feed successfully deleted")
 
     def reload_feeds(self) -> None:
@@ -579,7 +577,7 @@ class Display:
         if current_y != self._parent_y or current_x != self._parent_x:
             self._parent_y, self._parent_x = current_y, current_x
             self._create_windows()
-            self.create_menus()
+            self.menus_valid = False
             self.refresh()
 
         if self._parent_y < self.MIN_HEIGHT:

@@ -54,25 +54,14 @@ class QueueListing(Perspective):
         self._metadata_window.attron(curses.color_pair(1))
 
     def create_menus(self) -> None:
-        """Create the menus used in each window, if necessary.
+        """Create the menus used in each window.
 
         Overrides method from Perspective; see documentation in that class.
         """
         assert self._queue_window is not None
 
-        # this method could change a lot of screen content - probably
-        # reasonable to simply clear the whole screen
-        self._display.clear()
-
-        # delete old menus if they exist
-        if self._queue_menu is not None:
-            del self._queue_menu
-            self._queue_menu = None
-
-        self._queue_menu = QueueMenu(self._queue_window, self._display.queue, active=True)
-
-        # force reset active window to prevent starting in the episodes menu
-        self._active_window = 0
+        self._queue_menu = QueueMenu(self._queue_window, self._display.queue,
+                                     active=True)
 
     def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
@@ -137,7 +126,7 @@ class QueueListing(Perspective):
             queue.stop()
             self._cycle_queue_to_selected()
             queue.play()
-            self.create_menus()
+            self._display.menus_valid = False
         elif c == key_mapping[Config['key_pause_play']] or \
                 c == key_mapping[Config['key_pause_play_alt']]:
             queue.toggle()
@@ -145,7 +134,7 @@ class QueueListing(Perspective):
             queue.stop()
             queue.next()
             queue.play()
-            self.create_menus()
+            self._display.menus_valid = False
         elif c == key_mapping[Config['key_seek_forward']] or \
                 c == key_mapping[Config['key_seek_forward_alt']]:
             queue.seek(1)
@@ -155,7 +144,7 @@ class QueueListing(Perspective):
         elif c == key_mapping[Config['key_clear']]:
             queue.stop()
             queue.clear()
-            self.create_menus()
+            self._display.menus_valid = False
         elif c == key_mapping[Config['key_delete']]:
             self._remove_selected_from_queue()
 
@@ -174,8 +163,14 @@ class QueueListing(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
-        # recreate the menu since queue data may have changed
-        self.create_menus()
+        pass
+
+    def update_menus(self) -> None:
+        """Update/refresh the contents of all menus.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._queue_menu.update_items(None)
 
     def _get_active_menu(self) -> Menu:
         """Retrieve the active Menu, if there is one.
