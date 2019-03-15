@@ -30,19 +30,7 @@ class FeedMenu(Menu):
         if feed is None:
             return ""
 
-        description = helpers.html_to_plain(feed.description) if \
-            helpers.is_true(Config["clean_html_descriptions"]) else \
-            feed.description
-        description = description.replace('\n', '')
-
-        return \
-            f"\cb{feed.title}\n" \
-            f"{feed.last_build_date}\n\n" \
-            f"{feed.link}\n\n" \
-            f"\cbDescription:\n" \
-            f"{description}\n\n" \
-            f"\cbCopyright:\n" \
-            f"{feed.copyright}\n"
+        return feed.metadata
 
     def update_items(self, obj):
         super().update_items(obj)
@@ -56,6 +44,8 @@ class FeedMenu(Menu):
             self.update_items(None)
         if len(self._feeds) > 0:
             self._child.update_items(self._feeds[self._selected])
+        else:
+            self._child.update_items(None)
 
     def invert(self):
         super().invert()

@@ -24,25 +24,8 @@ class QueueMenu(Menu):
         player = self.item()
         if player is None:
             return ""
-        episode = player.episode
 
-        description = helpers.html_to_plain(episode.description) if \
-            helpers.is_true(Config["clean_html_descriptions"]) else \
-            episode.description
-        description = description.replace('\n', '')
-        downloaded = "Episode downloaded and available for offline playback." \
-            if episode.downloaded() else "Episode not downloaded."
-
-        return \
-            f"\cb{episode.title}\n" \
-            f"{episode.pubdate}\n\n" \
-            f"{episode.link}\n\n" \
-            f"\cbDescription:\n" \
-            f"{description}\n\n" \
-            f"\cbCopyright:\n" \
-            f"{episode.copyright}\n\n" \
-            f"\cbDownloaded:\n" \
-            f"{downloaded}\n"
+        return player.episode.metadata
 
     def update_items(self, obj):
         super().update_items(obj)

@@ -16,49 +16,39 @@ class EpisodeMenu(Menu):
         return len(self._episode_tuples)
 
     def _items(self):
-        return [pair[1] for pair in self._episode_tuples]
+        return [tpl[1] for tpl in self._episode_tuples]
 
     def item(self) -> Episode:
         if len(self._episode_tuples) == 0:
             return None
         
-        pair = self._episode_tuples[self._selected]
-        return self._source.episode(pair[0])
+        tpl = self._episode_tuples[self._selected]
+        return self._source.episode(tpl[0])
 
     def metadata(self):
-        episode = self.item()
-        if episode is None:
+        if len(self._episode_tuples) == 0:
             return ""
 
-        description = helpers.html_to_plain(episode.description) if \
-            helpers.is_true(Config["clean_html_descriptions"]) else \
-            episode.description
-        description = description.replace('\n', '')
-        downloaded = "Episode downloaded and available for offline playback." \
-            if episode.downloaded() else "Episode not downloaded."
-
-        return \
-            f"\cb{episode.title}\n" \
-            f"{episode.pubdate}\n\n" \
-            f"{episode.link}\n\n" \
-            f"\cbDescription:\n" \
-            f"{description}\n\n" \
-            f"\cbCopyright:\n" \
-            f"{episode.copyright}\n\n" \
-            f"\cbDownloaded:\n" \
-            f"{downloaded}\n"
+        tpl = self._episode_tuples[self._selected]
+        if tpl is None:
+            return ""
+        
+        return tpl[2]
 
     def update_items(self, feed: Feed):
-        assert isinstance(feed, Feed)
+        assert isinstance(feed, Feed) or feed is None
 
         super().update_items(feed)
 
         self._feed = feed
 
-        self._episode_tuples = \
-            [(episode.ep_id, str(episode)) for episode in self._source.episodes(feed)]
-        if self._inverted:
-            self._episode_tuples.reverse()
+        if feed is None:
+            self._episode_tuples = []
+        else:
+            self._episode_tuples = \
+                [(episode.ep_id, str(episode), episode.metadata) for episode in self._source.episodes(feed)]
+            if self._inverted:
+                self._episode_tuples.reverse()
 
     def update_child(self):
         pass

@@ -220,3 +220,24 @@ class Episode:
         if result is None:
             result = "Enclosure not available."
         return result
+
+    @property
+    def metadata(self) -> str:
+        """str: the user-displayed metadata of the episode"""
+        description = helpers.html_to_plain(self.description) if \
+            helpers.is_true(Config["clean_html_descriptions"]) else \
+            self.description
+        description = description.replace('\n', '')
+        downloaded = "Episode downloaded and available for offline playback." \
+            if self.downloaded() else "Episode not downloaded."
+
+        return \
+            f"\cb{self.title}\n" \
+            f"{self.pubdate}\n\n" \
+            f"{self.link}\n\n" \
+            f"\cbDescription:\n" \
+            f"{description}\n\n" \
+            f"\cbCopyright:\n" \
+            f"{self.copyright}\n\n" \
+            f"\cbDownloaded:\n" \
+            f"{downloaded}\n"

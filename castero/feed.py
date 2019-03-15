@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ElementTree
 import requests
 from typing import List
 
+from castero import helpers
 from castero.config import Config
 from castero.episode import Episode
 from castero.net import Net
@@ -358,3 +359,20 @@ class Feed:
         if result is None:
             result = "No copyright specified."
         return result
+
+    @property
+    def metadata(self) -> str:
+        """str: the user-displayed metadata of the feed"""
+        description = helpers.html_to_plain(self.description) if \
+            helpers.is_true(Config["clean_html_descriptions"]) else \
+            self.description
+        description = description.replace('\n', '')
+
+        return \
+            f"\cb{self.title}\n" \
+            f"{self.last_build_date}\n\n" \
+            f"{self.link}\n\n" \
+            f"\cbDescription:\n" \
+            f"{description}\n\n" \
+            f"\cbCopyright:\n" \
+            f"{self.copyright}\n"
