@@ -181,7 +181,6 @@ class PrimaryPerspective(Perspective):
                 self._display.save_episodes(feed=self._feed_menu.item())
             elif self._active_window == 1 and self._episode_menu.item():
                 self._display.save_episodes(episode=self._episode_menu.item())
-            
         elif c == key_mapping[Config['key_invert']]:
             self._invert_selected_menu()
 
