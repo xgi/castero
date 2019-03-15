@@ -213,8 +213,8 @@ class Database():
             else:
                 new_feed = Feed(file=feed.key)
 
-            self.replace_episodes(new_feed, self.episodes(new_feed))
             self.replace_feed(new_feed)
+            self.replace_episodes(new_feed, new_feed.parse_episodes())
 
         if display is not None:
             display.change_status("Feeds successfully reloaded")
