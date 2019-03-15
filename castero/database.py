@@ -218,4 +218,4 @@ class Database():
 
         if display is not None:
             display.change_status("Feeds successfully reloaded")
-            display.create_menus()
+            display.menus_valid = False

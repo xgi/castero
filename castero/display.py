@@ -79,6 +79,7 @@ class Display:
         self._download_queue = DownloadQueue(self)
         self._status = ""
         self._status_timer = self.STATUS_TIMEOUT
+        self._menus_valid = True
 
         # basic preliminary operations
         self._stdscr.timeout(self.INPUT_TIMEOUT)
@@ -241,6 +242,11 @@ class Display:
         """
         # check if the screen size has changed
         self.update_parent_dimensions()
+
+        # check to see if menu contents have been invalidated
+        if not self.menus_valid:
+            self.create_menus()
+            self.menus_valid = True
 
         # add header
         playing_str = castero.__title__
@@ -656,3 +662,12 @@ class Display:
     def queue(self) -> Queue:
         """Queue: the Queue of Player's"""
         return self._queue
+
+    @property
+    def menus_valid(self) -> bool:
+        """bool: whether the menu contents are valid (!need_to_be_updated)"""
+        return self._menus_valid
+
+    @menus_valid.setter
+    def menus_valid(self, menus_valid) -> None:
+        self._menus_valid = menus_valid
