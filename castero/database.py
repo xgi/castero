@@ -94,8 +94,8 @@ class Database():
     def replace_episode(self, feed: Feed, episode: Episode) -> None:
         cursor = self._conn.cursor()
         if episode.ep_id is None:
-            sql = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure)\n" \
-                "values (?,?,?,?,?,?,?)"
+            sql = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\n" \
+                "values (?,?,?,?,?,?,?,?)"
             cursor.execute(sql, (
                 episode.title,
                 feed.key,
@@ -103,13 +103,13 @@ class Database():
                 episode.link,
                 episode.pubdate,
                 episode.copyright,
-                episode.enclosure
+                episode.enclosure,
+                episode.played
             ))
             episode.ep_id = cursor.lastrowid
         else:
-            sql = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure)\n" \
-                "values (?,?,?,?,?,?,?,?)"
-
+            sql = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\n" \
+                "values (?,?,?,?,?,?,?,?,?)"
             cursor.execute(sql, (
                 episode.ep_id,
                 episode.title,
@@ -118,7 +118,8 @@ class Database():
                 episode.link,
                 episode.pubdate,
                 episode.copyright,
-                episode.enclosure
+                episode.enclosure,
+                episode.played
             ))
         self._conn.commit()
 
@@ -141,13 +142,12 @@ class Database():
                 description=row[2],
                 link=row[3],
                 last_build_date=row[4],
-                copyright=row[5],
-                episodes=[],
+                copyright=row[5]
             ))
         return feeds
 
     def episodes(self, feed: Feed) -> List[Episode]:
-        sql = "select id, title, description, link, pubdate, copyright, enclosure from episode where feed_key=?"
+        sql = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (feed.key,))
 
@@ -161,14 +161,15 @@ class Database():
                 link=row[3],
                 pubdate=row[4],
                 copyright=row[5],
-                enclosure=row[6]
+                enclosure=row[6],
+                played=row[7]
             ))
         return episodes
 
     def feed(self, key) -> Feed:
-        sql = "select key, title, description, link, last_build_date, copyright from feed"
+        sql = "select key, title, description, link, last_build_date, copyright from feed where key=?"
         cursor = self._conn.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, (key,))
 
         result = cursor.fetchone()
         if result is None:
@@ -186,7 +187,7 @@ class Database():
             )
 
     def episode(self, ep_id: int) -> Episode:
-        sql = "select feed_key, id, title, description, link, pubdate, copyright, enclosure from episode where id=?"
+        sql = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (ep_id,))
 
@@ -203,7 +204,8 @@ class Database():
                 link=result[4],
                 pubdate=result[5],
                 copyright=result[6],
-                enclosure=result[7]
+                enclosure=result[7],
+                played=result[8]
             )
 
     def reload(self, display=None) -> None:

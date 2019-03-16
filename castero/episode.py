@@ -13,7 +13,7 @@ class Episode:
     """
 
     def __init__(self, feed, ep_id=None, title=None, description=None, link=None,
-                 pubdate=None, copyright=None, enclosure=None) -> None:
+                 pubdate=None, copyright=None, enclosure=None, played=False) -> None:
         """Initializes the object.
 
         At least one of a title or description must be specified.
@@ -26,6 +26,7 @@ class Episode:
             pubdate: (optional) the date the episode was published, as a string
             copyright: (optional) the copyright notice of the episode
             enclosure: (optional) a url to a media file
+            played: (optional) whether the episode has been played
         """
         assert title is not None or description is not None
 
@@ -37,6 +38,7 @@ class Episode:
         self._pubdate = pubdate
         self._copyright = copyright
         self._enclosure = enclosure
+        self._played = played
 
     def __str__(self) -> str:
         """Represent this object as a single-line string.
@@ -220,6 +222,15 @@ class Episode:
         if result is None:
             result = "Enclosure not available."
         return result
+
+    @property
+    def played(self) -> bool:
+        """bool: whether the episode has been played"""
+        return self._played
+
+    @played.setter
+    def played(self, played) -> None:
+        self._played = played
 
     @property
     def metadata(self) -> str:

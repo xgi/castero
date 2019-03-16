@@ -1,3 +1,5 @@
+import curses
+
 from castero import helpers
 from castero.config import Config
 from castero.feed import Feed
@@ -9,7 +11,7 @@ class FeedMenu(Menu):
     def __init__(self, window, source, child=None, active=False) -> None:
         assert child is not None and isinstance(child, EpisodeMenu)
 
-        self._feeds = None
+        self._feeds = []
 
         super().__init__(window, source, child=child, active=active)
 
@@ -17,7 +19,13 @@ class FeedMenu(Menu):
         return len(self._feeds)
 
     def _items(self):
-        return [str(feed) for feed in self._feeds]
+        return [
+            {
+                'attr': curses.A_NORMAL,
+                'text': str(feed)
+            }
+            for feed in self._feeds
+        ]
 
     def item(self) -> Feed:
         if len(self._feeds) == 0:
@@ -39,10 +47,12 @@ class FeedMenu(Menu):
         if self._inverted:
             self._feeds.reverse()
 
+        self._sanitize()
+
     def update_child(self):
-        if self._feeds is None:
+        if len(self._feeds) == 0:
             self.update_items(None)
-        if len(self._feeds) > 0:
+        elif len(self._feeds) > 0:
             self._child.update_items(self._feeds[self._selected])
         else:
             self._child.update_items(None)

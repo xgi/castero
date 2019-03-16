@@ -2,6 +2,7 @@ import curses
 import glob
 import importlib
 import threading
+from typing import List
 from os.path import dirname, basename, isfile
 
 import castero
@@ -11,6 +12,7 @@ from castero.database import Database
 from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
+from castero.episode import Episode
 from castero.perspective import Perspective
 from castero.queue import Queue
 
@@ -75,11 +77,12 @@ class Display:
         self._active_perspective = 1
         self._header_window = None
         self._footer_window = None
-        self._queue = Queue()
+        self._queue = Queue(self)
         self._download_queue = DownloadQueue(self)
         self._status = ""
         self._status_timer = self.STATUS_TIMEOUT
         self._menus_valid = True
+        self._modified_episodes = []
 
         # basic preliminary operations
         self._stdscr.timeout(self.INPUT_TIMEOUT)
@@ -133,6 +136,11 @@ class Display:
             4,
             self.AVAILABLE_COLORS[Config["color_foreground_alt"]],
             self.AVAILABLE_COLORS[Config["color_background_alt"]]
+        )
+        curses.init_pair(
+            5,
+            self.AVAILABLE_COLORS[Config["color_foreground_dim"]],
+            self.AVAILABLE_COLORS[Config["color_background"]]
         )
 
     def _load_perspectives(self) -> None:
@@ -636,6 +644,13 @@ class Display:
                 # status_timer should be reset during the next change_status()
                 self._status = ""
 
+        # write any episode modifications to the database
+        if len(self._modified_episodes) > 0:
+            for episode in self._modified_episodes:
+                self.database.replace_episode(episode._feed, episode)
+            self.menus_valid = False
+            self._modified_episodes = []
+
     @property
     def parent_x(self) -> int:
         """int: the width of the parent screen, in characters"""
@@ -669,3 +684,8 @@ class Display:
     @menus_valid.setter
     def menus_valid(self, menus_valid) -> None:
         self._menus_valid = menus_valid
+
+    @property
+    def modified_episodes(self) -> List[Episode]:
+        """List[Episode]: database episodes to save on the next update"""
+        return self._modified_episodes

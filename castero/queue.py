@@ -9,10 +9,11 @@ class Queue:
     class' main interface for accessing information about the current player.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, display) -> None:
         """Initializes the object.
         """
         self._players = []
+        self._display = display
 
     def __getitem__(self, index):
         return self._players[index]
@@ -48,6 +49,8 @@ class Queue:
         """Plays the first player in the queue.
         """
         if self.first is not None:
+            self.first.episode.played = True
+            self._display.modified_episodes.append(self.first.episode)
             self.first.play()
 
     def pause(self) -> None:

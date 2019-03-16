@@ -68,8 +68,6 @@ class Menu(ABC):
             obj: an object of some type understood by the specific
             implementation of this menu
         """
-        self._selected = 0
-        self._top_index = 0
 
     @abstractmethod
     def update_child(self) -> None:
@@ -117,18 +115,19 @@ class Menu(ABC):
                 for _display_start_y
         """
         item = self._items()[index]
-        item_str = self._pad_text(item)
+        item_str = self._pad_text(item['text'])
 
-        color_pair = 1
+        attr = curses.color_pair(1)
         if index == self._selected:
             if self._active:
-                color_pair = 2
+                attr = curses.color_pair(2)
             else:
-                color_pair = 3
+                attr = curses.color_pair(3)
+        else:
+            attr = attr | item['attr']
 
         self._window.addstr(self._display_start_y + position, 0,
-                            item_str,
-                            curses.color_pair(color_pair))
+                            item_str, attr)
 
     def _sanitize(self) -> None:
         """Sanitizes _selected and _top_index.

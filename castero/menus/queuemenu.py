@@ -1,3 +1,5 @@
+import curses
+
 from castero import helpers
 from castero.config import Config
 from castero.feed import Feed
@@ -12,7 +14,13 @@ class QueueMenu(Menu):
         return self._source.length
 
     def _items(self):
-        return [str(player) for player in self._source]
+        return [
+            {
+                'attr': curses.A_NORMAL,
+                'text': str(player)
+            }
+            for player in self._source
+        ]
 
     def item(self) -> Feed:
         if self._source.length == 0:
