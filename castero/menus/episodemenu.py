@@ -12,36 +12,35 @@ class EpisodeMenu(Menu):
         super().__init__(window, source, child=child, active=active)
 
         self._feed = None
-        self._episode_dicts = []
+        self._episodes = []
 
     def __len__(self) -> int:
-        return len(self._episode_dicts)
+        return len(self._episodes)
 
     def _items(self):
         return [
             {
-                'attr': curses.color_pair(5) if tpl['played'] else curses.A_NORMAL,
-                'text': tpl['text']
+                'attr': curses.color_pair(5) if episode.played else curses.A_NORMAL,
+                'text': str(episode)
             }
-            for tpl in self._episode_dicts
+            for episode in self._episodes
         ]
 
     def item(self) -> Episode:
-        if len(self._episode_dicts) == 0:
+        if len(self._episodes) == 0:
             return None
 
-        tpl = self._episode_dicts[self._selected]
-        return self._source.episode(tpl['ep_id'])
+        return self._episodes[self._selected]
 
     def metadata(self):
-        if len(self._episode_dicts) == 0:
+        if len(self._episodes) == 0:
             return ""
 
-        tpl = self._episode_dicts[self._selected]
-        if tpl is None:
+        episode = self._episodes[self._selected]
+        if episode is None:
             return ""
 
-        return tpl['metadata']
+        return episode.metadata
 
     def update_items(self, feed: Feed):
         assert isinstance(feed, Feed) or feed is None
@@ -51,20 +50,13 @@ class EpisodeMenu(Menu):
         self._feed = feed
 
         if feed is None:
-            self._episode_dicts = []
+            self._episodes = []
         else:
-            self._episode_dicts = [
-                {
-                    'ep_id': episode.ep_id,
-                    'text': str(episode),
-                    'played': episode.played,
-                    'metadata': episode.metadata
-                }
-                for episode in self._source.episodes(feed)
-            ]
+            self._episodes = \
+                [episode for episode in self._source.episodes(feed)]
 
             if self._inverted:
-                self._episode_dicts.reverse()
+                self._episodes.reverse()
 
         self._sanitize()
 
