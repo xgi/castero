@@ -184,7 +184,13 @@ class PrimaryPerspective(Perspective):
         elif c == key_mapping[Config['key_invert']]:
             self._invert_selected_menu()
         elif c == key_mapping[Config['key_mark_played']]:
-            if self._active_window == 1:
+            if self._active_window == 0:
+                feed = self._feed_menu.item()
+                episodes = self._display.database.episodes(feed)
+                for episode in episodes:
+                    episode.played = not episode.played
+                self._display.modified_episodes.extend(episodes)
+            elif self._active_window == 1:
                 episode = self._episode_menu.item()
                 episode.played = not episode.played
                 self._display.modified_episodes.append(episode)
