@@ -102,10 +102,13 @@ def test_perspective_primary_input_keys(display):
         display.KEY_MAPPING[Config['key_seek_forward_alt']],
         display.KEY_MAPPING[Config['key_seek_backward']],
         display.KEY_MAPPING[Config['key_seek_backward_alt']],
+        display.KEY_MAPPING[Config['key_mark_played']],
     ]
     for key in operation_keys:
-        ret_val = perspective.handle_input(key)
-        assert ret_val
+        display._active_window = 0
+        assert perspective.handle_input(key)
+        display._active_window = 1
+        assert perspective.handle_input(key)
 
 
 def test_perspective_primary_draw_metadata(display):

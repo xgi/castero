@@ -167,15 +167,17 @@ class SimplePerspective(Perspective):
         elif c == key_mapping[Config['key_mark_played']]:
             if self._active_window == 0:
                 feed = self._feed_menu.item()
-                episodes = self._display.database.episodes(feed)
-                for episode in episodes:
-                    episode.played = not episode.played
-                self._display.modified_episodes.extend(episodes)
+                if feed is not None:
+                    episodes = self._display.database.episodes(feed)
+                    for episode in episodes:
+                        episode.played = not episode.played
+                    self._display.modified_episodes.extend(episodes)
             elif self._active_window == 1:
                 episode = self._episode_menu.item()
-                episode.played = not episode.played
-                self._display.modified_episodes.append(episode)
-                self._episode_menu.move(-1)
+                if episode is not None:
+                    episode.played = not episode.played
+                    self._display.modified_episodes.append(episode)
+                    self._episode_menu.move(-1)
 
         return keep_running
 
