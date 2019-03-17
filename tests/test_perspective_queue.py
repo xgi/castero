@@ -20,7 +20,7 @@ episode = Episode(feed,
 player1 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player2 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player3 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
-queue = Queue()
+queue = Queue(mock.MagicMock())
 queue.add(player1)
 queue.add(player2)
 
@@ -128,7 +128,7 @@ def test_perspective_queue_cycle_queue_to_selected_first(display):
     perspective = get_queue_perspective(display)
 
     perspective._queue_menu.item = mock.MagicMock(return_value=player1)
-    queue1 = Queue()
+    queue1 = Queue(display)
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -142,7 +142,7 @@ def test_perspective_queue_cycle_queue_to_selected_middle(display):
     perspective = get_queue_perspective(display)
 
     perspective._queue_menu.item = mock.MagicMock(return_value=player2)
-    queue1 = Queue()
+    queue1 = Queue(display)
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -156,7 +156,7 @@ def test_perspective_queue_remove_selected_first(display):
     perspective = get_queue_perspective(display)
 
     perspective._queue_menu.item = mock.MagicMock(return_value=player1)
-    queue1 = Queue()
+    queue1 = Queue(display)
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
@@ -170,7 +170,7 @@ def test_perspective_queue_remove_selected_middle(display):
     perspective = get_queue_perspective(display)
 
     perspective._queue_menu.item = mock.MagicMock(return_value=player2)
-    queue1 = Queue()
+    queue1 = Queue(display)
     queue1.add(player1)
     queue1.add(player2)
     queue1.add(player3)
