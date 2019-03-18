@@ -36,11 +36,7 @@ class EpisodeMenu(Menu):
         if len(self._episodes) == 0:
             return ""
 
-        episode = self._episodes[self._selected]
-        if episode is None:
-            return ""
-
-        return episode.metadata
+        return self._episodes[self._selected].metadata
 
     def update_items(self, feed: Feed):
         assert isinstance(feed, Feed) or feed is None

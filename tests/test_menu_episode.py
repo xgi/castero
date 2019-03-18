@@ -43,6 +43,11 @@ def test_menu_episode_items(mock_A_NORMAL, mock_color_pair):
     } in items
 
 
+def test_menu_episode_item_none():
+    mymenu = EpisodeMenu(window, source)
+    assert mymenu.item() is None
+
+
 @mock.patch('curses.color_pair')
 @mock.patch('curses.A_NORMAL')
 def test_menu_episode_item(mock_A_NORMAL, mock_color_pair):
@@ -72,7 +77,18 @@ def test_menu_episode_metadata(mock_A_NORMAL, mock_color_pair):
 
 @mock.patch('curses.color_pair')
 @mock.patch('curses.A_NORMAL')
+def test_menu_episode_update_child(mock_A_NORMAL, mock_color_pair):
+    mymenu = EpisodeMenu(window, source)
+    mymenu.update_items(feed)
+    items = mymenu._items()
+    mymenu.update_child()
+    assert mymenu._items() == items
+    
+
+@mock.patch('curses.color_pair')
+@mock.patch('curses.A_NORMAL')
 def test_menu_episode_invert(mock_A_NORMAL, mock_color_pair):
     mymenu = EpisodeMenu(window, source)
     mymenu.invert()
     assert mymenu._inverted
+    mymenu.update_items(feed)
