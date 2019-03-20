@@ -41,7 +41,7 @@ setuptools.setup(
         'castero', 'castero.perspectives', 'castero.players', 'castero.menus'
     ],
     package_data={
-        'castero': ['templates/*'],
+        'castero': ['templates/*', 'templates/migrations/*'],
     },
     python_requires='>=3',
     install_requires=install_requires,

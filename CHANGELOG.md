@@ -12,6 +12,10 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.5.2 - 2019-03-19
+**Fixed**
+* Fixed some files not being properly linked on install.
+
 ## 0.5.0 - 2019-03-19
 **Added**
 * The client now uses an sqlite database file for storing data (sqlite added as
