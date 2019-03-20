@@ -14,7 +14,7 @@ See also <https://github.com/xgi/castero/releases>.
 
 ## 0.5.0 - 2019-03-19
 **Added**
-* The client now uses an sqlite database file for storing data (sqlite added a
+* The client now uses an sqlite database file for storing data (sqlite added as
 a dependency).
 * Added support for marking episodes as played.
 * Added a metadata-less perspective (SimplePerspective) accessed with `3`.

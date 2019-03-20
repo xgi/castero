@@ -1,6 +1,6 @@
 # castero
 
-[![GitHub release](https://img.shields.io/github/release/xgi/castero.svg)](https://github.com/xgi/castero/releases) [![CircleCI](https://circleci.com/gh/xgi/castero/tree/master.svg?style=svg)](https://circleci.com/gh/xgi/castero/tree/master) [![Codacy Grade](https://api.codacy.com/project/badge/Grade/f67d09d07b1d4d1aa1c97db3cbed5d1f)](https://www.codacy.com/app/xgi/castero) [![Codacy Coverage](https://api.codacy.com/project/badge/Coverage/f67d09d07b1d4d1aa1c97db3cbed5d1f)](https://www.codacy.com/app/xgi/castero)
+[![GitHub release](https://img.shields.io/github/release/xgi/castero.svg)](https://github.com/xgi/castero/releases) [![PyPI](https://img.shields.io/pypi/v/castero.svg)](https://pypi.org/project/castero) [![CircleCI](https://circleci.com/gh/xgi/castero/tree/master.svg?style=svg)](https://circleci.com/gh/xgi/castero/tree/master) [![Codacy Grade](https://api.codacy.com/project/badge/Grade/f67d09d07b1d4d1aa1c97db3cbed5d1f)](https://www.codacy.com/app/xgi/castero) [![Codacy Coverage](https://api.codacy.com/project/badge/Coverage/f67d09d07b1d4d1aa1c97db3cbed5d1f)](https://www.codacy.com/app/xgi/castero)
 
 castero is a TUI podcast client for the terminal.
 
@@ -37,6 +37,7 @@ $ sudo python setup.py install
 Running castero requires the following external dependencies:
 
 * Python >= 3.5 (check the output of ``python --version``)
+* sqlite3
 * **One** of the following media players:
   * vlc >= 2.2.3
   * (mpv and libmpv) >= 0.14.0
@@ -70,7 +71,7 @@ Commands
     p or k       - pause/play the current episode
     f or l       - seek forward
     b or j       - seek backward
-    1-2          - change between client layouts
+    1-3          - change between client layouts
 ```
 
 ## Configuration
@@ -81,11 +82,10 @@ after the client has been run at least once.
 Please see the default [castero.conf](https://github.com/xgi/castero/blob/master/castero/templates/castero.conf)
 for a list of available settings.
 
-Additionally, a file containing your list of feeds is located at
-`{HOME}/.local/share/castero/feeds`. This file is provided to avoid
-redownloading feeds on every startup. However, it is not intended to be
-manually modified. Removing this file will simply cause castero to replace
-it with an empty list next time you run the client.
+User data, including downloaded episodes and a database with your feed
+information is located at `{HOME}/.local/share/castero/`. These files are not
+intended to be manually modified. Removing the database will simply cause
+castero to replace it with an empty one the next time you run the client.
 
 ## Testing
 
