@@ -12,6 +12,26 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.5.0 - 2019-03-19
+**Added**
+* The client now uses an sqlite database file for storing data (sqlite added a
+a dependency).
+* Added support for marking episodes as played.
+* Added a metadata-less perspective (SimplePerspective) accessed with `3`.
+
+**Changed**
+* Menus are now able to update dynamically from the database.
+
+**Deprecated**
+* The old JSON `feeds` file is no longer used, in favor of a `castero.db` file
+in the same location. The client will migrate your `feeds` file to the new
+database upon starting if necessary. There are no known issues with this
+process, but your original file is not modified regardless (please create an
+Issue if you have any problems!).
+
+**Fixed**
+* Fixed a crash when trying to view the metadata of 0 episodes.
+
 ## 0.4.2 - 2019-03-02
 **Added**
 * Added a separate config option for seeking forwards/backwards - Thanks
