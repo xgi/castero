@@ -31,12 +31,26 @@ class Queue:
             del p
         self._players = []
 
+    def jump(self, player) -> None:
+        """Jump to the given player.
+
+        Players skipped are removed from the queue. If the given player is not
+        actually in the queue, this method safely does nothing.
+
+        Args:
+            player: the Player to jump to
+        """
+        if player in self._players:
+            index = self._players.index(player)
+            if index > 0:
+                self.stop()
+                self._players = self._players[index:]
+
     def next(self) -> None:
         """Proceed to the next player in the queue.
         """
         if len(self._players) > 0:
             self._players.pop(0)
-            self.play()
 
     def add(self, player) -> None:
         """Adds a player to the end of the queue.

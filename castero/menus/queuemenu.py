@@ -2,7 +2,7 @@ import curses
 
 from castero import helpers
 from castero.config import Config
-from castero.feed import Feed
+from castero.player import Player
 from castero.menu import Menu
 
 
@@ -22,7 +22,7 @@ class QueueMenu(Menu):
             for player in self._source
         ]
 
-    def item(self) -> Feed:
+    def item(self) -> Player:
         if self._source.length == 0:
             return None
         

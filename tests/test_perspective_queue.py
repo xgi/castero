@@ -124,34 +124,6 @@ def test_perspective_queue_get_active_menu(display):
     assert perspective._get_active_menu() == perspective._queue_menu
 
 
-def test_perspective_queue_cycle_queue_to_selected_first(display):
-    perspective = get_queue_perspective(display)
-
-    perspective._queue_menu.item = mock.MagicMock(return_value=player1)
-    queue1 = Queue(display)
-    queue1.add(player1)
-    queue1.add(player2)
-    queue1.add(player3)
-    display._queue = queue1
-    perspective._cycle_queue_to_selected()
-    assert queue1.first == player1
-    assert queue1.length == 3
-
-
-def test_perspective_queue_cycle_queue_to_selected_middle(display):
-    perspective = get_queue_perspective(display)
-
-    perspective._queue_menu.item = mock.MagicMock(return_value=player2)
-    queue1 = Queue(display)
-    queue1.add(player1)
-    queue1.add(player2)
-    queue1.add(player3)
-    display._queue = queue1
-    perspective._cycle_queue_to_selected()
-    assert queue1.first == player2
-    assert queue1.length == 2
-
-
 def test_perspective_queue_remove_selected_first(display):
     perspective = get_queue_perspective(display)
 

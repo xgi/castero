@@ -124,7 +124,10 @@ class QueuePerspective(Perspective):
             self._metadata_updated = False
         elif c == key_mapping[Config['key_play_selected']]:
             queue.stop()
-            self._cycle_queue_to_selected()
+            target = self._queue_menu.item()
+            self._display.queue.jump(target)
+            while self._queue_menu.selected_index > 0:
+                self._queue_menu.move(1)
             queue.play()
             self._display.menus_valid = False
         elif c == key_mapping[Config['key_pause_play']] or \
@@ -180,13 +183,6 @@ class QueuePerspective(Perspective):
         assert 0 <= self._active_window < 2
 
         return self._queue_menu
-
-    def _cycle_queue_to_selected(self) -> None:
-        """Remove all players in the queue preceding the selected one.
-        """
-        target = self._queue_menu.item()
-        while self._display.queue.first != target:
-            self._display.queue.next()
 
     def _remove_selected_from_queue(self) -> None:
         """Remove the selected player from the queue.

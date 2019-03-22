@@ -101,6 +101,18 @@ def test_queue_next(display):
     assert myqueue.length == 1
 
 
+def test_queue_jump(display):
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+    player2 = mock.MagicMock(spec=Player)
+
+    myqueue.add(player1)
+    myqueue.add(player2)
+    assert myqueue.length == 2
+    myqueue.jump(player2)
+    assert myqueue.length == 1
+
+
 def test_queue_play(display):
     myqueue = Queue(display)
     player1 = mock.MagicMock(spec=Player)
