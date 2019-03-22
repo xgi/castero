@@ -47,9 +47,6 @@ def main():
         print(castero.__version__)
         sys.exit(0)
 
-    # check whether dependencies are met
-    Player.check_dependencies()
-
     # instantiate the display object
     stdscr = curses.initscr()
     display = Display(stdscr, database)

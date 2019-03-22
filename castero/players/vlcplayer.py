@@ -26,7 +26,8 @@ class VLCPlayer(Player):
         """
         try:
             import vlc
-            vlc.Instance()
+            i = vlc.Instance()
+            vlc.libvlc_release(i)
         except (ImportError, NameError, OSError, AttributeError,
                 ModuleNotFoundError):
             raise PlayerDependencyError(
