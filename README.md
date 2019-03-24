@@ -22,9 +22,8 @@ $ pip install castero --upgrade
 
 ### Manual Installation
 
-Warning: the documentation on this page refers to the latest official release.
-The behavior of the current code may be different from what is described here
-(i.e. different dependencies, changed commands).
+Warning: changes to the master branch are sometimes made before the
+documentation on this page is updated.
 
 ```bash
 $ git clone https://github.com/xgi/castero
@@ -79,11 +78,11 @@ Commands
 The configuration file is located at `{HOME}/.config/castero/castero.conf`
 after the client has been run at least once.
 
-Please see the default [castero.conf](https://github.com/xgi/castero/blob/master/castero/templates/castero.conf)
+Please see the [default castero.conf](https://github.com/xgi/castero/blob/master/castero/templates/castero.conf)
 for a list of available settings.
 
 User data, including downloaded episodes and a database with your feed
-information is located at `{HOME}/.local/share/castero/`. These files are not
+information, is located at `{HOME}/.local/share/castero/`. These files are not
 intended to be manually modified. Removing the database will simply cause
 castero to replace it with an empty one the next time you run the client.
 
