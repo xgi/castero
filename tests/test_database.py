@@ -153,6 +153,11 @@ def test_database_from_json(prevent_modification):
 
     feeds = mydatabase.feeds()
     assert len(feeds) == 2
+
+    # we don't technically make any assumptions about the order of the feeds
+    if feeds[0].key != "feed key":
+        feeds.reverse()
+
     assert feeds[0].key == "feed key"
     assert feeds[0].title == "feed title"
     assert feeds[0].description == "feed description"
