@@ -4,11 +4,12 @@ workflows:
   version: 2.1
   test:
     jobs:
-      - testa # python-3.7
-      - testb # python-3.6
+      - test-three-seven # python-3.7
+      - test-three-six   # python-3.6
+      - test-three-five  # python-3.5
 
 jobs:
-  testa: &test-template
+  test-three-seven: &test-template
     docker:
       - image: circleci/python:3.7-stretch
 
@@ -59,7 +60,12 @@ jobs:
             . venv/bin/activate
             python-codacy-coverage -r coverage.xml
 
-  testb:
+  test-three-six:
     <<: *test-template
     docker:
       - image: circleci/python:3.6-stretch
+
+  test-three-five:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.5-stretch
