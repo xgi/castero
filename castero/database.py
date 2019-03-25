@@ -15,6 +15,7 @@ class Database():
 
     def __init__(self):
         existed = os.path.exists(self.PATH)
+        DataFile.ensure_path(self.PATH)
         self._conn = sqlite3.connect(self.PATH, check_same_thread=False)
         self._conn.execute("PRAGMA foreign_keys = ON")
 
