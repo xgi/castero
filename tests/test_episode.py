@@ -138,7 +138,7 @@ def test_episode_delete(display):
     episode = myfeed.parse_episodes()[1]
     assert episode.downloaded()
     episode.delete(display=display)
-    display.change_status.assert_called_once()
+    assert display.change_status.call_count == 1
     assert not episode.downloaded()
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
@@ -151,7 +151,7 @@ def test_episode_download():
     myepisode = myfeed.parse_episodes()[1]
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     myepisode.download(mydownloadqueue)
-    DataFile.download_to_file.assert_called_once()
+    assert DataFile.download_to_file.call_count == 1
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
@@ -164,7 +164,7 @@ def test_episode_download_with_display(display):
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)
-    DataFile.download_to_file.assert_called_once()
+    assert DataFile.download_to_file.call_count == 1
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
@@ -177,7 +177,7 @@ def test_episode_download_with_display_no_enclosure(display):
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)
-    display.change_status.assert_called_once()
+    assert display.change_status.call_count == 1
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")

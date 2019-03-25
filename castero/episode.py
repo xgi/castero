@@ -243,12 +243,18 @@ class Episode:
             if self.downloaded() else "Episode not downloaded."
 
         return \
-            f"\cb{self.title}\n" \
-            f"{self.pubdate}\n\n" \
-            f"{self.link}\n\n" \
-            f"\cbDescription:\n" \
-            f"{description}\n\n" \
-            f"\cbCopyright:\n" \
-            f"{self.copyright}\n\n" \
-            f"\cbDownloaded:\n" \
-            f"{downloaded}\n"
+            "\cb{title}\n" \
+            "{pubdate}\n\n" \
+            "{link}\n\n" \
+            "\cbDescription:\n" \
+            "{description}\n\n" \
+            "\cbCopyright:\n" \
+            "{copyright}\n\n" \
+            "\cbDownloaded:\n" \
+            "{downloaded}\n".format(
+                title=self.title,
+                pubdate=self.pubdate,
+                link=self.link,
+                description=description,
+                copyright=self.copyright,
+                downloaded=downloaded)

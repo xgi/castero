@@ -31,7 +31,7 @@ def test_player_play():
     myplayer._player = mock.MagicMock()
 
     myplayer.play()
-    myplayer._player.play.assert_called_once()
+    assert myplayer._player.play.call_count == 1
     assert myplayer.state == 1
 
 
@@ -40,7 +40,7 @@ def test_player_pause():
     myplayer._player = mock.MagicMock()
 
     myplayer.pause()
-    myplayer._player.pause.assert_called_once()
+    assert myplayer._player.pause.call_count == 1
     assert myplayer.state == 2
 
 
@@ -49,7 +49,7 @@ def test_player_stop():
     myplayer._player = mock.MagicMock()
 
     myplayer.stop()
-    myplayer._player.stop.assert_called_once()
+    assert myplayer._player.stop.call_count == 1
     assert myplayer.state == 0
 
 

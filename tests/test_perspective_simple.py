@@ -169,8 +169,8 @@ def test_perspective_simple_invert_episodes(display):
 
     perspective._active_window = 0
     perspective._invert_selected_menu()
-    perspective._feed_menu.invert.assert_called_once()
+    assert perspective._feed_menu.invert.call_count == 1
     perspective._active_window = 1
     perspective._invert_selected_menu()
-    perspective._episode_menu.invert.assert_called_once()
+    assert perspective._episode_menu.invert.call_count == 1
     display._stdscr.reset_mock()

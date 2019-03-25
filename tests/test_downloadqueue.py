@@ -51,7 +51,7 @@ def test_downloadqueue_next():
     mydownloadqueue.start = mock.MagicMock(name="start")
     mydownloadqueue.next()
     assert mydownloadqueue.length == 1
-    mydownloadqueue.start.assert_called_once()
+    assert mydownloadqueue.start.call_count == 1
 
 
 def test_downloadqueue_update():
@@ -59,4 +59,4 @@ def test_downloadqueue_update():
     mydownloadqueue.add(episode1)
     mydownloadqueue.start = mock.MagicMock(name="start")
     mydownloadqueue.update()
-    mydownloadqueue.start.assert_called_once()
+    assert mydownloadqueue.start.call_count == 1

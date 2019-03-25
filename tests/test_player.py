@@ -33,7 +33,7 @@ def restore_config_data():
 def test_player_create_instance_success_direct():
     Config.data = {'player': 'someplayer'}
     myplayer = Player.create_instance(available_players, "t", "p", episode)
-    SomePlayer.check_dependencies.assert_called_once()
+    assert SomePlayer.check_dependencies.call_count == 1
     SomePlayer.assert_called_with("t", "p", episode)
 
 
@@ -49,7 +49,7 @@ def test_player_create_instance_dep_error_direct():
     SomePlayer.check_dependencies.side_effect = PlayerDependencyError()
     with pytest.raises(PlayerDependencyError):
         myplayer = Player.create_instance(available_players, "t", "p", episode)
-        SomePlayer.check_dependencies.assert_called_once()
+        assert SomePlayer.check_dependencies.call_count == 1
 
 
 def test_player_create_instance_dep_error_indirect():
@@ -57,4 +57,4 @@ def test_player_create_instance_dep_error_indirect():
     SomePlayer.check_dependencies.side_effect = PlayerDependencyError()
     with pytest.raises(PlayerDependencyError):
         myplayer = Player.create_instance(available_players, "t", "p", episode)
-        SomePlayer.check_dependencies.assert_called_once()
+        assert SomePlayer.check_dependencies.call_count == 1

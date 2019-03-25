@@ -119,7 +119,7 @@ def test_queue_play(display):
 
     myqueue.add(player1)
     myqueue.play()
-    player1.play.assert_called_once()
+    assert player1.play.call_count == 1
 
 
 def test_queue_pause(display):
@@ -128,7 +128,7 @@ def test_queue_pause(display):
 
     myqueue.add(player1)
     myqueue.pause()
-    player1.pause.assert_called_once()
+    assert player1.pause.call_count == 1
 
 
 def test_queue_stop(display):
@@ -137,7 +137,7 @@ def test_queue_stop(display):
 
     myqueue.add(player1)
     myqueue.stop()
-    player1.stop.assert_called_once()
+    assert player1.stop.call_count == 1
 
 
 def test_queue_toggle(display):
@@ -146,10 +146,10 @@ def test_queue_toggle(display):
 
     myqueue.add(player1)
     myqueue.toggle()
-    player1.play.assert_called_once()
+    assert player1.play.call_count == 1
     player1.state = 1
     myqueue.toggle()
-    player1.pause.assert_called_once()
+    assert player1.pause.call_count == 1
 
 
 def test_queue_seek_forward(display):

@@ -65,7 +65,7 @@ def test_display_help(display):
 def test_display_refresh(display):
     display._stdscr.reset_mock()
     display.refresh()
-    display._stdscr.refresh.assert_called_once()
+    assert display._stdscr.refresh.call_count == 1
 
 
 def test_display_get_input_str(display):
@@ -73,7 +73,7 @@ def test_display_get_input_str(display):
     display._footer_window.getch.side_effect = [ord('a'), ord('b'), 10]
     display._get_input_str("prompt")
     assert display._footer_window.getch.call_count == 3
-    display._footer_window.clear.assert_called_once()
+    assert display._footer_window.clear.call_count == 1
     assert display._footer_window.addstr.call_count == 2
     display._footer_window.addstr.assert_any_call(1, 0, "prompt")
     assert display._footer_window.called_with(1, len("prompt"))
@@ -81,7 +81,7 @@ def test_display_get_input_str(display):
 
 def test_display_get_y_n(display):
     display._get_y_n("prompt")
-    display._footer_window.clear.assert_called_once()
+    assert display._footer_window.clear.call_count == 1
     assert display._footer_window.addstr.call_count == 2
     display._footer_window.addstr.assert_any_call(1, 0, "prompt")
     assert display._footer_window.called_with(1, len("prompt"))
@@ -92,13 +92,13 @@ def test_display_input_keys(display):
         perspective = display.perspectives[perspective_id]
         perspective.handle_input = mock.MagicMock()
         display.handle_input(display.KEY_MAPPING[str(perspective_id)])
-        perspective.handle_input.assert_called_once()
+        assert perspective.handle_input.call_count == 1
 
 
 def test_display_getch(display):
     display._stdscr.reset_mock()
     display.getch()
-    display._stdscr.getch.assert_called_once()
+    assert display._stdscr.getch.call_count == 1
 
 
 def test_display_update_status(display):

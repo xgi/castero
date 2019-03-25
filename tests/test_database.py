@@ -112,7 +112,8 @@ def test_database_replace_episode(prevent_modification):
     mydatabase.replace_feed(myfeed)
     mydatabase.replace_episode(myfeed, episodes[0])
     assert len(mydatabase.episodes(myfeed)) == 1
-    mydatabase.replace_episode(myfeed, episodes[0])
+    episode = mydatabase.episodes(myfeed)[0]
+    mydatabase.replace_episode(myfeed, episode)
     assert len(mydatabase.episodes(myfeed)) == 1
 
 
