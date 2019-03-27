@@ -155,6 +155,7 @@ class SimplePerspective(Perspective):
         elif c == key_mapping[Config['key_delete']]:
             if self._active_window == 0:
                 self._display.delete_feed(self._feed_menu.item())
+                self._feed_menu.update_child()
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
         elif c == key_mapping[Config['key_save']]:
