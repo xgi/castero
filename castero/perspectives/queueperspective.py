@@ -53,6 +53,10 @@ class QueuePerspective(Perspective):
         self._queue_window.attron(curses.color_pair(1))
         self._metadata_window.attron(curses.color_pair(1))
 
+        # update menus if necessary
+        if self._queue_menu is not None:
+            self._queue_menu.window = self._queue_window
+
     def create_menus(self) -> None:
         """Create the menus used in each window.
 

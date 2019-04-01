@@ -240,3 +240,11 @@ class Menu(ABC):
     def selected_index(self) -> int:
         """int: the current selected index of the menu"""
         return self._selected
+
+    @property
+    def window(self):
+        return self._window
+
+    @window.setter
+    def window(self, window) -> None:
+        self._window = window

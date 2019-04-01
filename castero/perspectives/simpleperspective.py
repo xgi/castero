@@ -56,6 +56,12 @@ class SimplePerspective(Perspective):
         self._feed_window.attron(curses.color_pair(1))
         self._episode_window.attron(curses.color_pair(1))
 
+        # update menus if necessary
+        if self._feed_menu is not None:
+            self._feed_menu.window = self._feed_window
+        if self._episode_menu is not None:
+            self._episode_menu.window = self._episode_window
+
     def create_menus(self) -> None:
         """Create the menus used in each window, if necessary.
 
