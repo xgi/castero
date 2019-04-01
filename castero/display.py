@@ -534,10 +534,10 @@ class Display:
 
         if feed is not None:
             for episode in self.database.episodes(feed):
-                if not episode.downloaded():
+                if not episode.downloaded:
                     self._download_queue.add(episode)
         else:
-            if episode.downloaded():
+            if episode.downloaded:
                 should_delete = self._get_y_n(
                     "Are you sure you want to delete the downloaded"
                     " episode? (y/n): ")

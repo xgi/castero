@@ -17,6 +17,7 @@ class QueueMenu(Menu):
         return [
             {
                 'attr': curses.A_NORMAL,
+                'tags': [],
                 'text': str(player)
             }
             for player in self._source

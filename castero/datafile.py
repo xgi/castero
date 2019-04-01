@@ -107,6 +107,7 @@ class DataFile:
 
         if display is not None:
             display.change_status("Episode successfully downloaded.")
+            display.menus_valid = False
         download_queue.next()
 
     def load(self) -> None:

@@ -115,7 +115,12 @@ class Menu(ABC):
                 for _display_start_y
         """
         item = self._items()[index]
-        item_str = self._pad_text(item['text'])
+        
+        tag_str = ""
+        if len(item['tags']) > 0:
+            tag_str = "".join(["[%s]" % tag for tag in item['tags']]) + " "
+
+        text = tag_str + item['text']
 
         attr = curses.color_pair(1)
         if index == self._selected:
@@ -127,7 +132,7 @@ class Menu(ABC):
             attr = attr | item['attr']
 
         self._window.addstr(self._display_start_y + position, 0,
-                            item_str, attr)
+                            self._pad_text(text), attr)
 
     def _sanitize(self) -> None:
         """Sanitizes _selected and _top_index.
@@ -135,7 +140,7 @@ class Menu(ABC):
         Checks that _selected and _top_index are valid (inside all boundaries),
         setting them to appropriate extremes if they are not.
         """
-        num_my_items = len(self._items())
+        num_my_items = len(self)
 
         # _selected cannot be outside range of items
         if self._selected < 0:
@@ -164,7 +169,7 @@ class Menu(ABC):
         position = 0
         for i in range(self._top_index,
                        self._top_index + self._max_displayed_items):
-            if i <= len(self._items()) - 1:
+            if i <= len(self) - 1:
                 self._draw_item(i, position)
                 position += 1
 

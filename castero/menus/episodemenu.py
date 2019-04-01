@@ -18,13 +18,18 @@ class EpisodeMenu(Menu):
         return len(self._episodes)
 
     def _items(self):
-        return [
-            {
+        result = []
+        for episode in self._episodes:
+            tags = []
+            if episode.downloaded:
+                tags.append('D')
+
+            result.append({
                 'attr': curses.color_pair(5) if episode.played else curses.A_NORMAL,
+                'tags': tags,
                 'text': str(episode)
-            }
-            for episode in self._episodes
-        ]
+            })
+        return result
 
     def item(self) -> Episode:
         if len(self._episodes) == 0:

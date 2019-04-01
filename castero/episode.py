@@ -39,6 +39,7 @@ class Episode:
         self._copyright = copyright
         self._enclosure = enclosure
         self._played = played
+        self._downloaded = None
 
     def __str__(self) -> str:
         """Represent this object as a single-line string.
@@ -141,6 +142,7 @@ class Episode:
                 for File in os.listdir(feed_directory):
                     if File.startswith(episode_partial_filename + '.'):
                         os.remove(os.path.join(feed_directory, File))
+                        self._downloaded = False
                         if display is not None:
                             display.change_status(
                                 "Successfully deleted the downloaded episode"
@@ -150,21 +152,42 @@ class Episode:
                 if len(os.listdir(feed_directory)) == 0:
                     os.rmdir(feed_directory)
 
-    def downloaded(self) -> bool:
-        """Determines whether the episode is downloaded.
+    def check_downloaded(self) -> bool:
+        """Check whether the episode is downloaded.
+
+        This method updates the downloaded property.
 
         Returns:
             bool: whether or not the episode is downloaded
         """
-        found_downloaded = False
+        self._downloaded = False
         episode_partial_filename = helpers.sanitize_path(str(self))
         feed_directory = self._feed_directory()
 
         if os.path.exists(feed_directory):
             for File in os.listdir(feed_directory):
                 if File.startswith(episode_partial_filename + '.'):
-                    found_downloaded = True
-        return found_downloaded
+                    self._downloaded = True
+        return self._downloaded
+
+    @property
+    def downloaded(self) -> bool:
+        """Determines whether the episode is downloaded.
+
+        This method does not guarantee the episode exists, but it determines
+        whether it "probably" does. If the download status has not been checked
+        since the client started, we check it here and return the result.
+        Some methods also update the download status. However, if a file is
+        removed externally while the client is still running, the status may
+        not be properly updated.
+
+        Returns:
+            bool: whether or not the episode is downloaded
+        """
+        if self._downloaded is None:
+            self.check_downloaded()
+        return self._downloaded
+        
 
     @property
     def ep_id(self) -> int:
@@ -240,7 +263,7 @@ class Episode:
             self.description
         description = description.replace('\n', '')
         downloaded = "Episode downloaded and available for offline playback." \
-            if self.downloaded() else "Episode not downloaded."
+            if self.downloaded else "Episode not downloaded."
 
         return \
             "\cb{title}\n" \

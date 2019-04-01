@@ -109,7 +109,7 @@ def test_episode_playable_remote():
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     episode = myfeed.parse_episodes()[0]
     playable = episode.get_playable()
-    assert not episode.downloaded()
+    assert not episode.downloaded
     assert playable == "http://example.com/myfeed_item1_title.mp3"
 
 
@@ -118,7 +118,7 @@ def test_episode_playable_local():
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     episode = myfeed.parse_episodes()[0]
     playable = episode.get_playable()
-    assert episode.downloaded()
+    assert episode.downloaded
     assert playable == os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
                                     "myfeed_title",
                                     "myfeed_item1_title.mp3")
@@ -136,10 +136,10 @@ def test_episode_delete(display):
     myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
     display.change_status = mock.MagicMock(name="change_status")
     episode = myfeed.parse_episodes()[1]
-    assert episode.downloaded()
+    assert episode.downloaded
     episode.delete(display=display)
     assert display.change_status.call_count == 1
-    assert not episode.downloaded()
+    assert not episode.downloaded
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")

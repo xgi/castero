@@ -22,6 +22,7 @@ class FeedMenu(Menu):
         return [
             {
                 'attr': curses.A_NORMAL,
+                'tags': [],
                 'text': str(feed)
             }
             for feed in self._feeds

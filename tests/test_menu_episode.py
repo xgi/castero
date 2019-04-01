@@ -39,6 +39,7 @@ def test_menu_episode_items(mock_A_NORMAL, mock_color_pair):
     items = mymenu._items()
     assert {
         'attr': mock_color_pair(5),
+        'tags': ['D'],
         'text': str(episode1)
     } in items
 
