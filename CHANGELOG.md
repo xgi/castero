@@ -12,7 +12,20 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
-## 0.5.2 - 2019-03-19
+## 0.5.4 - 2019-04-13
+**Added**
+* Added download status "\[D\]" metadata tag to episode menu.
+
+**Fixed**
+* Fixed a crash when queueing a large number of episodes with the VLC player.
+* Fixed delay when skipping ahead in queue.
+* Fixed a crash when running with Python 3.5.
+* Fixed crash when trying to create database file in nonexistant directory.
+* Fixed episode menu not updating on feed delete.
+* Fixed menus not updating when terminal dimensions change.
+* Fixed user metadata (i.e. played status) being overwritten when reloading.
+
+## 0.5.3 - 2019-03-19
 **Fixed**
 * Fixed some files not being properly linked on install.
 
