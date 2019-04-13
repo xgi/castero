@@ -170,6 +170,14 @@ class Episode:
                     self._downloaded = True
         return self._downloaded
 
+    def replace_from(self, episode) -> None:
+        """Replace user-specific metadata from the given episode.
+
+        Args:
+            episode: the source Episode
+        """
+        self._played = episode._played
+
     @property
     def downloaded(self) -> bool:
         """Determines whether the episode is downloaded.

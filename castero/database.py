@@ -226,8 +226,16 @@ class Database():
             else:
                 new_feed = Feed(file=feed.key)
 
+            # keep user metadata for episodes intact
+            new_episodes = new_feed.parse_episodes()
+            old_episodes = self.episodes(feed)
+            for new_ep in new_episodes:
+                matching_olds = [old_ep for old_ep in old_episodes if old_ep.title == new_ep.title]
+                if len(matching_olds) == 1:
+                    new_ep.replace_from(matching_olds[0])
+
             self.replace_feed(new_feed)
-            self.replace_episodes(new_feed, new_feed.parse_episodes())
+            self.replace_episodes(new_feed, new_episodes)
 
         if display is not None:
             display.change_status("Feeds successfully reloaded")
