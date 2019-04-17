@@ -3,6 +3,8 @@ import os
 import sqlite3
 from typing import List, Tuple
 
+from castero import helpers
+from castero.config import Config
 from castero.datafile import DataFile
 from castero.episode import Episode
 from castero.feed import Feed
@@ -233,6 +235,11 @@ class Database():
                 matching_olds = [old_ep for old_ep in old_episodes if old_ep.title == new_ep.title]
                 if len(matching_olds) == 1:
                     new_ep.replace_from(matching_olds[0])
+
+            # limit number of episodes, if necessary
+            max_episodes =  int(Config["max_episodes"])
+            if max_episodes != -1:
+                new_episodes = new_episodes[:max_episodes]
 
             self.replace_feed(new_feed)
             self.replace_episodes(new_feed, new_episodes)
