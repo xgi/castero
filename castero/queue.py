@@ -123,6 +123,7 @@ class Queue:
                 if (self.first.time / 1000) + 1 >= \
                         (self.first.duration / 1000):
                     self.next()
+                    self.play()
 
     @property
     def first(self) -> Player:
