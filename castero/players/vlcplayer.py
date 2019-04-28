@@ -28,8 +28,7 @@ class VLCPlayer(Player):
             import vlc
             i = vlc.Instance()
             vlc.libvlc_release(i)
-        except (ImportError, NameError, OSError, AttributeError,
-                ModuleNotFoundError):
+        except (ImportError, NameError, OSError, AttributeError):
             raise PlayerDependencyError(
                 "Dependency VLC not found, which is required for playing"
                 " media files"
