@@ -248,6 +248,7 @@ class Menu(ABC):
 
     @property
     def window(self):
+        """window: the curses.window which this menu is placed on"""
         return self._window
 
     @window.setter

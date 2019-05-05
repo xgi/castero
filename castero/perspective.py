@@ -19,9 +19,9 @@ class Perspective(ABC):
     The user is able to switch between perspectives by using the 0-9 keys
     corresponding to the perspective's ID.
 
-    Instances of this class do not generally hold data variables, i.e. the
-    instance of the Feed class or Config class. We instead reference the
-    variables held in Display instance.
+    Instances of this class do not generally hold data variables, e.g. the
+    instance of the Database class. We instead reference the variables held in
+    the Display instance.
     """
     ID = -1
 
@@ -119,8 +119,6 @@ class Perspective(ABC):
 
     def _draw_metadata(self, window) -> None:
         """Draws the metadata of the selected feed/episode onto the window.
-
-        Exactly one of feed or episode must be specified.
 
         Args:
             window: the curses window which will display the metadata

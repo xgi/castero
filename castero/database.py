@@ -11,11 +11,27 @@ from castero.feed import Feed
 
 
 class Database():
+    """The Database class.
+
+    This class provides an API for storing and retrieving data from an sqlite
+    database file.
+
+    The database replaces the Feeds class which stored feed/episode data in a
+    JSON file. We automatically migrate users from that format to the database:
+    see _create_from_old_feeds().
+
+    For schema details, see $PACKAGE/templates/migrations.
+    """
     PATH = os.path.join(DataFile.DATA_DIR, 'castero.db')
     OLD_PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
     MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
 
     def __init__(self):
+        """Initializes the object.
+
+        If the database file does not exist but the old Feeds file does, we
+        create the database using the old format.
+        """
         existed = os.path.exists(self.PATH)
         DataFile.ensure_path(self.PATH)
         self._conn = sqlite3.connect(self.PATH, check_same_thread=False)
@@ -27,6 +43,10 @@ class Database():
         self.migrate()
 
     def migrate(self):
+        """Apply SQL migrations.
+
+        Migrations are defined in $PACKAGE/templtaes/migrations.
+        """
         cursor = self._conn.cursor()
         cur_version = cursor.execute('pragma user_version').fetchone()[0]
 
@@ -39,6 +59,11 @@ class Database():
                     cursor.executescript(f.read())
 
     def _create_from_old_feeds(self):
+        """Create database from deprecated Feeds format.
+
+        This method is only necessary for users updating to version 0.4.0+ from
+        an earlier version.
+        """
         self.migrate()
         cursor = self._conn.cursor()
 
@@ -75,12 +100,26 @@ class Database():
         self._conn.commit()
 
     def delete_feed(self, feed: Feed) -> None:
+        """Delete a feed from the database.
+
+        Note: episodes have a cascade delete relation with their feed.
+
+        Args:
+            feed: the Feed to delete, which is in the database
+        """
         sql = "delete from feed where key=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (feed.key,))
         self._conn.commit()
 
     def replace_feed(self, feed: Feed) -> None:
+        """Replace (or insert) a feed in the database.
+
+        This method is used for both updating a feed and for adding a new one.
+
+        Args:
+            feed: the Feed to replace
+        """
         sql = "replace into feed (key, title, description, link, last_build_date, copyright)\n" \
               "values (?,?,?,?,?,?)"
         cursor = self._conn.cursor()
@@ -95,6 +134,19 @@ class Database():
         self._conn.commit()
 
     def replace_episode(self, feed: Feed, episode: Episode) -> None:
+        """Replace (or insert) an episode in the database.
+
+        This method is used for both updating an episode and for adding a new
+        one.
+
+        Episode instances have an ep_id field which is the episode's unique id
+        in the database, if set. If it was not set when this method is called,
+        we update it after the episode has been added to the database. 
+
+        Args:
+            feed: the Feed the episode is a part of
+            episode: the Episode to replace
+        """
         cursor = self._conn.cursor()
         if episode.ep_id is None:
             sql = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\n" \
@@ -127,11 +179,24 @@ class Database():
         self._conn.commit()
 
     def replace_episodes(self, feed: Feed, episodes: List[Episode]) -> None:
+        """Replace (or insert) a list of episodes in the database.
+
+        This method is used for both updating episodes and for adding new ones.
+
+        Args:
+            feed: the Feed all episode are a part of
+            episodes: a list of Episode's to replace
+        """
         for episode in episodes:
             self.replace_episode(feed, episode)
         self._conn.commit()
 
     def feeds(self) -> List[Feed]:
+        """Retrieve the list of Feeds.
+
+        Returns:
+            List[Feed]: all Feed's in the database
+        """
         sql = "select key, title, description, link, last_build_date, copyright from feed"
         cursor = self._conn.cursor()
         cursor.execute(sql)
@@ -150,6 +215,14 @@ class Database():
         return feeds
 
     def episodes(self, feed: Feed) -> List[Episode]:
+        """Retrieve all episodes for a feed.
+
+        Args:
+            feed: the Feed to retrieve episodes of
+
+        Returns:
+            List[Episode]: all Episode's of the given Feed in the database
+        """
         sql = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (feed.key,))
@@ -170,6 +243,15 @@ class Database():
         return episodes
 
     def feed(self, key) -> Feed:
+        """Retrieve a feed by key.
+
+        Args:
+            key: the key of the Feed to retrieve, which is the feed's primary
+            key in the database
+
+        Returns:
+            Feed: the matching Feed, if it exists, or None
+        """
         sql = "select key, title, description, link, last_build_date, copyright from feed where key=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (key,))
@@ -190,6 +272,15 @@ class Database():
             )
 
     def episode(self, ep_id: int) -> Episode:
+        """Retrieve an episode by ep_id.
+
+        Args:
+            ep_id: the id of the Episode to retrieve, which is the episode's
+            primary key in the database
+
+        Returns:
+            Episode: the matching Episode, if it exists, or None
+        """
         sql = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
         cursor = self._conn.cursor()
         cursor.execute(sql, (ep_id,))
@@ -212,6 +303,30 @@ class Database():
             )
 
     def reload(self, display=None) -> None:
+        """Reload all feeds in the database.
+
+        To preserve user metadata for episodes (such as played/marked status),
+        we use Episode.replace_from() which "manually" copies such fields to
+        the new downloaded episode. This is necessary because downloaded
+        episodes are new Episode instances and we can't guarantee they have any
+        of the same properties.
+
+        Therefore, Episode.replace_from() _must_ be updated if any new user
+        metadata fields are added.
+
+        Also: to determine which episodes are the same in order to copy user
+        metadata, we simply check whether the string representation of the two
+        episodes are matching (usually the episodes' titles). This could cause
+        issues if a feed has multiple episodes with the same title, although it
+        does not require episode titles to be globally unique (that is,
+        episodes with the same name in different feeds will never have issues).
+
+        This method adheres to the max_episodes config parameter to limit the
+        number of episodes saved per feed.
+
+        Args:
+            display: (optional) the display to write status updates to
+        """
         feeds = self.feeds()
         total_feeds = len(feeds)
         current_feed = 1
@@ -232,12 +347,13 @@ class Database():
             new_episodes = new_feed.parse_episodes()
             old_episodes = self.episodes(feed)
             for new_ep in new_episodes:
-                matching_olds = [old_ep for old_ep in old_episodes if old_ep.title == new_ep.title]
+                matching_olds = [
+                    old_ep for old_ep in old_episodes if str(old_ep) == str(new_ep)]
                 if len(matching_olds) == 1:
                     new_ep.replace_from(matching_olds[0])
 
             # limit number of episodes, if necessary
-            max_episodes =  int(Config["max_episodes"])
+            max_episodes = int(Config["max_episodes"])
             if max_episodes != -1:
                 new_episodes = new_episodes[:max_episodes]
 
