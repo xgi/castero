@@ -71,7 +71,7 @@ def test_player_seek():
 
 def test_player_str():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
-    assert str(myplayer) == myplayer.title
+    assert str(myplayer) == "[%s] %s" % (episode.feed_str, myplayer.title)
 
 
 def test_player_title():

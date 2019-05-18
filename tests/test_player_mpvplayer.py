@@ -67,7 +67,7 @@ def test_player_seek():
 
 def test_player_str():
     myplayer = MPVPlayer("player1 title", "player1 path", episode)
-    assert str(myplayer) == myplayer.title
+    assert str(myplayer) == "[%s] %s" % (episode.feed_str, myplayer.title)
 
 
 def test_player_title():
