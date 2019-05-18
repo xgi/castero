@@ -12,6 +12,15 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.5.5 - 2019-05-18
+**Added**
+* Added the name of the feed to episodes in the queue menu/perspective.
+
+**Fixed**
+* Fixed client not adhering to the max_episodes config option when reloading.
+* Fixed the queue not progressing automatically on episode completion.
+* Fixed a Python 3.5 compatibility issue.
+
 ## 0.5.4 - 2019-04-13
 **Added**
 * Added download status "\[D\]" metadata tag to episode menu.
