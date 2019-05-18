@@ -207,6 +207,11 @@ class Episode:
         self._ep_id = ep_id
 
     @property
+    def feed_str(self) -> str:
+        """str: the string representation of this episode's feed"""
+        return str(self._feed)
+
+    @property
     def title(self) -> str:
         """str: the title of the episode"""
         result = self._title

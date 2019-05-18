@@ -54,9 +54,9 @@ class Player:
         """Represent this object as a string.
 
         Returns:
-            string: the title of the player
+            string: the name of the feed and the title of the player
         """
-        return self._title
+        return "[%s] %s" % (self._episode.feed_str, self._title)
 
     @staticmethod
     def create_instance(available_players, title, path, episode):
