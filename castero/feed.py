@@ -337,7 +337,10 @@ class Feed:
     @property
     def description(self) -> str:
         """str: the description of the feed"""
-        return self._description
+        result = self._description
+        if result is None:
+            result = "Description not available."
+        return result
 
     @property
     def link(self) -> str:
