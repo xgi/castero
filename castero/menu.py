@@ -102,20 +102,20 @@ class Menu(ABC):
         max_width = self._window.getmaxyx()[1] - 1
         return text.ljust(max_width)[:max_width]
 
-    def _draw_item(self, index, position) -> None:
-        """Draws an item's text on the window.
+    def _draw_item(self, item, position, selected) -> None:
+        """Draws an item on the window.
 
         This method applies the appropriate color pair to the item: 2 if the
         item is selected and the window is active, 3 if the item is selected
         but the window is not active, and 1 otherwise.
 
         Args:
-            index: the index of the item
+            item: the item to draw, which should be a dict including the fields
+                'attr', 'tags', and 'text' -- see EpisodeMenu for an example
             position: the y-position to draw the item, without accounting
                 for _display_start_y
+            selected: whether the item is selected
         """
-        item = self._items()[index]
-        
         tag_str = ""
         if len(item['tags']) > 0:
             tag_str = "".join(["[%s]" % tag for tag in item['tags']]) + " "
@@ -123,7 +123,7 @@ class Menu(ABC):
         text = tag_str + item['text']
 
         attr = curses.color_pair(1)
-        if index == self._selected:
+        if selected:
             if self._active:
                 attr = curses.color_pair(2)
             else:
@@ -166,11 +166,14 @@ class Menu(ABC):
         _top_index but less than _max_displayed_items greater than _top_index.
         That is, all items that can fit on the screen starting from _top_index.
         """
+        items = self._items()
+
         position = 0
         for i in range(self._top_index,
                        self._top_index + self._max_displayed_items):
             if i <= len(self) - 1:
-                self._draw_item(i, position)
+                selected = i == self._selected
+                self._draw_item(items[i], position, selected)
                 position += 1
 
         # fill unused rows with blank lines
