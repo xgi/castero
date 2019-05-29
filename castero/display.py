@@ -15,6 +15,7 @@ from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
 from castero.episode import Episode
 from castero.perspective import Perspective
 from castero.queue import Queue
+from castero.player import Player
 
 
 class DisplayError(Exception):
@@ -96,6 +97,7 @@ class Display:
         self.create_color_pairs()
         self._load_perspectives()
         self._load_players()
+        self._restore_queue()
         self._create_windows()
         self.create_menus()
 
@@ -173,6 +175,15 @@ class Display:
                 dir(p_mod)[[cls.lower() == name
                             for cls in dir(p_mod)].index(True)])
             self.AVAILABLE_PLAYERS[p_cls.NAME] = p_cls
+
+    def _restore_queue(self) -> None:
+        """Recreate players in queue from the database.
+        """
+        for episode in self.database.queue():
+            player = Player.create_instance(
+                self.AVAILABLE_PLAYERS, str(episode),
+                episode.get_playable(), episode)
+            self.queue.add(player)
 
     def _create_windows(self) -> None:
         """Creates and sets basic parameters for the windows.
@@ -259,7 +270,7 @@ class Display:
         if self._queue.first is not None:
             state = self._queue.first.state
             playing_str = ["Stopped", "Playing", "Paused"][state] + \
-                          ": %s" % self._queue.first.title
+                ": %s" % self._queue.first.title
             if self._queue.length > 1:
                 playing_str += " (+%d in queue)" % (self._queue.length - 1)
 
@@ -571,6 +582,8 @@ class Display:
         before the object is destroyed.
         """
         self._queue.stop()
+
+        self.database.replace_queue(self._queue)
 
         curses.nocbreak()
         self._stdscr.keypad(False)

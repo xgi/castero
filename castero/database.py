@@ -8,6 +8,7 @@ from castero.config import Config
 from castero.datafile import DataFile
 from castero.episode import Episode
 from castero.feed import Feed
+from castero.queue import Queue
 
 
 class Database():
@@ -191,6 +192,37 @@ class Database():
             self.replace_episode(feed, episode)
         self._conn.commit()
 
+    def delete_queue(self) -> None:
+        """Clear the queue table.
+        """
+        sql = 'DELETE FROM queue'
+        cursor = self._conn.cursor()
+        cursor.execute(sql)
+        self._conn.commit()
+
+    def replace_queue(self, queue: Queue) -> None:
+        """Replace the queue in the database.
+
+        This method overwrites the existing queue.
+
+        Args:
+            queue: the Queue to replace from
+        """
+        sql = "replace into queue (id, ep_id)\n" \
+              "values (?,?)"
+        cursor = self._conn.cursor()
+
+        self.delete_queue()
+
+        i = 1
+        for player in queue:
+            cursor.execute(sql, (
+                i,
+                player.episode.ep_id
+            ))
+            i += 1
+        self._conn.commit()
+
     def feeds(self) -> List[Feed]:
         """Retrieve the list of Feeds.
 
@@ -301,6 +333,52 @@ class Database():
                 enclosure=result[7],
                 played=result[8]
             )
+
+    def queue(self) -> List[Episode]:
+        """Retrieve all episodes in the queue.
+
+        Returns:
+            List[Episode]: all Episode's in the queue
+        """
+        cursor = self._conn.cursor()
+
+        # get ep_id's of episodes to retrieve
+        sql = "select id, ep_id from queue"
+        cursor.execute(sql, ())
+        ep_ids = [row[1] for row in cursor.fetchall()]
+
+        if len(ep_ids) == 0:
+            return []
+
+        # bulk retrieve all episodes
+        sql = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
+        for ep_id in ep_ids[1:]:
+            sql += " OR id=?"
+        cursor.execute(sql, tuple(ep_ids))
+
+        episodes_cache = {}
+        feeds_cache = {}
+        for result in cursor.fetchall():
+            ep_id = result[1]
+            if ep_id not in episodes_cache:
+                feed_key = result[0]
+                feed = feeds_cache[feed_key] if feed_key in feeds_cache \
+                    else self.feed(feed_key)
+                episodes_cache[ep_id] = Episode(
+                    feed,
+                    ep_id=ep_id,
+                    title=result[2],
+                    description=result[3],
+                    link=result[4],
+                    pubdate=result[5],
+                    copyright=result[6],
+                    enclosure=result[7],
+                    played=result[8]
+                )
+
+        # queue may contain repeated ep_id's, so we need to go back to the
+        # retrieved ep_ids to get complete list of desired episodes
+        return [episodes_cache[ep_id] for ep_id in ep_ids]
 
     def reload(self, display=None) -> None:
         """Reload all feeds in the database.
