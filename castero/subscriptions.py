@@ -36,24 +36,36 @@ class Subscriptions():
         self._feeds = []
 
     def load(self, path):
-        file = None
+        self._tree = None
         try:
-            file = open(path)
-            text = file.read()
-            try:
-                self._tree = ElementTree.fromstring(text)
-            except ElementTree.ParseError:
-                raise SubscriptionsParseError(
-                    "Unable to parse text as an XML document")
+            self._tree = ElementTree.parse(path)
+            self._parse_feeds()
         except IOError:
             raise SubscriptionsLoadError(
-                "An exception occurred when attempting to load the file")
-        finally:
-            if file is not None:
-                file.close()
+                "An I/O exception occurred when attempting to load the file")
+        except ElementTree.ParseError:
+            raise SubscriptionsParseError(
+                "Unable to parse text as an XML document")
 
+    def save(self, path):
+        if self._tree is not None:
+            try:
+                self._tree.write(path, xml_declaration=True)
+            except IOError:
+                raise SubscriptionsLoadError(
+                    "An I/O exception occurred when attempting to save the"
+                    " file")
+        else:
+            raise SubscriptionsError(
+                "Attempted to save an XML document that has not been loaded or"
+                " created")
+
+    def _parse_feeds(self):
         body = self._tree.find('body')
         container = body.find('outline')
         entries = container.findall('outline')
+
+        self._feeds = []
         for entry in entries:
             feed = Feed(url=entry.attrib['xmlUrl'])
+            self._feeds.append(feed)
