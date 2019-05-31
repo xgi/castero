@@ -60,6 +60,31 @@ class Subscriptions():
                 "Attempted to save an XML document that has not been loaded or"
                 " created")
 
+    def generate(self, feeds):
+        builder = ElementTree.TreeBuilder()
+
+        builder.start("opml", {'version': '1.0'})
+        builder.start("head", {})
+        builder.start("title", {})
+        builder.data("castero feeds")
+        builder.end("title")
+        builder.end("head")
+        builder.start("body", {})
+        builder.start("outline", {'text': 'feeds'})
+        for feed in feeds:
+            builder.start("outline", {
+                'type': 'rss',
+                'text': str(feed),
+                'xmlUrl': feed.key
+            })
+            builder.end("outline")
+        builder.end("outline")
+        builder.end("body")
+        builder.end("opml")
+
+        # .close returns an Element, so we need to cast to an ElementTree
+        self._tree = ElementTree.ElementTree(builder.close())
+
     def _parse_feeds(self):
         body = self._tree.find('body')
         container = body.find('outline')
