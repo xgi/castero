@@ -598,6 +598,7 @@ class Display:
         if current_y != self._parent_y or current_x != self._parent_x:
             self._parent_y, self._parent_x = current_y, current_x
             self._create_windows()
+            self.create_menus()
             self.menus_valid = False
             self.refresh()
 
