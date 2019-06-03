@@ -39,7 +39,7 @@ class Display:
     MIN_HEIGHT = 8
     INPUT_TIMEOUT = 1000  # 1 second
     STATUS_TIMEOUT = 4  # multiple of INPUT_TIMEOUT
-    AVAILABLE_COLORS = {
+    COLOR_NAMES = {
         'black': curses.COLOR_BLACK,
         'blue': curses.COLOR_BLUE,
         'cyan': curses.COLOR_CYAN,
@@ -88,6 +88,7 @@ class Display:
         # basic preliminary operations
         self._stdscr.timeout(self.INPUT_TIMEOUT)
         curses.start_color()
+        curses.use_default_colors()
         curses.noecho()
         curses.curs_set(0)
         curses.cbreak()
@@ -101,6 +102,14 @@ class Display:
         self._create_windows()
         self.create_menus()
 
+    def color_number(self, color: str) -> int:
+        """Convert color string to valid color number"""
+        if color in self.COLOR_NAMES:
+            return self.COLOR_NAMES[color]
+        if color.isnumeric() and int(color) < curses.COLORS:
+            return int(color)
+        return -1
+
     def create_color_pairs(self) -> None:
         """Initializes color pairs used for the display.
 
@@ -109,40 +118,33 @@ class Display:
             - 2: background, foreground
             - 3: background_alt, foreground_alt
             - 4: foreground_alt, background_alt
+            - 5: foreground_dim, background
         """
-        assert Config["color_foreground"] in self.AVAILABLE_COLORS
-        assert Config["color_background"] in self.AVAILABLE_COLORS
-        assert Config["color_foreground_alt"] in self.AVAILABLE_COLORS
-        assert Config["color_background_alt"] in self.AVAILABLE_COLORS
-
-        if (self.AVAILABLE_COLORS[Config["color_background"]] == -1 or
-                self.AVAILABLE_COLORS[Config["color_background_alt"]] == -1):
-            curses.use_default_colors()
 
         curses.init_pair(
             1,
-            self.AVAILABLE_COLORS[Config["color_foreground"]],
-            self.AVAILABLE_COLORS[Config["color_background"]]
+            self.color_number(Config["color_foreground"]),
+            self.color_number(Config["color_background"]),
         )
         curses.init_pair(
             2,
-            self.AVAILABLE_COLORS[Config["color_background"]],
-            self.AVAILABLE_COLORS[Config["color_foreground"]]
+            self.color_number(Config["color_background"]),
+            self.color_number(Config["color_foreground"]),
         )
         curses.init_pair(
             3,
-            self.AVAILABLE_COLORS[Config["color_background_alt"]],
-            self.AVAILABLE_COLORS[Config["color_foreground_alt"]]
+            self.color_number(Config["color_background_alt"]),
+            self.color_number(Config["color_foreground_alt"]),
         )
         curses.init_pair(
             4,
-            self.AVAILABLE_COLORS[Config["color_foreground_alt"]],
-            self.AVAILABLE_COLORS[Config["color_background_alt"]]
+            self.color_number(Config["color_foreground_alt"]),
+            self.color_number(Config["color_background_alt"]),
         )
         curses.init_pair(
             5,
-            self.AVAILABLE_COLORS[Config["color_foreground_dim"]],
-            self.AVAILABLE_COLORS[Config["color_background"]]
+            self.color_number(Config["color_foreground_dim"]),
+            self.color_number(Config["color_background"]),
         )
 
     def _load_perspectives(self) -> None:
