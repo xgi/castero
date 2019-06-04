@@ -66,7 +66,12 @@ class Episode:
         if Config is None or Config["custom_download_dir"] == "":
             path = DataFile.DEFAULT_DOWNLOADED_DIR
         else:
-            path = Config["custom_download_dir"]
+            path = \
+                os.path.expandvars(
+                    os.path.expanduser(
+                        Config["custom_download_dir"]))
+            if not path.startswith('/'):
+                path = "/%s" % path
         return os.path.join(path, feed_dirname)
 
     def get_playable(self) -> str:
@@ -195,7 +200,6 @@ class Episode:
         if self._downloaded is None:
             self.check_downloaded()
         return self._downloaded
-        
 
     @property
     def ep_id(self) -> int:
