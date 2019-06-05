@@ -148,6 +148,15 @@ class Player:
             amount: the amount of seconds to seek
         """
 
+    @abstractmethod
+    def change_rate(self, direction, display=None) -> None:
+        """Increase or decrease the playback speed.
+
+        Args:
+            direction: 1 to increase, -1 to decrease
+            display: (optional) the display to write status updates to
+        """
+
     @property
     def state(self) -> int:
         """int: the state of the player"""

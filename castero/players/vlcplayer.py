@@ -92,6 +92,19 @@ class VLCPlayer(Player):
                 self._player.get_time() + (direction * amount * 1000)
             )
 
+    def change_rate(self, direction, display=None) -> None:
+        """Increase or decrease the playback speed.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        assert direction == 1 or direction == -1
+        if self._player is not None:
+            new_rate = self._player.get_rate() + 0.1 * direction
+            self._player.set_rate(new_rate)
+            if display:
+                display.change_status(
+                    "Playback speed set to {:0.2f}".format(new_rate))
+
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
