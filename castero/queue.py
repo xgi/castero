@@ -99,6 +99,18 @@ class Queue:
             distance = int(Config["seek_distance_forward" if direction == 1 else "seek_distance_backward"])
             self.first.seek(direction, distance)
 
+    def change_rate(self, direction, display=None) -> None:
+        """Increase or decrease the playback speed of the first player.
+
+        Args:
+            direction: 1 to increase, -1 to decrease
+            display: (optional) the display to write status updates to
+        """
+        assert direction == 1 or direction == -1
+
+        if self.first is not None:
+            self.first.change_rate(direction, display=display)
+
     def remove(self, player) -> int:
         """Remove a player from the queue, if it is currently in it.
 

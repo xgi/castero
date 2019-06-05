@@ -84,6 +84,14 @@ class MPVPlayer(Player):
         if self._player is not None:
             self._player.seek(direction * amount)
 
+    def change_rate(self, direction, display=None) -> None:
+        """Increase or decrease the playback speed.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        assert direction == 1 or direction == -1
+        pass
+
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
