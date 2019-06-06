@@ -35,7 +35,6 @@ class Menu(ABC):
         self._selected = 0
         self._display_start_y = 2
         self._top_index = 0
-        self._max_displayed_items = self._window.getmaxyx()[0] - 4
         self._inverted = False
 
         if child is not None:
@@ -150,8 +149,8 @@ class Menu(ABC):
 
         # if there is no next page, then the current page should be as full
         # as possible
-        if self._top_index + self._max_displayed_items > num_my_items:
-            self._top_index = num_my_items - self._max_displayed_items
+        if self._top_index + self.max_displayed_items > num_my_items:
+            self._top_index = num_my_items - self.max_displayed_items
 
         # _top_index cannot be outside range of items
         if self._top_index > num_my_items - 1:
@@ -163,14 +162,14 @@ class Menu(ABC):
         """Draw all visible items on this menu to the window.
 
         Visible items are items with an index greater than or equal to
-        _top_index but less than _max_displayed_items greater than _top_index.
+        _top_index but less than max_displayed_items greater than _top_index.
         That is, all items that can fit on the screen starting from _top_index.
         """
         items = self._items()
 
         position = 0
         for i in range(self._top_index,
-                       self._top_index + self._max_displayed_items):
+                       self._top_index + self.max_displayed_items):
             if i <= len(self) - 1:
                 selected = i == self._selected
                 self._draw_item(items[i], position, selected)
@@ -178,7 +177,7 @@ class Menu(ABC):
 
         # fill unused rows with blank lines
         for y in range(self._display_start_y + position,
-                       self._display_start_y + self._max_displayed_items):
+                       self._display_start_y + self.max_displayed_items):
             self._window.addstr(y, 0, self._pad_text(""))
 
     def set_active(self, active) -> None:
@@ -209,7 +208,7 @@ class Menu(ABC):
         if self._selected < self._top_index:
             # the cursor went above the menu
             self._top_index -= 1
-        elif self._selected >= self._top_index + self._max_displayed_items:
+        elif self._selected >= self._top_index + self.max_displayed_items:
             # the cursor went below the menu
             self._top_index += 1
 
@@ -220,7 +219,7 @@ class Menu(ABC):
     def move_page(self, direction) -> None:
         """Change the selected item to the next "page".
 
-        Effectively the same as moving _max_displayed_items times.
+        Effectively the same as moving max_displayed_items times.
 
         We always try to make the menu as full as possible -- if the movement
         would leave us with only a few items on the screen, we instead reset
@@ -234,15 +233,19 @@ class Menu(ABC):
         assert direction == 1 or direction == -1
 
         if direction == 1:
-            self._selected -= self._max_displayed_items
-            self._top_index -= self._max_displayed_items
+            self._selected -= self.max_displayed_items
+            self._top_index -= self.max_displayed_items
         elif direction == -1:
-            self._selected += self._max_displayed_items
-            self._top_index += self._max_displayed_items
+            self._selected += self.max_displayed_items
+            self._top_index += self.max_displayed_items
 
         self._sanitize()
         if self._child is not None:
             self.update_child()
+
+    @property
+    def max_displayed_items(self) -> int:
+        return self._window.getmaxyx()[0] - 4
 
     @property
     def selected_index(self) -> int:
