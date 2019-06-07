@@ -90,7 +90,12 @@ class MPVPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         assert direction == 1 or direction == -1
-        pass
+        if self._player is not None:
+            new_rate = self._player.speed + 0.1 * direction
+            self._player.speed = new_rate
+            if display:
+                display.change_status(
+                    "Playback speed set to {:0.2f}".format(new_rate))
 
     @property
     def duration(self) -> int:
