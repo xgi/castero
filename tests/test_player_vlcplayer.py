@@ -17,16 +17,16 @@ episode = Episode(feed,
                   enclosure="episode enclosure")
 
 
-def test_player_check_dependencies():
+def test_player_vlc_check_dependencies():
     assert VLCPlayer.check_dependencies
 
 
-def test_player_init():
+def test_player_vlc_init():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     assert isinstance(myplayer, VLCPlayer)
 
 
-def test_player_play():
+def test_player_vlc_play():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
 
@@ -35,7 +35,7 @@ def test_player_play():
     assert myplayer.state == 1
 
 
-def test_player_pause():
+def test_player_vlc_pause():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
 
@@ -44,7 +44,7 @@ def test_player_pause():
     assert myplayer.state == 2
 
 
-def test_player_stop():
+def test_player_vlc_stop():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
 
@@ -53,14 +53,14 @@ def test_player_stop():
     assert myplayer.state == 0
 
 
-def test_player_del():
+def test_player_vlc_del():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     assert "myplayer" in locals()
     del myplayer
     assert "myplayer" not in locals()
 
 
-def test_player_seek():
+def test_player_vlc_seek():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
 
@@ -69,22 +69,22 @@ def test_player_seek():
         myplayer._player.get_time() + 10 * 1000)
 
 
-def test_player_str():
+def test_player_vlc_str():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     assert str(myplayer) == "[%s] %s" % (episode.feed_str, myplayer.title)
 
 
-def test_player_title():
+def test_player_vlc_title():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     assert myplayer.title == "player1 title"
 
 
-def test_player_episode():
+def test_player_vlc_episode():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     assert myplayer.episode == episode
 
 
-def test_player_time():
+def test_player_vlc_time():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
 
@@ -92,7 +92,7 @@ def test_player_time():
     assert myplayer.time == 5000
 
 
-def test_player_time_str():
+def test_player_vlc_time_str():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
     myplayer._media = mock.MagicMock()
