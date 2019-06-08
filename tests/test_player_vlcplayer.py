@@ -69,6 +69,34 @@ def test_player_vlc_seek():
         myplayer._player.get_time() + 10 * 1000)
 
 
+def test_player_vlc_change_rate_increase():
+    myplayer = VLCPlayer("player1 title", "player1 path", episode)
+    myplayer._player = mock.MagicMock()
+    myplayer._player.get_rate = mock.MagicMock(return_value=1)
+
+    myplayer.change_rate(1)
+    myplayer._player.set_rate.assert_called_with(1.1)
+
+
+def test_player_vlc_change_rate_decrease():
+    myplayer = VLCPlayer("player1 title", "player1 path", episode)
+    myplayer._player = mock.MagicMock()
+    myplayer._player.get_rate = mock.MagicMock(return_value=1)
+
+    myplayer.change_rate(-1)
+    myplayer._player.set_rate.assert_called_with(0.9)
+
+
+def test_player_vlc_change_rate_display():
+    myplayer = VLCPlayer("player1 title", "player1 path", episode)
+    myplayer._player = mock.MagicMock()
+    myplayer._player.get_rate = mock.MagicMock(return_value=1)
+    display = mock.MagicMock()
+
+    myplayer.change_rate(1, display=display)
+    display.change_status.assert_called_once()
+
+
 def test_player_vlc_str():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     assert str(myplayer) == "[%s] %s" % (episode.feed_str, myplayer.title)

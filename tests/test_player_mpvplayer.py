@@ -65,6 +65,34 @@ def test_player_mpv_seek():
     myplayer._player.seek.assert_called_with(10)
 
 
+def test_player_mpv_change_rate_increase():
+    myplayer = MPVPlayer("player1 title", "player1 path", episode)
+    myplayer._player = mock.MagicMock()
+
+    myplayer._player.speed = 1
+    myplayer.change_rate(1)
+    assert myplayer._player.speed == 1.1
+
+
+def test_player_mpv_change_rate_decrease():
+    myplayer = MPVPlayer("player1 title", "player1 path", episode)
+    myplayer._player = mock.MagicMock()
+
+    myplayer._player.speed = 1
+    myplayer.change_rate(-1)
+    assert myplayer._player.speed == 0.9
+
+
+def test_player_mpv_change_rate_display():
+    myplayer = MPVPlayer("player1 title", "player1 path", episode)
+    myplayer._player = mock.MagicMock()
+    display = mock.MagicMock()
+
+    myplayer._player.speed = 1
+    myplayer.change_rate(1, display=display)
+    display.change_status.assert_called_once()
+
+
 def test_player_mpv_str():
     myplayer = MPVPlayer("player1 title", "player1 path", episode)
     assert str(myplayer) == "[%s] %s" % (episode.feed_str, myplayer.title)
