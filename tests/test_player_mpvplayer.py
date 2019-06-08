@@ -90,7 +90,7 @@ def test_player_mpv_change_rate_display():
 
     myplayer._player.speed = 1
     myplayer.change_rate(1, display=display)
-    display.change_status.assert_called_once()
+    assert display.change_status.call_count == 1
 
 
 def test_player_mpv_str():
