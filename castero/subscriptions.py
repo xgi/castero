@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ElementTree
+from typing import List
 
 from castero.feed import Feed
 
@@ -31,11 +32,11 @@ class Subscriptions():
     the user can import from (and export to) OPML-formatted documents.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._tree = None
         self._feeds = []
 
-    def load(self, path):
+    def load(self, path: str) -> None:
         self._tree = None
         try:
             self._tree = ElementTree.parse(path)
@@ -47,7 +48,7 @@ class Subscriptions():
             raise SubscriptionsParseError(
                 "Unable to parse text as an XML document")
 
-    def save(self, path):
+    def save(self, path: str) -> None:
         if self._tree is not None:
             try:
                 self._tree.write(path, xml_declaration=True)
@@ -60,7 +61,7 @@ class Subscriptions():
                 "Attempted to save an XML document that has not been loaded or"
                 " created")
 
-    def generate(self, feeds):
+    def generate(self, feeds: List[Feed]) -> None:
         builder = ElementTree.TreeBuilder()
 
         builder.start("opml", {'version': '1.0'})
@@ -85,7 +86,7 @@ class Subscriptions():
         # .close returns an Element, so we need to cast to an ElementTree
         self._tree = ElementTree.ElementTree(builder.close())
 
-    def _parse_feeds(self):
+    def _parse_feeds(self) -> None:
         body = self._tree.find('body')
         container = body.find('outline')
         entries = container.findall('outline')
