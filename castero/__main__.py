@@ -89,7 +89,7 @@ def main():
 
     # check if we need to start reloading
     if helpers.is_true(Config['reload_on_start']):
-        reload_thread = threading.Thread(target=feeds.reload, args=[display])
+        reload_thread = threading.Thread(target=database.reload, args=[display])
         reload_thread.start()
 
     # run initial display operations
