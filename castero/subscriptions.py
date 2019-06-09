@@ -33,10 +33,22 @@ class Subscriptions():
     """
 
     def __init__(self) -> None:
+        """Initializes the object.
+        """
         self._tree = None
         self._feeds = []
 
     def load(self, path: str) -> None:
+        """Load an OPML file of subscriptions.
+
+        Args:
+            path: the location of the OPML file to load
+
+        Raises:
+            SubscriptionsParseError: unable to parse text as an XML document
+            SubscriptionsLoadError: an exception occurred when attempting to
+                load the file
+        """
         self._tree = None
         try:
             self._tree = ElementTree.parse(path)
@@ -49,6 +61,19 @@ class Subscriptions():
                 "Unable to parse text as an XML document")
 
     def save(self, path: str) -> None:
+        """Save an OPML file of subscriptions.
+
+        A subscriptions document must have been loaded (with .load) or created
+        (with .generate) before running this method.
+
+        Args:
+            path: the location of the OPML file to create
+
+        Raises:
+            SubscriptionsError: attempted to save before creating document
+            SubscriptionsLoadError: an exception occurred when attempting to
+                write the file
+        """
         if self._tree is not None:
             try:
                 self._tree.write(path, xml_declaration=True)
@@ -62,6 +87,11 @@ class Subscriptions():
                 " created")
 
     def generate(self, feeds: List[Feed]) -> None:
+        """Create subscriptions document from list of feeds.
+
+        Args:
+            feeds: the list of feeds to include in the document
+        """
         builder = ElementTree.TreeBuilder()
 
         builder.start("opml", {'version': '1.0'})
@@ -87,6 +117,8 @@ class Subscriptions():
         self._tree = ElementTree.ElementTree(builder.close())
 
     def _parse_feeds(self) -> None:
+        """Parse the XML tree into a list of feeds.
+        """
         body = self._tree.find('body')
         container = body.find('outline')
         entries = container.findall('outline')
@@ -95,3 +127,8 @@ class Subscriptions():
         for entry in entries:
             feed = Feed(url=entry.attrib['xmlUrl'])
             self._feeds.append(feed)
+
+    @property
+    def feeds(self) -> List[Feed]:
+        """List[Feed]: the loaded feeds"""
+        return self._feeds
