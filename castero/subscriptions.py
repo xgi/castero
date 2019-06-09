@@ -48,6 +48,8 @@ class Subscriptions():
             SubscriptionsParseError: unable to parse text as an XML document
             SubscriptionsLoadError: an exception occurred when attempting to
                 load the file
+            SubscriptionsStructureError: the file data is not a properly
+                structured OPML document
         """
         self._tree = None
         try:
@@ -118,10 +120,24 @@ class Subscriptions():
 
     def _parse_feeds(self) -> None:
         """Parse the XML tree into a list of feeds.
+
+        Raises:
+            SubscriptionsStructureError: the file data is not a properly
+                structured OPML document
         """
+        error_msg = "The file data is not a properly structured OPML document"
+
+        if self._tree is None:
+            raise SubscriptionsStructureError(error_msg)
         body = self._tree.find('body')
+        if body is None:
+            raise SubscriptionsStructureError(error_msg)
         container = body.find('outline')
+        if container is None:
+            raise SubscriptionsStructureError(error_msg)
         entries = container.findall('outline')
+        if entries is None:
+            raise SubscriptionsStructureError(error_msg)
 
         self._feeds = []
         for entry in entries:

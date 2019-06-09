@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<opml version="1.0">
+    <head>
+        <title>my feeds</title>
+    </head>
+    <body>
+        <outline type="rss" text="feed1" xmlUrl="http://feed1" />
+        <outline type="rss" text="feed2" xmlUrl="http://feed2" />
+    </body>
+</opml>
