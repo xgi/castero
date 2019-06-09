@@ -2,6 +2,7 @@ import curses
 import sys
 import threading
 import re
+import argparse
 
 import castero
 from castero import helpers
@@ -12,7 +13,12 @@ from castero.player import Player
 
 
 def main():
-    database = Database()
+    # parse command line arguments
+    parser = argparse.ArgumentParser(
+        prog=castero.__title__, description=castero.__description__)
+    parser.add_argument('-V', '--version', action='version',
+                        version='%(prog)s {}'.format(castero.__version__))
+    args = parser.parse_args()
 
     # update fields in help menu text
     for field in Config:
@@ -35,19 +41,8 @@ def main():
         castero.__help__ = \
             castero.__help__.replace(field, adjusted)
 
-    # check if user is running the client with an info flag
-    info_flags = {
-        'help': ['-h', '--help'],
-        'version': ['-v', '--version']
-    }
-    if sys.argv[len(sys.argv) - 1] in info_flags['help']:
-        print(castero.__help__)
-        sys.exit(0)
-    elif sys.argv[len(sys.argv) - 1] in info_flags['version']:
-        print(castero.__version__)
-        sys.exit(0)
-
-    # instantiate the display object
+    # instantiate display
+    database = Database()
     stdscr = curses.initscr()
     display = Display(stdscr, database)
     display.clear()
