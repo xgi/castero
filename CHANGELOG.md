@@ -12,6 +12,22 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.6.0 - 2019-06-10
+**Added**
+* Added support for importing/exporting subscriptions to and from OPML files.
+Many other clients support this format, so you are now able to easily move your
+feeds between clients. To use this feature, run castero with the
+`--import` or `--export` flag (or run `castero -h` for more info).
+* Added support for preserving the queue when restarting the client.
+* Added support for 256 colors - Thanks @arza-zara!
+* Added controls for playback speed - **[** and **]** by default.
+
+**Fixed**
+* Fixed a crash when viewing metadata for a feed with no description.
+* Fixed custom_download_dir config option not being an absolute path.
+* Improved scroll performance of episode menu with many episodes.
+* Fixed a crash when vertically shrinking the client.
+
 ## 0.5.5 - 2019-05-18
 **Added**
 * Added the name of the feed to episodes in the queue menu/perspective.
