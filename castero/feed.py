@@ -375,12 +375,12 @@ class Feed:
             "\cb{title}\n" \
             "{last_build_date}\n\n" \
             "{link}\n\n" \
-            "\cbDescription:\n" \
-            "{description}\n\n" \
             "\cbCopyright:\n" \
-            "{copyright}\n".format(
+            "{copyright}\n\n" \
+            "\cbDescription:\n" \
+            "{description}\n".format(
                 title=self.title,
                 last_build_date=self.last_build_date,
                 link=self.link,
-                description=description,
-                copyright=self.copyright)
+                copyright=self.copyright,
+                description=description)

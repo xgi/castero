@@ -127,7 +127,7 @@ class Perspective(ABC):
 
         output_lines = []
 
-        max_lines = int(0.7 * window.getmaxyx()[0])
+        max_lines = window.getmaxyx()[0] - 4
         max_line_width = window.getmaxyx()[1] - 1
 
         # clear the window by drawing blank lines
@@ -146,9 +146,6 @@ class Perspective(ABC):
             else:
                 for part in parts:
                     lines.append(part.strip())
-
-        # truncate to at most 70% of the total lines on the screen
-        lines = lines[:max_lines]
 
         y = 2
         for line in lines[:max_lines]:

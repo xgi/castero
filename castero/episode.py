@@ -286,15 +286,15 @@ class Episode:
             "\cb{title}\n" \
             "{pubdate}\n\n" \
             "{link}\n\n" \
-            "\cbDescription:\n" \
-            "{description}\n\n" \
             "\cbCopyright:\n" \
             "{copyright}\n\n" \
             "\cbDownloaded:\n" \
-            "{downloaded}\n".format(
+            "{downloaded}\n\n" \
+            "\cbDescription:\n" \
+            "{description}\n".format(
                 title=self.title,
                 pubdate=self.pubdate,
                 link=self.link,
-                description=description,
                 copyright=self.copyright,
-                downloaded=downloaded)
+                downloaded=downloaded,
+                description=description)
