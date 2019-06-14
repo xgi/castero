@@ -7,15 +7,12 @@ from castero.datafile import DataFile
 
 
 class Episode:
-    """The Episode class.
-
-    This class represents a single episode from a podcast feed.
+    """A single episode from a podcast feed.
     """
 
     def __init__(self, feed, ep_id=None, title=None, description=None, link=None,
                  pubdate=None, copyright=None, enclosure=None, played=False) -> None:
-        """Initializes the object.
-
+        """
         At least one of a title or description must be specified.
 
         Args:

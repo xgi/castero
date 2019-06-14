@@ -4,13 +4,12 @@ from castero.player import Player, PlayerDependencyError
 
 
 class VLCPlayer(Player):
-    """The VLCPlayer class.
+    """Interface for the vlc media player.
     """
     NAME = "vlc"
 
     def __init__(self, title, path, episode) -> None:
-        """Initializes the object.
-
+        """
         Overrides method from Player; see documentation in that class.
         """
         super().__init__(title, path, episode)

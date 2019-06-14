@@ -37,7 +37,7 @@ class FeedStructureError(FeedError):
 
 
 class Feed:
-    """The Feed class.
+    """A podcast feed.
 
     This class uses a provided url to retrieve all data and metadata for a
     podcast feed. It creates and is a parent to all episode objects which are
@@ -47,8 +47,7 @@ class Feed:
     """
 
     def __init__(self, url=None, file=None, **kwargs) -> None:
-        """Initializes the object.
-
+        """
         A feed can be provided as either a url or a file, but exactly one must
         be given. Realistically, users will almost universally use a url to
         retrieve feeds from. However, having support for handling files makes

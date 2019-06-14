@@ -12,7 +12,7 @@ from castero.queue import Queue
 
 
 class Database():
-    """The Database class.
+    """The user's database.
 
     This class provides an API for storing and retrieving data from an sqlite
     database file.
@@ -28,8 +28,7 @@ class Database():
     MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
 
     def __init__(self):
-        """Initializes the object.
-
+        """
         If the database file does not exist but the old Feeds file does, we
         create the database using the old format.
         """

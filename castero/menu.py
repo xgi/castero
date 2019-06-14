@@ -4,7 +4,7 @@ from typing import List
 
 
 class Menu(ABC):
-    """The Menu class.
+    """A navigable menu in the display.
 
     This class is used to display interactable menus. It displays a list of
     items to its window and allows the user to cycle through them.
@@ -16,8 +16,7 @@ class Menu(ABC):
 
     @abstractmethod
     def __init__(self, window, source, child=None, active=False) -> None:
-        """Initializes the object.
-
+        """
         Args:
             window: the curses.window which this menu is placed on
             items: a 2D array where rows represent indices of the parent menu

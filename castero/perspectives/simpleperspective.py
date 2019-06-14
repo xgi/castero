@@ -10,7 +10,7 @@ from castero.player import Player
 
 
 class SimplePerspective(Perspective):
-    """The SimplePerspective class.
+    """The simple perspective, similar to the primary one.
 
     This class handles display elements while in the simple perspective, which
     is similar to the primary perspective but without a metadata window.
@@ -18,8 +18,7 @@ class SimplePerspective(Perspective):
     ID = 3
 
     def __init__(self, display) -> None:
-        """Initializes the object.
-
+        """
         Overrides method from Perspective; see documentation in that class.
         """
         super().__init__(display)

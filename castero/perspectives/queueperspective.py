@@ -8,7 +8,7 @@ from castero.perspective import Perspective
 
 
 class QueuePerspective(Perspective):
-    """The QueuePerspective class.
+    """The queue-list perspective.
 
     This class handles display elements while in the queue perspective, which
     is a listing of the user's current Queue in which they can directly modify
@@ -17,8 +17,7 @@ class QueuePerspective(Perspective):
     ID = 2
 
     def __init__(self, display) -> None:
-        """Initializes the object.
-
+        """
         Overrides method from Perspective; see documentation in that class.
         """
         super().__init__(display)

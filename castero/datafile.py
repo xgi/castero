@@ -9,7 +9,7 @@ from castero.net import Net
 
 
 class DataFile:
-    """The DataFile class.
+    """Extendable class for objects with filesystem data.
 
     Used when handling files with data that can reasonably be stored in a
     dictionary. Particularly used in the Config class and the Feeds class.
@@ -27,8 +27,7 @@ class DataFile:
     DEFAULT_DOWNLOADED_DIR = os.path.join(DATA_DIR, "downloaded")
 
     def __init__(self, path, default_path) -> None:
-        """Initializes the object.
-
+        """
         Args:
             path: the path to the data file
             default_path: the path to the default data file

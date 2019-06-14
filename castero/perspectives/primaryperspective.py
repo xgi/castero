@@ -10,7 +10,7 @@ from castero.player import Player
 
 
 class PrimaryPerspective(Perspective):
-    """The PrimaryPerspective class.
+    """The primary/default perspective.
 
     This class handles display elements while in the primary perspective, which
     is the default perspective.
@@ -18,8 +18,7 @@ class PrimaryPerspective(Perspective):
     ID = 1
 
     def __init__(self, display) -> None:
-        """Initializes the object.
-
+        """
         Overrides method from Perspective; see documentation in that class.
         """
         super().__init__(display)

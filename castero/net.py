@@ -3,7 +3,7 @@ import requests
 
 
 class Net:
-    """The Net class.
+    """Manager for network requests.
 
     This class provides helper methods for network requests. Generally just a
     wrapper around the requests library.

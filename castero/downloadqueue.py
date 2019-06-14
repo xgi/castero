@@ -4,14 +4,10 @@ from castero.episode import Episode
 
 
 class DownloadQueue:
-    """The DownloadQueue class.
-
-    A FIFO ordered queue for handling episode downloads.
+    """A FIFO ordered queue for handling episode downloads.
     """
 
     def __init__(self, display=None) -> None:
-        """Initializes the object.
-        """
         self._episodes = []
         self._display = display
 

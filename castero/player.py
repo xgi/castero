@@ -20,15 +20,14 @@ class PlayerCreateError(PlayerError):
 
 
 class Player:
-    """The Player class.
+    """Extendable class for media players.
 
     This class is extended by players -- classes which offer methods to handle
     media operations for a specific external player (i.e. VLC, mpv).
     """
 
     def __init__(self, title, path, episode) -> None:
-        """Initializes the object.
-
+        """
         Args:
             title: the title of the media (usually an episode title)
             path: a URL or file-path of a media file (usually an audio file)

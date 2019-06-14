@@ -3,15 +3,13 @@ from castero.player import Player
 
 
 class Queue:
-    """The Queue class.
+    """A FIFO ordered queue of Player instances. 
 
-    A FIFO ordered queue of Player instances. This class is also the display
-    class' main interface for accessing information about the current player.
+    This class is also the display class' main interface for accessing
+    information about the current player.
     """
 
     def __init__(self, display) -> None:
-        """Initializes the object.
-        """
         self._players = []
         self._display = display
 
@@ -96,7 +94,8 @@ class Queue:
         assert direction == 1 or direction == -1
 
         if self.first is not None:
-            distance = int(Config["seek_distance_forward" if direction == 1 else "seek_distance_backward"])
+            distance = int(
+                Config["seek_distance_forward" if direction == 1 else "seek_distance_backward"])
             self.first.seek(direction, distance)
 
     def change_rate(self, direction, display=None) -> None:

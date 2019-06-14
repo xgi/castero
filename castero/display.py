@@ -29,7 +29,7 @@ class DisplaySizeError(DisplayError):
 
 
 class Display:
-    """The Display class.
+    """The user-facing display.
 
     This class is used to handle all user-interaction. It creates and handles
     all aspects of the application's interface, including windows and menus. It
@@ -64,8 +64,7 @@ class Display:
     AVAILABLE_PLAYERS = {}
 
     def __init__(self, stdscr, database) -> None:
-        """Initializes the object.
-
+        """
         Args:
             stdscr: a stdscr from curses.initscr()
             database: a connected castero.Database

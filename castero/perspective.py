@@ -9,7 +9,7 @@ from castero.menu import Menu
 
 
 class Perspective(ABC):
-    """The Perspective class.
+    """Extendable class for display "screens".
 
     This class is extended by perspectives -- classes which offer methods to
     handle display elements with a certain layout. Perspectives only control
@@ -27,8 +27,7 @@ class Perspective(ABC):
 
     @abstractmethod
     def __init__(self, display):
-        """Initializes the object.
-
+        """
         This method does not automatically create configure some of its
         necessary elements, i.e. the windows. Instead, for some methods it is
         expected that the Display instance will call identically-named methods

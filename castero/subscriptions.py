@@ -26,15 +26,13 @@ class SubscriptionsStructureError(SubscriptionsError):
 
 
 class Subscriptions():
-    """The Subscriptions class.
+    """The user's podcast subscriptions.
 
     Instances of this class represent a list of podcast subscriptions, which
     the user can import from (and export to) OPML-formatted documents.
     """
 
     def __init__(self) -> None:
-        """Initializes the object.
-        """
         self._tree = None
         self._feeds = []
 

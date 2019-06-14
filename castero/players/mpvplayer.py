@@ -4,13 +4,12 @@ from castero.player import Player, PlayerDependencyError
 
 
 class MPVPlayer(Player):
-    """The MPVPlayer class.
+    """Interface for the mpv media player.
     """
     NAME = "mpv"
 
     def __init__(self, title, path, episode) -> None:
-        """Initializes the object.
-
+        """
         Overrides method from Player; see documentation in that class.
         """
         super().__init__(title, path, episode)

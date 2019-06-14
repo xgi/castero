@@ -21,7 +21,7 @@ class ConfigDuplicateError(ConfigError):
 
 
 class _Config(DataFile):
-    """The Config class.
+    """The user's config settings.
 
     Reads the configuration file. Instances of this class can generally be
     treated like dictionaries, accessing a variable with config_instance[key].
@@ -33,7 +33,8 @@ class _Config(DataFile):
     DEFAULT_PATH = os.path.join(DataFile.PACKAGE, 'templates/castero.conf')
 
     def __init__(self) -> None:
-        """Initializes the object.
+        """
+        Note: the config class is a singleton.
         """
         super().__init__(self.PATH, self.DEFAULT_PATH)
 
