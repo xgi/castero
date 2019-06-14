@@ -43,7 +43,6 @@ class SimplePerspective(Perspective):
 
         parent_x = self._display.parent_x
         parent_y = self._display.parent_y
-        
 
         fw_width = min(25, parent_x / 2)
 

@@ -3,8 +3,6 @@ from abc import ABC, abstractmethod
 
 import cjkwrap
 
-from castero import helpers
-from castero.config import Config
 from castero.menu import Menu
 
 
@@ -124,8 +122,6 @@ class Perspective(ABC):
         """
         assert window is not None
 
-        output_lines = []
-
         max_lines = window.getmaxyx()[0] - 4
         max_line_width = window.getmaxyx()[1] - 1
 
@@ -148,7 +144,7 @@ class Perspective(ABC):
 
         y = 2
         for line in lines[:max_lines]:
-            if line.startswith('\cb'):
+            if line.startswith('!cb'):
                 window.attron(curses.A_BOLD)
                 line = line[3:]
             else:

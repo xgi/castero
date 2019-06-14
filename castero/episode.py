@@ -10,8 +10,9 @@ class Episode:
     """A single episode from a podcast feed.
     """
 
-    def __init__(self, feed, ep_id=None, title=None, description=None, link=None,
-                 pubdate=None, copyright=None, enclosure=None, played=False) -> None:
+    def __init__(self, feed, ep_id=None, title=None, description=None,
+                 link=None, pubdate=None, copyright=None, enclosure=None,
+                 played=False) -> None:
         """
         At least one of a title or description must be specified.
 
@@ -280,14 +281,14 @@ class Episode:
             if self.downloaded else "Episode not downloaded."
 
         return \
-            "\cb{title}\n" \
+            "!cb{title}\n" \
             "{pubdate}\n\n" \
             "{link}\n\n" \
-            "\cbCopyright:\n" \
+            "!cbCopyright:\n" \
             "{copyright}\n\n" \
-            "\cbDownloaded:\n" \
+            "!cbDownloaded:\n" \
             "{downloaded}\n\n" \
-            "\cbDescription:\n" \
+            "!cbDescription:\n" \
             "{description}\n".format(
                 title=self.title,
                 pubdate=self.pubdate,

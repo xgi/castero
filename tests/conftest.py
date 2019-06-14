@@ -1,6 +1,5 @@
 import curses
 import os
-from shutil import copyfile
 from unittest import mock
 
 import pytest

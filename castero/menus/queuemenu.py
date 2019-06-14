@@ -1,7 +1,5 @@
 import curses
 
-from castero import helpers
-from castero.config import Config
 from castero.player import Player
 from castero.menu import Menu
 
@@ -26,7 +24,7 @@ class QueueMenu(Menu):
     def item(self) -> Player:
         if self._source.length == 0:
             return None
-        
+
         return self._source[self._selected]
 
     def metadata(self):

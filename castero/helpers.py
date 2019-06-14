@@ -50,7 +50,7 @@ def sanitize_path(path) -> str:
         str: the given path with potentially unsafe characters replaced
     """
     # adapted from https://stackoverflow.com/a/13593932
-    path = re.sub('[^\w\-]', '_', path)
+    path = re.sub('[^\\w\\-]', '_', path)
     return path
 
 
@@ -70,7 +70,7 @@ def is_true(string) -> bool:
 
 def html_to_plain(html) -> str:
     """Converts a potentially HTML-formatted string to user-friendly plaintext.
-    
+
     Args:
         html: the text to convert with potential html tags
 

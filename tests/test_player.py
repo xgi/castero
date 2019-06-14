@@ -6,7 +6,7 @@ import castero.config
 from castero.config import Config
 from castero.episode import Episode
 from castero.feed import Feed
-from castero.player import Player, PlayerDependencyError, PlayerCreateError
+from castero.player import Player, PlayerDependencyError
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -32,14 +32,14 @@ def restore_config_data():
 
 def test_player_create_instance_success_direct():
     Config.data = {'player': 'someplayer'}
-    myplayer = Player.create_instance(available_players, "t", "p", episode)
+    Player.create_instance(available_players, "t", "p", episode)
     assert SomePlayer.check_dependencies.call_count == 1
     SomePlayer.assert_called_with("t", "p", episode)
 
 
 def test_player_create_instance_success_indirect():
     Config.data = {'player': ''}
-    myplayer = Player.create_instance(available_players, "t", "p", episode)
+    Player.create_instance(available_players, "t", "p", episode)
     SomePlayer.check_dependencies.assert_called = 2
     SomePlayer.assert_called_with("t", "p", episode)
 
@@ -48,7 +48,7 @@ def test_player_create_instance_dep_error_direct():
     Config.data = {'player': 'someplayer'}
     SomePlayer.check_dependencies.side_effect = PlayerDependencyError()
     with pytest.raises(PlayerDependencyError):
-        myplayer = Player.create_instance(available_players, "t", "p", episode)
+        Player.create_instance(available_players, "t", "p", episode)
         assert SomePlayer.check_dependencies.call_count == 1
 
 
@@ -56,5 +56,5 @@ def test_player_create_instance_dep_error_indirect():
     Config.data = {'player': ''}
     SomePlayer.check_dependencies.side_effect = PlayerDependencyError()
     with pytest.raises(PlayerDependencyError):
-        myplayer = Player.create_instance(available_players, "t", "p", episode)
+        Player.create_instance(available_players, "t", "p", episode)
         assert SomePlayer.check_dependencies.call_count == 1

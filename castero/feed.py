@@ -371,12 +371,12 @@ class Feed:
         description = description.replace('\n', '')
 
         return \
-            "\cb{title}\n" \
+            "!cb{title}\n" \
             "{last_build_date}\n\n" \
             "{link}\n\n" \
-            "\cbCopyright:\n" \
+            "!cbCopyright:\n" \
             "{copyright}\n\n" \
-            "\cbDescription:\n" \
+            "!cbDescription:\n" \
             "{description}\n".format(
                 title=self.title,
                 last_build_date=self.last_build_date,

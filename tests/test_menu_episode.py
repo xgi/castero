@@ -1,8 +1,5 @@
-import os
 from unittest import mock
 
-import curses
-from castero.config import Config
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.menus.episodemenu import EpisodeMenu
@@ -78,7 +75,7 @@ def test_menu_episode_update_child(mock_A_NORMAL, mock_color_pair):
     items = mymenu._items()
     mymenu.update_child()
     assert mymenu._items() == items
-    
+
 
 def test_menu_episode_invert():
     mymenu = EpisodeMenu(window, source)

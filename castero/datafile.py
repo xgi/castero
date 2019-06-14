@@ -2,8 +2,6 @@ import collections
 import os
 from shutil import copyfile
 
-import requests
-
 import castero
 from castero.net import Net
 

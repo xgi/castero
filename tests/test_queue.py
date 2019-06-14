@@ -1,10 +1,8 @@
 import os
 from unittest import mock
 
-import vlc
 
 from castero.config import Config
-from castero.episode import Episode
 from castero.feed import Feed
 from castero.queue import Queue
 from castero.player import Player
@@ -159,6 +157,7 @@ def test_queue_seek_forward(display):
     myqueue.add(player1)
     myqueue.seek(1)
     player1.seek.assert_called_with(1, int(Config["seek_distance_forward"]))
+
 
 def test_queue_seek_backward(display):
     myqueue = Queue(display)

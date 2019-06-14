@@ -1,7 +1,5 @@
 import curses
 
-from castero import helpers
-from castero.config import Config
 from castero.feed import Feed
 from castero.menu import Menu
 from castero.menus.episodemenu import EpisodeMenu
@@ -31,7 +29,7 @@ class FeedMenu(Menu):
     def item(self) -> Feed:
         if len(self._feeds) == 0:
             return None
-        
+
         return self._feeds[self._selected]
 
     def metadata(self):

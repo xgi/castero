@@ -1,9 +1,8 @@
 import json
 import os
 import sqlite3
-from typing import List, Tuple
+from typing import List
 
-from castero import helpers
 from castero.config import Config
 from castero.datafile import DataFile
 from castero.episode import Episode
@@ -425,7 +424,9 @@ class Database():
             old_episodes = self.episodes(feed)
             for new_ep in new_episodes:
                 matching_olds = [
-                    old_ep for old_ep in old_episodes if str(old_ep) == str(new_ep)]
+                    old_ep for old_ep in old_episodes if
+                    str(old_ep) == str(new_ep)
+                ]
                 if len(matching_olds) == 1:
                     new_ep.replace_from(matching_olds[0])
 

@@ -1,8 +1,5 @@
-import os
 from unittest import mock
 
-import curses
-from castero.config import Config
 from castero.episode import Episode
 from castero.player import Player
 from castero.queue import Queue

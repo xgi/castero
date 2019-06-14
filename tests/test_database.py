@@ -1,5 +1,4 @@
 import os
-import copy
 from shutil import copyfile
 from unittest import mock
 
@@ -18,7 +17,7 @@ def test_database_default(prevent_modification):
 def test_database_feeds_length(prevent_modification):
     copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
     mydatabase = Database()
-    
+
     assert len(mydatabase.feeds()) == 2
 
 

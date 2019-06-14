@@ -154,19 +154,19 @@ def test_perspective_primary_create_player(display):
                 copyright="feed copyright",
                 episodes=[])
     episode1 = Episode(feed,
-                      title="episode1 title",
-                      description="episode1 description",
-                      link="episode1 link",
-                      pubdate="episode1 pubdate",
-                      copyright="episode1 copyright",
-                      enclosure="episode1 enclosure")
+                       title="episode1 title",
+                       description="episode1 description",
+                       link="episode1 link",
+                       pubdate="episode1 pubdate",
+                       copyright="episode1 copyright",
+                       enclosure="episode1 enclosure")
     episode2 = Episode(feed,
-                      title="episode2 title",
-                      description="episode2 description",
-                      link="episode2 link",
-                      pubdate="episode2 pubdate",
-                      copyright="episode2 copyright",
-                      enclosure="episode2 enclosure")
+                       title="episode2 title",
+                       description="episode2 description",
+                       link="episode2 link",
+                       pubdate="episode2 pubdate",
+                       copyright="episode2 copyright",
+                       enclosure="episode2 enclosure")
     display.display()
     display.database.replace_feed(feed)
     display.database.replace_episodes(feed, [episode1, episode2])

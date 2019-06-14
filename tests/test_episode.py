@@ -144,6 +144,7 @@ def test_episode_delete(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
 
+
 def test_episode_download():
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     mydownloadqueue = DownloadQueue()
@@ -155,6 +156,7 @@ def test_episode_download():
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
+
 
 def test_episode_download_with_display(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
@@ -168,6 +170,7 @@ def test_episode_download_with_display(display):
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
+
 
 def test_episode_download_with_display_no_enclosure(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")

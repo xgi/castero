@@ -1,7 +1,5 @@
 import curses
 
-from castero import helpers
-from castero.config import Config
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.menu import Menu
@@ -25,7 +23,8 @@ class EpisodeMenu(Menu):
                 tags.append('D')
 
             result.append({
-                'attr': curses.color_pair(5) if episode.played else curses.A_NORMAL,
+                'attr': curses.color_pair(5) if episode.played else
+                curses.A_NORMAL,
                 'tags': tags,
                 'text': str(episode)
             })

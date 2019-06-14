@@ -9,8 +9,7 @@ from castero import helpers
 from castero.config import Config
 from castero.database import Database
 from castero.display import Display
-from castero.player import Player
-from castero.subscriptions import Subscriptions, SubscriptionsLoadError
+from castero.subscriptions import Subscriptions
 
 
 def import_subscriptions(path: str, database: Database) -> None:
@@ -31,7 +30,7 @@ def import_subscriptions(path: str, database: Database) -> None:
 
 def export_subscriptions(path: str, database: Database) -> None:
     subscriptions = Subscriptions()
-    
+
     feeds = database.feeds()
     subscriptions.generate(feeds)
     # Save may raise an error, but they are user-friendly enough that we don't
@@ -52,7 +51,7 @@ def main():
     parser.add_argument('--import', help='path to OPML file of feeds to add')
     parser.add_argument('--export', help='path to save feeds as OPML file')
     args = parser.parse_args()
-    
+
     if vars(args)['import'] is not None:
         import_subscriptions(vars(args)['import'], database)
         sys.exit(0)
@@ -75,7 +74,7 @@ def main():
                     "{%s|%s}" % (field, field2),
                     ("%s or %s" % (Config[field], Config[field2])).ljust(9)
                 )
-    remaining_brace_fields = re.compile('\{.*?\}').findall(castero.__help__)
+    remaining_brace_fields = re.compile('\\{.*?\\}').findall(castero.__help__)
     for field in remaining_brace_fields:
         adjusted = field.replace("{", "").replace("}", "").ljust(9)
         castero.__help__ = \
@@ -89,7 +88,10 @@ def main():
 
     # check if we need to start reloading
     if helpers.is_true(Config['reload_on_start']):
-        reload_thread = threading.Thread(target=database.reload, args=[display])
+        reload_thread = threading.Thread(
+            target=database.reload,
+            args=[display]
+        )
         reload_thread.start()
 
     # run initial display operations
