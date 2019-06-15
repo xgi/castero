@@ -162,27 +162,27 @@ class SimplePerspective(Perspective):
             self._display.add_feed()
         elif c == key_mapping[Config['key_delete']]:
             if self._active_window == 0:
-                self._display.delete_feed(self._feed_menu.item())
+                self._display.delete_feed(self._feed_menu.item)
                 self._feed_menu.update_child()
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
         elif c == key_mapping[Config['key_save']]:
-            if self._active_window == 0 and self._feed_menu.item():
-                self._display.save_episodes(feed=self._feed_menu.item())
-            elif self._active_window == 1 and self._episode_menu.item():
-                self._display.save_episodes(episode=self._episode_menu.item())
+            if self._active_window == 0 and self._feed_menu.item:
+                self._display.save_episodes(feed=self._feed_menu.item)
+            elif self._active_window == 1 and self._episode_menu.item:
+                self._display.save_episodes(episode=self._episode_menu.item)
         elif c == key_mapping[Config['key_invert']]:
             self._invert_selected_menu()
         elif c == key_mapping[Config['key_mark_played']]:
             if self._active_window == 0:
-                feed = self._feed_menu.item()
+                feed = self._feed_menu.item
                 if feed is not None:
                     episodes = self._display.database.episodes(feed)
                     for episode in episodes:
                         episode.played = not episode.played
                     self._display.modified_episodes.extend(episodes)
             elif self._active_window == 1:
-                episode = self._episode_menu.item()
+                episode = self._episode_menu.item
                 if episode is not None:
                     episode.played = not episode.played
                     self._display.modified_episodes.append(episode)
@@ -235,7 +235,7 @@ class SimplePerspective(Perspective):
         nor will it play the episodes after running.
         """
         if self._active_window == 0:
-            feed = self._feed_menu.item()
+            feed = self._feed_menu.item
             if feed is not None:
                 for episode in self._display.database.episodes(feed):
                     player = Player.create_instance(
@@ -243,7 +243,7 @@ class SimplePerspective(Perspective):
                         episode.get_playable(), episode)
                     self._display.queue.add(player)
         elif self._active_window == 1:
-            episode = self._episode_menu.item()
+            episode = self._episode_menu.item
             if episode is not None:
                 player = Player.create_instance(
                     self._display.AVAILABLE_PLAYERS, str(episode),

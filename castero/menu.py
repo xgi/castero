@@ -45,8 +45,11 @@ class Menu(ABC):
 
     @abstractproperty
     @property
-    def _items(self) -> List[str]:
-        """List[str]: the current items in this menu"""
+    def _items(self):
+        """A list of items in the menu represented as dictionaries.
+
+        The dictionary contains the fields 'attr', 'tags', and 'text'.
+        """
 
     @abstractproperty
     @property
@@ -164,7 +167,7 @@ class Menu(ABC):
         _top_index but less than max_displayed_items greater than _top_index.
         That is, all items that can fit on the screen starting from _top_index.
         """
-        items = self._items()
+        items = self._items
 
         position = 0
         for i in range(self._top_index,

@@ -6,6 +6,9 @@ from castero.menu import Menu
 
 
 class EpisodeMenu(Menu):
+    """The menu for episodes in a feed.
+    """
+
     def __init__(self, window, source, child=None, active=False) -> None:
         super().__init__(window, source, child=child, active=active)
 
@@ -15,7 +18,12 @@ class EpisodeMenu(Menu):
     def __len__(self) -> int:
         return len(self._episodes)
 
+    @property
     def _items(self):
+        """A list of items in the menu represented as dictionaries.
+
+        Overrides method from Menu; see documentation in that class.
+        """
         result = []
         for episode in self._episodes:
             tags = []
@@ -30,19 +38,33 @@ class EpisodeMenu(Menu):
             })
         return result
 
+    @property
     def item(self) -> Episode:
+        """The selected episode.
+
+        Overrides method from Menu; see documentation in that class.
+        """
         if len(self._episodes) == 0:
             return None
 
         return self._episodes[self._selected]
 
-    def metadata(self):
+    @property
+    def metadata(self) -> str:
+        """Metadata for the selected episode.
+
+        Overrides method from Menu; see documentation in that class.
+        """
         if len(self._episodes) == 0:
             return ""
 
         return self._episodes[self._selected].metadata
 
     def update_items(self, feed: Feed):
+        """Called by the parent menu (the feeds menu) to update our items.
+
+        Overrides method from Menu; see documentation in that class.
+        """
         assert isinstance(feed, Feed) or feed is None
 
         super().update_items(feed)
@@ -61,9 +83,17 @@ class EpisodeMenu(Menu):
         self._sanitize()
 
     def update_child(self):
+        """Not necessary for this menu -- does nothing.
+
+        Overrides method from Menu; see documentation in that class.
+        """
         pass
 
     def invert(self):
+        """Invert the menu order.
+
+        Overrides method from Menu; see documentation in that class.
+        """
         super().invert()
 
         self.update_items(self._feed)

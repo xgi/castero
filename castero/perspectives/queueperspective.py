@@ -127,7 +127,7 @@ class QueuePerspective(Perspective):
             self._metadata_updated = False
         elif c == key_mapping[Config['key_play_selected']]:
             queue.stop()
-            target = self._queue_menu.item()
+            target = self._queue_menu.item
             self._display.queue.jump(target)
             while self._queue_menu.selected_index > 0:
                 self._queue_menu.move(1)
@@ -194,7 +194,7 @@ class QueuePerspective(Perspective):
     def _remove_selected_from_queue(self) -> None:
         """Remove the selected player from the queue.
         """
-        player = self._queue_menu.item()
+        player = self._queue_menu.item
         if player is not None:
             index = self._display.queue.remove(player)
             self._queue_menu.update_items(None)

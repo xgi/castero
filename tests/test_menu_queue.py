@@ -25,14 +25,14 @@ def test_menu_queue_init():
 def test_menu_queue_update_items():
     mymenu = QueueMenu(window, source)
     mymenu.update_items(None)
-    assert len(mymenu._items()) == 2
+    assert len(mymenu._items) == 2
 
 
 @mock.patch('curses.A_NORMAL')
 def test_menu_queue_items(mock_A_NORMAL):
     mymenu = QueueMenu(window, source)
     mymenu.update_items(feed)
-    items = mymenu._items()
+    items = mymenu._items
     assert {
         'attr': mock_A_NORMAL,
         'tags': [],
@@ -42,18 +42,18 @@ def test_menu_queue_items(mock_A_NORMAL):
 
 def test_menu_queue_item_none():
     mymenu = QueueMenu(window, source)
-    assert mymenu.item() == source.__getitem__()
+    assert mymenu.item == source.__getitem__()
 
 
 def test_menu_queue_metadata():
     mymenu = QueueMenu(window, source)
     mymenu.update_items(feed)
-    assert mymenu.metadata() == player1.episode.metadata
+    assert mymenu.metadata == player1.episode.metadata
 
 
 def test_menu_queue_update_child():
     mymenu = QueueMenu(window, source)
     mymenu.update_items(feed)
-    items = mymenu._items()
+    items = mymenu._items
     mymenu.update_child()
-    assert mymenu._items() == items
+    assert mymenu._items == items

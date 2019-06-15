@@ -24,7 +24,7 @@ def test_menu_episode_update_items(mock_color_pair, mock_A_NORMAL):
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
     source.episodes.assert_called_with(feed)
-    assert len(mymenu._items()) == 2
+    assert len(mymenu._items) == 2
     assert len(mymenu) == 2
 
 
@@ -33,7 +33,7 @@ def test_menu_episode_update_items(mock_color_pair, mock_A_NORMAL):
 def test_menu_episode_items(mock_A_NORMAL, mock_color_pair):
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
-    items = mymenu._items()
+    items = mymenu._items
     assert {
         'attr': mock_color_pair(5),
         'tags': ['D'],
@@ -43,28 +43,28 @@ def test_menu_episode_items(mock_A_NORMAL, mock_color_pair):
 
 def test_menu_episode_item_none():
     mymenu = EpisodeMenu(window, source)
-    assert mymenu.item() is None
+    assert mymenu.item is None
 
 
 def test_menu_episode_item():
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
-    assert mymenu.item() == episode1
+    assert mymenu.item == episode1
     mymenu._selected += 1
-    assert mymenu.item() == episode2
+    assert mymenu.item == episode2
 
 
 def test_menu_episode_metadata_none():
     mymenu = EpisodeMenu(window, source)
-    assert mymenu.metadata() == ""
+    assert mymenu.metadata == ""
     mymenu.update_items(None)
-    assert mymenu.metadata() == ""
+    assert mymenu.metadata == ""
 
 
 def test_menu_episode_metadata():
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
-    assert mymenu.metadata() == episode1.metadata
+    assert mymenu.metadata == episode1.metadata
 
 
 @mock.patch('curses.color_pair')
@@ -72,9 +72,9 @@ def test_menu_episode_metadata():
 def test_menu_episode_update_child(mock_A_NORMAL, mock_color_pair):
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
-    items = mymenu._items()
+    items = mymenu._items
     mymenu.update_child()
-    assert mymenu._items() == items
+    assert mymenu._items == items
 
 
 def test_menu_episode_invert():

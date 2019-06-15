@@ -37,7 +37,7 @@ Running castero requires the following external dependencies:
 
 * Python >= 3.5 (check the output of ``python --version``)
 * sqlite3
-* **One** of the following media players:
+* At least one of the following media players:
   * vlc >= 2.2.3
   * (mpv and libmpv) >= 0.14.0
   

@@ -129,7 +129,7 @@ class Perspective(ABC):
         for y in range(2, window.getmaxyx()[0]):
             window.addstr(y, 0, " " * max_line_width)
 
-        metadata = self._get_active_menu().metadata()
+        metadata = self._get_active_menu().metadata
         temp_lines = metadata.split('\n')
 
         lines = []

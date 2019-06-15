@@ -126,8 +126,9 @@ def test_perspective_queue_get_active_menu(display):
 
 def test_perspective_queue_remove_selected_first(display):
     perspective = get_queue_perspective(display)
+    perspective._queue_menu = mock.MagicMock()
 
-    perspective._queue_menu.item = mock.MagicMock(return_value=player1)
+    perspective._queue_menu.item = player1
     queue1 = Queue(display)
     queue1.add(player1)
     queue1.add(player2)
@@ -140,8 +141,9 @@ def test_perspective_queue_remove_selected_first(display):
 
 def test_perspective_queue_remove_selected_middle(display):
     perspective = get_queue_perspective(display)
+    perspective._queue_menu = mock.MagicMock()
 
-    perspective._queue_menu.item = mock.MagicMock(return_value=player2)
+    perspective._queue_menu.item = player2
     queue1 = Queue(display)
     queue1.add(player1)
     queue1.add(player2)
