@@ -232,6 +232,7 @@ class PrimaryPerspective(Perspective):
         self._feed_window.refresh()
         self._episode_window.refresh()
         self._metadata_window.refresh()
+        self._feed_menu.refresh()
 
     def _get_active_menu(self) -> Menu:
         """Retrieve the active Menu, if there is one.

@@ -1,6 +1,5 @@
 import curses
 from abc import ABC, abstractmethod, abstractproperty
-from typing import List
 
 
 class Menu(ABC):
@@ -149,6 +148,10 @@ class Menu(ABC):
         if self._selected > num_my_items - 1:
             self._selected = num_my_items - 1
 
+        # _selected can not be past the displayed items
+        if self._selected >= self._top_index + self.max_displayed_items:
+            self._selected = self._top_index + self.max_displayed_items - 1
+
         # if there is no next page, then the current page should be as full
         # as possible
         if self._top_index + self.max_displayed_items > num_my_items:
@@ -244,6 +247,15 @@ class Menu(ABC):
         self._sanitize()
         if self._child is not None:
             self.update_child()
+
+    def refresh(self) -> None:
+        """Refresh the menu, accounting for any changes to the display/window.
+
+        Also refreshes this menu's child, it we have one.
+        """
+        self._sanitize()
+        if self._child is not None:
+            self._child.refresh()
 
     @property
     def max_displayed_items(self) -> int:

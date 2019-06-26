@@ -167,6 +167,7 @@ class QueuePerspective(Perspective):
         """
         self._queue_window.refresh()
         self._metadata_window.refresh()
+        self._queue_menu.refresh()
 
     def made_active(self) -> None:
         """Called each time the perspective is made active (switched to).
