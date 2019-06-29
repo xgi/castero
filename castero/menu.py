@@ -142,15 +142,15 @@ class Menu(ABC):
         """
         num_my_items = len(self)
 
+        # _selected can not be past the displayed items
+        if self._selected >= self._top_index + self.max_displayed_items:
+            self._selected = self._top_index + self.max_displayed_items - 1
+
         # _selected cannot be outside range of items
         if self._selected < 0:
             self._selected = 0
         if self._selected > num_my_items - 1:
             self._selected = num_my_items - 1
-
-        # _selected can not be past the displayed items
-        if self._selected >= self._top_index + self.max_displayed_items:
-            self._selected = self._top_index + self.max_displayed_items - 1
 
         # if there is no next page, then the current page should be as full
         # as possible
