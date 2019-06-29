@@ -94,14 +94,13 @@ class Subscriptions():
         """
         builder = ElementTree.TreeBuilder()
 
-        builder.start("opml", {'version': '1.0'})
+        builder.start("opml", {'version': '2.0'})
         builder.start("head", {})
         builder.start("title", {})
         builder.data("castero feeds")
         builder.end("title")
         builder.end("head")
         builder.start("body", {})
-        builder.start("outline", {'text': 'feeds'})
         for feed in feeds:
             builder.start("outline", {
                 'type': 'rss',
@@ -109,7 +108,6 @@ class Subscriptions():
                 'xmlUrl': feed.key
             })
             builder.end("outline")
-        builder.end("outline")
         builder.end("body")
         builder.end("opml")
 
@@ -130,17 +128,32 @@ class Subscriptions():
         body = self._tree.find('body')
         if body is None:
             raise SubscriptionsStructureError(error_msg)
-        container = body.find('outline')
-        if container is None:
-            raise SubscriptionsStructureError(error_msg)
-        entries = container.findall('outline')
-        if entries is None:
-            raise SubscriptionsStructureError(error_msg)
 
-        self._feeds = []
-        for entry in entries:
-            feed = Feed(url=entry.attrib['xmlUrl'])
-            self._feeds.append(feed)
+        feeds_container = self._find_rss_container(body)
+        if feeds_container is not None:
+            self._feeds = []
+            for entry in feeds_container.findall('outline'):
+                feed = Feed(url=entry.attrib['xmlUrl'])
+                self._feeds.append(feed)
+
+    def _find_rss_container(self, container):
+        """Find potentially-nested container for RSS feeds.
+
+        Args:
+            container: the Element to search
+
+        Return:
+            Element: the first 'outline' Element containing an RSS feed
+        """
+        outline = container.find('outline')
+        if outline is None:
+            return None
+
+        if 'type' in outline.attrib and \
+                outline.attrib['type'].lower() == 'rss':
+            return container
+        else:
+            return self._find_rss_container(outline)
 
     @property
     def feeds(self) -> List[Feed]:
