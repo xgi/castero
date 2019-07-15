@@ -146,7 +146,7 @@ class Database():
 
         Episode instances have an ep_id field which is the episode's unique id
         in the database, if set. If it was not set when this method is called,
-        we update it after the episode has been added to the database. 
+        we update it after the episode has been added to the database.
 
         Args:
             feed: the Feed the episode is a part of

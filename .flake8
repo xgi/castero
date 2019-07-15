@@ -6,3 +6,5 @@ exclude =
     build,
     dist,
     venv
+per-file-ignores =
+    ./castero/database.py:E501
