@@ -26,6 +26,18 @@ class Database():
     OLD_PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
     MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
 
+    SQL_EPISODES_BY_ID = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
+    SQL_EPISODES_BY_FEED = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=?"
+    SQL_EPISODE_REPLACE = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?,?)"
+    SQL_EPISODE_REPLACE_NOID = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?)"
+    SQL_FEEDS_ALL = "select key, title, description, link, last_build_date, copyright from feed"
+    SQL_FEED_BY_KEY = "select key, title, description, link, last_build_date, copyright from feed where key=?"
+    SQL_FEED_REPLACE = "replace into feed (key, title, description, link, last_build_date, copyright)\nvalues (?,?,?,?,?,?)"
+    SQL_FEED_DELETE = "delete from feed where key=?"
+    SQL_QUEUE_ALL = "select id, ep_id from queue"
+    SQL_QUEUE_REPLACE = "replace into queue (id, ep_id)\nvalues (?,?)"
+    SQL_QUEUE_DELETE = "delete from queue"
+
     def __init__(self):
         """
         If the database file does not exist but the old Feeds file does, we
@@ -72,9 +84,7 @@ class Database():
         for key in content:
             feed_dict = content[key]
 
-            sql = "insert into feed (key, title, description, link, last_build_date, copyright)\n" \
-                  "values (?,?,?,?,?,?)"
-            cursor.execute(sql, (
+            cursor.execute(self.SQL_FEED_REPLACE, (
                 key,
                 feed_dict["title"],
                 feed_dict["description"],
@@ -84,16 +94,15 @@ class Database():
             ))
 
             for episode_dict in feed_dict["episodes"]:
-                sql = "insert into episode (feed_key, title, description, link, pubdate, copyright, enclosure)\n" \
-                      "values (?,?,?,?,?,?,?)"
-                cursor.execute(sql, (
-                    key,
+                cursor.execute(self.SQL_EPISODE_REPLACE_NOID, (
                     episode_dict["title"],
+                    key,
                     episode_dict["description"],
                     episode_dict["link"],
                     episode_dict["pubdate"],
                     episode_dict["copyright"],
-                    episode_dict["enclosure"]
+                    episode_dict["enclosure"],
+                    False
                 ))
 
         self._conn.commit()
@@ -106,9 +115,8 @@ class Database():
         Args:
             feed: the Feed to delete, which is in the database
         """
-        sql = "delete from feed where key=?"
         cursor = self._conn.cursor()
-        cursor.execute(sql, (feed.key,))
+        cursor.execute(self.SQL_FEED_DELETE, (feed.key,))
         self._conn.commit()
 
     def replace_feed(self, feed: Feed) -> None:
@@ -119,10 +127,8 @@ class Database():
         Args:
             feed: the Feed to replace
         """
-        sql = "replace into feed (key, title, description, link, last_build_date, copyright)\n" \
-              "values (?,?,?,?,?,?)"
         cursor = self._conn.cursor()
-        cursor.execute(sql, (
+        cursor.execute(self.SQL_FEED_REPLACE, (
             feed.key,
             feed.title,
             feed.description,
@@ -148,9 +154,7 @@ class Database():
         """
         cursor = self._conn.cursor()
         if episode.ep_id is None:
-            sql = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\n" \
-                "values (?,?,?,?,?,?,?,?)"
-            cursor.execute(sql, (
+            cursor.execute(self.SQL_EPISODE_REPLACE_NOID, (
                 episode.title,
                 feed.key,
                 episode.description,
@@ -162,9 +166,7 @@ class Database():
             ))
             episode.ep_id = cursor.lastrowid
         else:
-            sql = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\n" \
-                "values (?,?,?,?,?,?,?,?,?)"
-            cursor.execute(sql, (
+            cursor.execute(self.SQL_EPISODE_REPLACE, (
                 episode.ep_id,
                 episode.title,
                 feed.key,
@@ -193,9 +195,8 @@ class Database():
     def delete_queue(self) -> None:
         """Clear the queue table.
         """
-        sql = 'DELETE FROM queue'
         cursor = self._conn.cursor()
-        cursor.execute(sql)
+        cursor.execute(self.SQL_QUEUE_DELETE)
         self._conn.commit()
 
     def replace_queue(self, queue: Queue) -> None:
@@ -206,15 +207,13 @@ class Database():
         Args:
             queue: the Queue to replace from
         """
-        sql = "replace into queue (id, ep_id)\n" \
-              "values (?,?)"
         cursor = self._conn.cursor()
 
         self.delete_queue()
 
         i = 1
         for player in queue:
-            cursor.execute(sql, (
+            cursor.execute(self.SQL_QUEUE_REPLACE, (
                 i,
                 player.episode.ep_id
             ))
@@ -227,9 +226,8 @@ class Database():
         Returns:
             List[Feed]: all Feed's in the database
         """
-        sql = "select key, title, description, link, last_build_date, copyright from feed"
         cursor = self._conn.cursor()
-        cursor.execute(sql)
+        cursor.execute(self.SQL_FEEDS_ALL)
 
         feeds = []
         for row in cursor.fetchall():
@@ -253,9 +251,8 @@ class Database():
         Returns:
             List[Episode]: all Episode's of the given Feed in the database
         """
-        sql = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=?"
         cursor = self._conn.cursor()
-        cursor.execute(sql, (feed.key,))
+        cursor.execute(self.SQL_EPISODES_BY_FEED, (feed.key,))
 
         episodes = []
         for row in cursor.fetchall():
@@ -282,9 +279,8 @@ class Database():
         Returns:
             Feed: the matching Feed, if it exists, or None
         """
-        sql = "select key, title, description, link, last_build_date, copyright from feed where key=?"
         cursor = self._conn.cursor()
-        cursor.execute(sql, (key,))
+        cursor.execute(self.SQL_FEED_BY_KEY, (key,))
 
         result = cursor.fetchone()
         if result is None:
@@ -311,9 +307,8 @@ class Database():
         Returns:
             Episode: the matching Episode, if it exists, or None
         """
-        sql = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
         cursor = self._conn.cursor()
-        cursor.execute(sql, (ep_id,))
+        cursor.execute(self.SQL_EPISODES_BY_ID, (ep_id,))
 
         result = cursor.fetchone()
         if result is None:
@@ -341,15 +336,14 @@ class Database():
         cursor = self._conn.cursor()
 
         # get ep_id's of episodes to retrieve
-        sql = "select id, ep_id from queue"
-        cursor.execute(sql, ())
+        cursor.execute(self.SQL_QUEUE_ALL, ())
         ep_ids = [row[1] for row in cursor.fetchall()]
 
         if len(ep_ids) == 0:
             return []
 
         # bulk retrieve all episodes
-        sql = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
+        sql = self.SQL_EPISODES_BY_ID
         for ep_id in ep_ids[1:]:
             sql += " OR id=?"
         cursor.execute(sql, tuple(ep_ids))

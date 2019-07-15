@@ -170,6 +170,7 @@ def test_database_from_json(prevent_modification):
     assert episodes0[0].pubdate == "episode pubdate"
     assert episodes0[0].copyright == "episode copyright"
     assert episodes0[0].enclosure == "episode enclosure"
+    assert not episodes0[0].played
 
     assert feeds[1].key == "http://feed2_url"
     assert feeds[1].title == "feed2 title"
@@ -184,3 +185,4 @@ def test_database_from_json(prevent_modification):
     assert episodes1[0].pubdate == "episode pubdate"
     assert episodes1[0].copyright == "episode copyright"
     assert episodes1[0].enclosure == "episode enclosure"
+    assert not episodes1[0].played
