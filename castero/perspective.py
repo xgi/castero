@@ -126,7 +126,7 @@ class Perspective(ABC):
         max_line_width = window.getmaxyx()[1] - 1
 
         # clear the window by drawing blank lines
-        for y in range(2, window.getmaxyx()[0]):
+        for y in range(2, window.getmaxyx()[0] - 2):
             window.addstr(y, 0, " " * max_line_width)
 
         metadata = self._get_active_menu().metadata

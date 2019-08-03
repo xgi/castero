@@ -206,10 +206,6 @@ class Display:
         self._footer_window = curses.newwin(2, self._parent_x,
                                             self._parent_y - 2, 0)
 
-        # set window attributes
-        self._header_window.attron(curses.color_pair(4))
-        self._footer_window.attron(curses.color_pair(4))
-
         # create windows for all perspectives
         for perspective_id in self._perspectives:
             self._perspectives[perspective_id].create_windows()
@@ -266,6 +262,10 @@ class Display:
                 self._perspectives[perspective_id].update_menus()
             self.menus_valid = True
 
+        # update window colors
+        self._header_window.bkgd(curses.color_pair(4))
+        self._footer_window.bkgd(curses.color_pair(4))
+
         # add header
         playing_str = castero.__title__
         if self._queue.first is not None:
@@ -282,7 +282,8 @@ class Display:
                 playing_str += " [%s]" % self._queue.first.time_str
 
         self._header_window.attron(curses.A_BOLD)
-        self._header_window.addstr(0, 0, " " * self._parent_x)
+        self._header_window.addstr(0, 0,
+                                   " " * self._header_window.getmaxyx()[1])
         self._header_window.addstr(0, 0, playing_str)
 
         # add footer
@@ -313,9 +314,6 @@ class Display:
             footer_str += " -- Press %s for help" % Config["key_help"]
 
         self._footer_window.attron(curses.A_BOLD)
-        self._footer_window.addstr(
-            1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
-        )
         footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
         self._footer_window.addstr(1, 0, footer_str)
 

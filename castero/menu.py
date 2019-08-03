@@ -180,11 +180,6 @@ class Menu(ABC):
                 self._draw_item(items[i], position, selected)
                 position += 1
 
-        # fill unused rows with blank lines
-        for y in range(self._display_start_y + position,
-                       self._display_start_y + self.max_displayed_items):
-            self._window.addstr(y, 0, self._pad_text(""))
-
     def set_active(self, active) -> None:
         """Sets whether this menu is active.
 

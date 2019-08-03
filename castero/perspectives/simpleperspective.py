@@ -51,9 +51,6 @@ class SimplePerspective(Perspective):
         self._episode_window = curses.newwin(parent_y - 2, parent_x - fw_width,
                                              2, fw_width)
 
-        self._feed_window.attron(curses.color_pair(1))
-        self._episode_window.attron(curses.color_pair(1))
-
         # update menus if necessary
         if self._feed_menu is not None:
             self._feed_menu.window = self._feed_window
@@ -79,6 +76,10 @@ class SimplePerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
+        # update window colors
+        self._feed_window.bkgd(curses.color_pair(1))
+        self._episode_window.bkgd(curses.color_pair(1))
+
         # add window titles
         self._feed_window.attron(curses.A_BOLD)
         self._episode_window.attron(curses.A_BOLD)
