@@ -49,9 +49,6 @@ class QueuePerspective(Perspective):
         self._metadata_window = curses.newwin(parent_y - 2, metadata_width,
                                               2, 2 * third_x)
 
-        self._queue_window.attron(curses.color_pair(1))
-        self._metadata_window.attron(curses.color_pair(1))
-
         # update menus if necessary
         if self._queue_menu is not None:
             self._queue_menu.window = self._queue_window
@@ -71,6 +68,10 @@ class QueuePerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
+        # update window colors
+        self._queue_window.bkgd(curses.color_pair(1))
+        self._metadata_window.bkgd(curses.color_pair(1))
+
         # add window titles
         self._queue_window.attron(curses.A_BOLD)
         self._metadata_window.attron(curses.A_BOLD)
