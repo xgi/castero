@@ -54,7 +54,7 @@ class PrimaryPerspective(Perspective):
         self._episode_window = curses.newwin(parent_y - 2, third_x,
                                              2, third_x)
         metadata_width = parent_x - ((third_x * 2) - 1)
-        self._metadata_window = curses.newwin(parent_y - 2, metadata_width,
+        self._metadata_window = curses.newwin(parent_y - 3, metadata_width,
                                               2, 2 * third_x)
 
         # update menus if necessary
