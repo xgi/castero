@@ -282,7 +282,8 @@ class Display:
                 playing_str += " [%s]" % self._queue.first.time_str
 
         self._header_window.attron(curses.A_BOLD)
-        self._header_window.addstr(0, 0, " " * self._parent_x)
+        self._header_window.addstr(0, 0,
+                                   " " * self._header_window.getmaxyx()[1])
         self._header_window.addstr(0, 0, playing_str)
 
         # add footer
