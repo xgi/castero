@@ -124,7 +124,22 @@ class PrimaryPerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
-        return self._generic_handle_input(c)
+        queue = self._display.queue
+        key_mapping = self._display.KEY_MAPPING
+
+        keep_running = True
+        if c == key_mapping[Config['key_play_selected']]:
+            queue.stop()
+            queue.clear()
+            self._create_player_from_selected()
+            queue.play()
+        elif c == key_mapping[Config['key_add_selected']]:
+            self._create_player_from_selected()
+            self._get_active_menu().move(-1)
+        else:
+            keep_running = self._generic_handle_input(c)
+
+        return keep_running
 
     def made_active(self) -> None:
         """Called each time the perspective is made active (switched to).

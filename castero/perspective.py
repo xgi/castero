@@ -128,14 +128,6 @@ class Perspective(ABC):
         elif c == key_mapping[Config['key_scroll_down']]:
             self._get_active_menu().move_page(-1)
             self._metadata_updated = False
-        elif c == key_mapping[Config['key_play_selected']]:
-            queue.stop()
-            queue.clear()
-            self._create_player_from_selected()
-            queue.play()
-        elif c == key_mapping[Config['key_add_selected']]:
-            self._create_player_from_selected()
-            self._get_active_menu().move(-1)
         elif c == key_mapping[Config['key_clear']]:
             queue.stop()
             queue.clear()
