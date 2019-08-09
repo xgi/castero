@@ -49,7 +49,7 @@ jobs:
           command: |
             . venv/bin/activate
             coverage run -m pytest tests
-            coverage xml
+            coverage xml --omit="tests/*"
 
       - store_artifacts:
           path: coverage.xml
