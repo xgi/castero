@@ -25,4 +25,6 @@ class Net:
         Returns:
             requests.models.Response: response
         """
-        return requests.get(url, headers=Net.HEADERS, **kwargs)
+        r = requests.get(url, headers=Net.HEADERS, **kwargs)
+        r.encoding = r.apparent_encoding
+        return r
