@@ -159,6 +159,13 @@ class QueuePerspective(Perspective):
 
         return self._queue_menu
 
+    def _invert_selected_menu(self) -> None:
+        """Inverts the contents of the selected menu.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        pass
+
     def _remove_selected_from_queue(self) -> None:
         """Remove the selected player from the queue.
         """
