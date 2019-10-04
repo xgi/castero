@@ -34,6 +34,7 @@ class Menu(ABC):
         self._display_start_y = 2
         self._top_index = 0
         self._inverted = False
+        self._filter_text = ""
 
         if child is not None:
             self.update_child()
@@ -276,3 +277,12 @@ class Menu(ABC):
     @window.setter
     def window(self, window) -> None:
         self._window = window
+
+    @property
+    def filter_text(self) -> str:
+        """str: the filter applied to the menu"""
+        return self._filter_text
+
+    @filter_text.setter
+    def filter_text(self, filter_text) -> None:
+        self._filter_text = filter_text

@@ -13,6 +13,7 @@ from castero.downloadqueue import DownloadQueue
 from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
     FeedParseError, FeedStructureError
 from castero.episode import Episode
+from castero.menu import Menu
 from castero.perspective import Perspective
 from castero.queue import Queue
 from castero.player import Player
@@ -555,6 +556,10 @@ class Display:
                     episode.delete(self)
             else:
                 self._download_queue.add(episode)
+
+    def filter_menu(self, menu: Menu) -> None:
+        menu.filter_text = self._get_input_str("Filter: ")
+        self.menus_valid = False
 
     def clear(self) -> None:
         """Clear the screen.
