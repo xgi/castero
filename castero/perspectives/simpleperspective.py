@@ -156,6 +156,15 @@ class SimplePerspective(Perspective):
             1: self._episode_menu,
         }.get(self._active_window)
 
+    def _invert_selected_menu(self) -> None:
+        """Inverts the contents of the selected menu.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._get_active_menu().invert()
+        if self._feed_menu:
+            self._feed_menu.update_child()
+
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.
 
@@ -181,10 +190,3 @@ class SimplePerspective(Perspective):
                     self._display.AVAILABLE_PLAYERS, str(episode),
                     episode.get_playable(), episode)
                 self._display.queue.add(player)
-
-    def _invert_selected_menu(self) -> None:
-        """Inverts the contents of the selected menu.
-        """
-        self._get_active_menu().invert()
-        if self._feed_menu:
-            self._feed_menu.update_child()

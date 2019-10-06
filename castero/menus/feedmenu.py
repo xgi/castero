@@ -17,7 +17,7 @@ class FeedMenu(Menu):
         super().__init__(window, source, child=child, active=active)
 
     def __len__(self) -> int:
-        return len(self._feeds)
+        return len(self._filtered_feeds)
 
     @property
     def _items(self):
@@ -40,10 +40,10 @@ class FeedMenu(Menu):
 
         Overrides method from Menu; see documentation in that class.
         """
-        if len(self._feeds) == 0:
+        if len(self._filtered_feeds) == 0:
             return None
 
-        return self._feeds[self._selected]
+        return self._filtered_feeds[self._selected]
 
     @property
     def metadata(self) -> str:
@@ -75,10 +75,11 @@ class FeedMenu(Menu):
 
         Overrides method from Menu; see documentation in that class.
         """
-        if len(self._feeds) == 0:
+        if len(self._filtered_feeds) == 0:
             self.update_items(None)
+            self._child.update_items(None)
         else:
-            self._child.update_items(self._feeds[self._selected])
+            self._child.update_items(self._filtered_feeds[self._selected])
 
     def invert(self):
         """Invert the menu order.
@@ -88,3 +89,10 @@ class FeedMenu(Menu):
         super().invert()
 
         self.update_items(None)
+
+    @property
+    def _filtered_feeds(self):
+        """A list of feeds which match the menu filter.
+        """
+        return list(filter(
+            lambda feed: self._filter_text in str(feed).lower(), self._feeds))

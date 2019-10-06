@@ -85,6 +85,11 @@ class Perspective(ABC):
         """
 
     @abstractmethod
+    def _invert_selected_menu(self) -> None:
+        """Inverts the contents of the selected menu.
+        """
+
+    @abstractmethod
     def _get_active_menu(self) -> Menu:
         """Retrieve the active Menu, if there is one.
 
@@ -163,6 +168,15 @@ class Perspective(ABC):
                 self._display.save_episodes(episode=self._episode_menu.item)
         elif c == key_mapping[Config['key_invert']]:
             self._invert_selected_menu()
+        elif c == key_mapping[Config['key_filter']]:
+            menu = self._get_active_menu()
+            if menu.filter_text:
+                menu.filter_text = ""
+            else:
+                self._display.filter_menu(menu)
+            self._feed_menu.update_child()
+            menu.move(-1)
+            menu.move(1)
         elif c == key_mapping[Config['key_mark_played']]:
             if self._active_window == 0:
                 feed = self._feed_menu.item

@@ -37,6 +37,7 @@ Commands
     {key_clear} - clear the queue
     {key_next} - go to the next episode in the queue
     {key_invert} - invert the order of the menu
+    {key_filter} - filter the contents of the menu
     {key_mark_played} - mark episode as played/unplayed
     {key_pause_play|key_pause_play_alt} - pause/play the current episode
     {key_seek_forward|key_seek_forward_alt} - seek forward

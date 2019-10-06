@@ -16,7 +16,7 @@ class EpisodeMenu(Menu):
         self._episodes = []
 
     def __len__(self) -> int:
-        return len(self._episodes)
+        return len(self._filtered_episodes)
 
     @property
     def _items(self):
@@ -25,7 +25,7 @@ class EpisodeMenu(Menu):
         Overrides method from Menu; see documentation in that class.
         """
         result = []
-        for episode in self._episodes:
+        for episode in self._filtered_episodes:
             tags = []
             if episode.downloaded:
                 tags.append('D')
@@ -44,10 +44,10 @@ class EpisodeMenu(Menu):
 
         Overrides method from Menu; see documentation in that class.
         """
-        if len(self._episodes) == 0:
+        if len(self._filtered_episodes) == 0:
             return None
 
-        return self._episodes[self._selected]
+        return self._filtered_episodes[self._selected]
 
     @property
     def metadata(self) -> str:
@@ -55,10 +55,10 @@ class EpisodeMenu(Menu):
 
         Overrides method from Menu; see documentation in that class.
         """
-        if len(self._episodes) == 0:
+        if len(self._filtered_episodes) == 0:
             return ""
 
-        return self._episodes[self._selected].metadata
+        return self._filtered_episodes[self._selected].metadata
 
     def update_items(self, feed: Feed):
         """Called by the parent menu (the feeds menu) to update our items.
@@ -97,3 +97,10 @@ class EpisodeMenu(Menu):
         super().invert()
 
         self.update_items(self._feed)
+
+    @property
+    def _filtered_episodes(self):
+        """A list of episodes which match the menu filter.
+        """
+        return list(filter(
+            lambda ep: self._filter_text in str(ep).lower(), self._episodes))
