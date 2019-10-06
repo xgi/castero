@@ -158,7 +158,7 @@ class Perspective(ABC):
         elif c == key_mapping[Config['key_delete']]:
             if self._active_window == 0:
                 self._display.delete_feed(self._feed_menu.item)
-                self._feed_menu.update_child()
+                self.update_menus()
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
         elif c == key_mapping[Config['key_save']]:
@@ -174,7 +174,7 @@ class Perspective(ABC):
                 menu.filter_text = ""
             else:
                 self._display.filter_menu(menu)
-            self._feed_menu.update_child()
+            self.update_menus()
             menu.move(-1)
             menu.move(1)
         elif c == key_mapping[Config['key_mark_played']]:

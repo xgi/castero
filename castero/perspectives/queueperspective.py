@@ -122,6 +122,12 @@ class QueuePerspective(Perspective):
             self._display.menus_valid = False
         elif c == key_mapping[Config['key_delete']]:
             self._remove_selected_from_queue()
+        elif c == key_mapping[Config['key_save']]:
+            pass
+        elif c == key_mapping[Config['key_mark_played']]:
+            pass
+        elif c == key_mapping[Config['key_filter']]:
+            pass
         else:
             keep_running = self._generic_handle_input(c)
 
