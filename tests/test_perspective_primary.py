@@ -188,7 +188,7 @@ def test_perspective_regression_11(display):
     old_ddir = Config["custom_download_dir"]
     Config.data["custom_download_dir"] = os.path.join(my_dir, "downloaded")
 
-    feed = Feed(file="%s/feeds/valid_enclosures.xml" % (my_dir))
+    feed = Feed(file="%s/feeds/valid_basic.xml" % (my_dir))
     display.database.replace_feed(feed)
     display.database.replace_episodes(feed, feed.parse_episodes())
     display.menus_valid = False

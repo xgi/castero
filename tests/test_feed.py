@@ -11,12 +11,21 @@ def test_feed_validation_valid():
     myfeed = feed.Feed(file=my_dir + "/feeds/valid_basic.xml")
     assert isinstance(myfeed, feed.Feed)
     assert myfeed.validated
+    assert len(myfeed.parse_episodes()) == 3
 
 
 def test_feed_validation_complete():
-    myfeed = feed.Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myfeed = feed.Feed(file=my_dir + "/feeds/valid_complete.xml")
     assert isinstance(myfeed, feed.Feed)
     assert myfeed.validated
+    assert len(myfeed.parse_episodes()) == 3
+
+
+def test_feed_validation_valid_mixed_enclosure():
+    myfeed = feed.Feed(file=my_dir + "/feeds/valid_mixed_enclosures.xml")
+    assert isinstance(myfeed, feed.Feed)
+    assert myfeed.validated
+    assert len(myfeed.parse_episodes()) == 2
 
 
 def test_feed_validations_is_rss():

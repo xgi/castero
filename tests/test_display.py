@@ -118,7 +118,7 @@ def test_display_update(display):
 
 
 def test_display_nonempty(display):
-    myfeed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     display.database.feeds = mock.MagicMock(return_value=[myfeed])
     display.menus_valid = False
     display.display()
@@ -135,7 +135,7 @@ def test_display_min_dimensions(display):
 
 
 def test_display_add_feed(display):
-    feed_dir = my_dir + "/feeds/valid_enclosures.xml"
+    feed_dir = my_dir + "/feeds/valid_basic.xml"
     display._get_input_str = mock.MagicMock(return_value=feed_dir)
     display.add_feed()
     assert len(display.database.feeds()) == 1

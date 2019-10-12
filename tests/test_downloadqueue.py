@@ -7,7 +7,7 @@ from castero.feed import Feed
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
-feed = Feed(file=my_dir + "/feeds/valid_enclosures.xml")
+feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
 episode1 = Episode(feed=feed, title="episode1 title")
 episode2 = Episode(feed=feed, title="episode2 title")
 
