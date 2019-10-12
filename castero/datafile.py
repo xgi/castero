@@ -1,5 +1,6 @@
 import collections
 import os
+import requests
 from shutil import copyfile
 
 import castero
@@ -85,26 +86,32 @@ class DataFile:
         chunk_size = 1024
         chuck_size_label = "KB"
 
-        response = Net.Get(url, stream=True)
-        handle = open(file, "wb")
-        downloaded = 0
-        for chunk in response.iter_content(chunk_size=chunk_size):
+        try:
+            response = Net.Get(url, stream=True)
+        except requests.exceptions.RequestException as e:
             if display is not None:
-                status_str = "Downloading \"%s\": %d%s" % (
-                    name, downloaded / chunk_size, chuck_size_label
-                )
-                if download_queue.length > 1:
-                    status_str += " (+%d downloads in queue)" % \
-                                  (download_queue.length - 1)
+                display.change_status("RequestException: %s" % str(e))
+            return
+        else:
+            handle = open(file, "wb")
+            downloaded = 0
+            for chunk in response.iter_content(chunk_size=chunk_size):
+                if display is not None:
+                    status_str = "Downloading \"%s\": %d%s" % (
+                        name, downloaded / chunk_size, chuck_size_label
+                    )
+                    if download_queue.length > 1:
+                        status_str += " (+%d downloads in queue)" % \
+                                    (download_queue.length - 1)
 
-                display.change_status(status_str)
-            if chunk:
-                handle.write(chunk)
-            downloaded += len(chunk)
+                    display.change_status(status_str)
+                if chunk:
+                    handle.write(chunk)
+                downloaded += len(chunk)
 
-        if display is not None:
-            display.change_status("Episode successfully downloaded.")
-            display.menus_valid = False
+            if display is not None:
+                display.change_status("Episode successfully downloaded.")
+                display.menus_valid = False
         download_queue.next()
 
     def load(self) -> None:
