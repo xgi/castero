@@ -306,6 +306,11 @@ class Feed:
                 if 'url' in item_enclosure.attrib.keys():
                     item_enclosure_str = item_enclosure.attrib['url']
 
+            # if we were unable to find an enclosure for this episode,
+            # don't add it
+            if not item_enclosure_str:
+                continue
+
             episodes.append(
                 Episode(self,
                         title=item_title_str,
