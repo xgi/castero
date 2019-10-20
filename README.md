@@ -22,9 +22,6 @@ $ pip install castero --upgrade
 
 ### Manual Installation
 
-Warning: changes to the master branch are sometimes made before the
-documentation on this page is updated.
-
 ```bash
 $ git clone https://github.com/xgi/castero
 $ cd castero
@@ -74,6 +71,16 @@ Commands
     [            - decrease playback speed
     1-3          - change between client layouts
 ```
+
+### Importing/exporting feeds from another client
+
+castero supports importing and exporting an [OPML file](https://en.wikipedia.org/wiki/OPML)
+of your subscriptions in order to easily transfer them between other podcast
+clients. Please refer to your other client's documentation for details on
+how/if it supports this format.
+
+Importing and exporting from castero are available with command line flags.
+Run `castero --help` for details.
 
 ## Configuration
 
