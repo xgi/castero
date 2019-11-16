@@ -146,6 +146,21 @@ class Display:
             self.color_number(Config["color_foreground_dim"]),
             self.color_number(Config["color_background"]),
         )
+        curses.init_pair(
+            6,
+            self.color_number(Config["color_foreground_status"]),
+            self.color_number(Config["color_background"]),
+        )
+        curses.init_pair(
+            7,
+            self.color_number(Config["color_foreground_heading"]),
+            self.color_number(Config["color_background"]),
+        )
+        curses.init_pair(
+            8,
+            self.color_number(Config["color_foreground_dividers"]),
+            self.color_number(Config["color_background"]),
+        )
 
     def _load_perspectives(self) -> None:
         """Load instances of perspectives from the `perspectives` package.
@@ -233,7 +248,6 @@ class Display:
         padding_yx = (1, 4)
 
         help_window = curses.newwin(self._parent_y, self._parent_x, 0, 0)
-        help_window.attron(curses.A_BOLD)
 
         # display lines from __help__
         help_lines = \
@@ -241,7 +255,8 @@ class Display:
         help_lines.append("Press any key to exit this screen.")
         for i in range(len(help_lines)):
             help_window.addstr(i + padding_yx[0], padding_yx[1],
-                               help_lines[i][:self._parent_x - padding_yx[1]])
+                               help_lines[i][:self._parent_x - padding_yx[1]],
+                               curses.A_BOLD)
         help_window.refresh()
 
         # simply wait until any key is pressed (temporarily disable timeout)
@@ -263,10 +278,6 @@ class Display:
                 self._perspectives[perspective_id].update_menus()
             self.menus_valid = True
 
-        # update window colors
-        self._header_window.bkgd(curses.color_pair(4))
-        self._footer_window.bkgd(curses.color_pair(4))
-
         # add header
         playing_str = castero.__title__
         if self._queue.first is not None:
@@ -282,10 +293,10 @@ class Display:
             else:
                 playing_str += " [%s]" % self._queue.first.time_str
 
-        self._header_window.attron(curses.A_BOLD)
         self._header_window.addstr(0, 0,
                                    " " * self._header_window.getmaxyx()[1])
-        self._header_window.addstr(0, 0, playing_str)
+        self._header_window.addstr(0, 0, playing_str,
+                                   curses.color_pair(6) | curses.A_BOLD)
 
         # add footer
         footer_str = ""
@@ -314,15 +325,19 @@ class Display:
         if footer_str != "":
             footer_str += " -- Press %s for help" % Config["key_help"]
 
-        self._footer_window.attron(curses.A_BOLD)
         footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
-        self._footer_window.addstr(1, 0, footer_str)
+        self._footer_window.addstr(0, 0,
+                                   " " * self._footer_window.getmaxyx()[1])
+        self._footer_window.addstr(1, 0, footer_str,
+                                   curses.color_pair(6) | curses.A_BOLD)
 
         # add window borders
         self._header_window.hline(1, 0,
-                                  0, self._header_window.getmaxyx()[1])
+                                  0, self._header_window.getmaxyx()[1],
+                                  curses.ACS_HLINE | curses.color_pair(8))
         self._footer_window.hline(0, 0,
-                                  0, self._footer_window.getmaxyx()[1])
+                                  0, self._footer_window.getmaxyx()[1],
+                                  curses.ACS_HLINE | curses.color_pair(8))
 
         # update display for current perspective
         self._perspectives[self._active_perspective].display()

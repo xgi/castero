@@ -76,24 +76,23 @@ class SimplePerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
-        # update window colors
-        self._feed_window.bkgd(curses.color_pair(1))
-        self._episode_window.bkgd(curses.color_pair(1))
-
-        # add window titles
-        self._feed_window.attron(curses.A_BOLD)
-        self._episode_window.attron(curses.A_BOLD)
-        self._feed_window.addstr(0, 0, "Feeds")
-        self._episode_window.addstr(0, 0, "Episodes")
+        # add window headers
+        self._feed_window.addstr(0, 0, "Feeds",
+                                 curses.color_pair(7) | curses.A_BOLD)
+        self._episode_window.addstr(0, 0, "Episodes",
+                                    curses.color_pair(7) | curses.A_BOLD)
 
         # add window borders
         self._feed_window.hline(1, 0,
-                                0, self._feed_window.getmaxyx()[1])
+                                0, self._feed_window.getmaxyx()[1],
+                                curses.ACS_HLINE | curses.color_pair(8))
         self._episode_window.hline(1, 0,
-                                   0, self._episode_window.getmaxyx()[1])
+                                   0, self._episode_window.getmaxyx()[1],
+                                   curses.ACS_HLINE | curses.color_pair(8))
         if not helpers.is_true(Config["disable_vertical_borders"]):
             self._feed_window.vline(0, self._feed_window.getmaxyx()[1] - 1,
-                                    0, self._feed_window.getmaxyx()[0] - 2)
+                                    0, self._feed_window.getmaxyx()[0] - 2,
+                                    curses.ACS_VLINE | curses.color_pair(8))
 
         # display menu content
         self._feed_menu.display()

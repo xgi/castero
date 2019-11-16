@@ -247,11 +247,10 @@ class Perspective(ABC):
 
         y = 2
         for line in lines[:max_lines]:
+            attr = curses.color_pair(1)
             if line.startswith('!cb'):
-                window.attron(curses.A_BOLD)
+                attr |= curses.A_BOLD
                 line = line[3:]
-            else:
-                window.attrset(curses.color_pair(1))
 
-            window.addstr(y, 0, line)
+            window.addstr(y, 0, line, attr)
             y += 1
