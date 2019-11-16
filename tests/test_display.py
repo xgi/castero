@@ -18,16 +18,16 @@ def test_display_init(display):
 
 def test_display_display_header(display):
     display.display()
-    display._header_window.attron.assert_called_with(curses.A_BOLD)
-    display._header_window.addstr.assert_called_with(0, 0, castero.__title__)
+    display._header_window.addstr.assert_called_with(
+        0, 0, castero.__title__, curses.color_pair(6) | curses.A_BOLD)
     display._stdscr.reset_mock()
 
 
 def test_display_display_footer_empty(display):
     display.display()
-    display._footer_window.attron.assert_called_with(curses.A_BOLD)
     display._footer_window.addstr.assert_called_with(
-        1, 0, "No feeds added -- Press h for help"
+        1, 0, "No feeds added -- Press h for help",
+        curses.color_pair(6) | curses.A_BOLD
     )
     display._stdscr.reset_mock()
     feed = Feed(url="feed url",
@@ -38,11 +38,11 @@ def test_display_display_footer_empty(display):
                 copyright="feed copyright")
     display.database.feeds = mock.MagicMock(return_value=[feed])
     display.display()
-    display._footer_window.attron.assert_called_with(curses.A_BOLD)
     display._footer_window.addstr.assert_called_with(
         1, 0,
         "Found 1 feeds with 0 total episodes (avg. 0 episodes, med. 0)"
-        " -- Press h for help"
+        " -- Press h for help",
+        curses.color_pair(6) | curses.A_BOLD
     )
 
 

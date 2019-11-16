@@ -68,24 +68,23 @@ class QueuePerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
-        # update window colors
-        self._queue_window.bkgd(curses.color_pair(1))
-        self._metadata_window.bkgd(curses.color_pair(1))
-
-        # add window titles
-        self._queue_window.attron(curses.A_BOLD)
-        self._metadata_window.attron(curses.A_BOLD)
-        self._queue_window.addstr(0, 0, "Queue")
-        self._metadata_window.addstr(0, 0, "Metadata")
+        # add window headers
+        self._queue_window.addstr(0, 0, "Queue",
+                                  curses.color_pair(7) | curses.A_BOLD)
+        self._metadata_window.addstr(0, 0, "Metadata",
+                                     curses.color_pair(7) | curses.A_BOLD)
 
         # add window borders
         self._queue_window.hline(1, 0,
-                                 0, self._queue_window.getmaxyx()[1])
+                                 0, self._queue_window.getmaxyx()[1],
+                                 curses.ACS_HLINE | curses.color_pair(8))
         self._metadata_window.hline(1, 0,
-                                    0, self._metadata_window.getmaxyx()[1] - 1)
+                                    0, self._metadata_window.getmaxyx()[1] - 1,
+                                    curses.ACS_HLINE | curses.color_pair(8))
         if not helpers.is_true(Config["disable_vertical_borders"]):
             self._queue_window.vline(0, self._queue_window.getmaxyx()[1] - 1,
-                                     0, self._queue_window.getmaxyx()[0] - 2)
+                                     0, self._queue_window.getmaxyx()[0] - 2,
+                                     curses.ACS_VLINE | curses.color_pair(8))
 
         # display menu content
         self._queue_menu.display()
