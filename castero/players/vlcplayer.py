@@ -104,6 +104,14 @@ class VLCPlayer(Player):
                 display.change_status(
                     "Playback speed set to {:0.2f}".format(new_rate))
 
+    def set_rate(self, rate) -> None:
+        """Set the playback speed.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        if self._player is not None:
+            self._player.set_rate(rate)
+
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
