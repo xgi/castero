@@ -64,6 +64,7 @@ class Queue:
             self.first.episode.played = True
             self._display.modified_episodes.append(self.first.episode)
             self.first.play()
+            self.first.set_rate(float(Config["default_playback_speed"]))
 
     def pause(self) -> None:
         """Pauses the first player in the queue.

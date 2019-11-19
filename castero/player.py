@@ -156,6 +156,14 @@ class Player:
             display: (optional) the display to write status updates to
         """
 
+    @abstractmethod
+    def set_rate(self, rate) -> None:
+        """Set the playback speed.
+
+        Args:
+            rate: the desired playback speed
+        """
+
     @property
     def state(self) -> int:
         """int: the state of the player"""
