@@ -103,7 +103,6 @@ class QueuePerspective(Perspective):
 
         keep_running = True
         if c == key_mapping[Config['key_play_selected']]:
-            queue.stop()
             target = self._queue_menu.item
             self._display.queue.jump(target)
             while self._queue_menu.selected_index > 0:
