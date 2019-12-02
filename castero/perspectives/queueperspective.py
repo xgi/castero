@@ -112,6 +112,7 @@ class QueuePerspective(Perspective):
         elif c == key_mapping[Config['key_next']]:
             queue.stop()
             queue.next()
+            self._queue_menu.move(1)
             queue.play()
             self._display.menus_valid = False
         elif c == key_mapping[Config['key_clear']]:
