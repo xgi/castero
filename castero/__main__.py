@@ -3,6 +3,10 @@ import sys
 import threading
 import re
 import argparse
+import os
+import io
+import ctypes
+import tempfile
 
 import castero
 from castero import helpers
@@ -38,6 +42,27 @@ def export_subscriptions(path: str, database: Database) -> None:
     subscriptions.save(path)
 
     print("Exported %d feeds" % len(feeds))
+
+
+def redirect_stderr() -> io.TextIOWrapper:
+    temp_file = tempfile.TemporaryFile(prefix="%s-" % castero.__title__)
+
+    libc = ctypes.CDLL(None)
+    c_stderr = ctypes.c_void_p.in_dll(libc, 'stderr')
+
+    stderr_fd = sys.stderr.fileno()
+    libc.fflush(c_stderr)
+    sys.stderr.close()
+
+    # make the stderr fd point to the temp_file
+    os.dup2(temp_file.fileno(), stderr_fd)
+
+    # overwrite sys.stderr to use our modified fd
+    # - not explicitly necessary for our purposes, since curses does not
+    #   use this field
+    sys.stderr = io.TextIOWrapper(os.fdopen(stderr_fd, 'wb'))
+
+    return temp_file.fileno()
 
 
 def main():
@@ -81,6 +106,7 @@ def main():
             castero.__help__.replace(field, adjusted)
 
     # instantiate display
+    temp_file = redirect_stderr()
     stdscr = curses.initscr()
     display = Display(stdscr, database)
     display.clear()
@@ -109,6 +135,7 @@ def main():
         if char != -1:
             running = display.handle_input(char)
 
+    temp_file.close()
     sys.exit(0)
 
 
