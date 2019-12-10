@@ -128,7 +128,7 @@ class Menu(ABC):
             if self._active:
                 attr = curses.color_pair(2)
             else:
-                attr = curses.color_pair(3)
+                attr = curses.color_pair(4)
         else:
             attr = attr | item['attr']
 
