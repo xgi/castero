@@ -39,6 +39,22 @@ class EpisodeMenu(Menu):
         return result
 
     @property
+    def title(self) -> str:
+        """The title of the menu to display in the window header.
+
+        Overrides method from Menu; see documentation in that class."""
+        base = "Episodes"
+        if len(self._filtered_episodes) > 0:
+            unplayed_episodes = 0
+            for episode in self._filtered_episodes:
+                if not episode.played:
+                    unplayed_episodes += 1
+
+            return "%s (%d/%d)" % \
+                (base, unplayed_episodes, len(self._filtered_episodes))
+        return base
+
+    @property
     def item(self) -> Episode:
         """The selected episode.
 

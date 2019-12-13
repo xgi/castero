@@ -35,6 +35,13 @@ class FeedMenu(Menu):
         ]
 
     @property
+    def title(self) -> str:
+        """The title of the menu to display in the window header.
+
+        Overrides method from Menu; see documentation in that class."""
+        return "Feeds"
+
+    @property
     def item(self) -> Feed:
         """The selected feed.
 
