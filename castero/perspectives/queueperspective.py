@@ -68,8 +68,11 @@ class QueuePerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
+        # clear dynamic menu headers
+        self._queue_window.addstr(0, 0, " " * self._queue_window.getmaxyx()[1])
+
         # add window headers
-        self._queue_window.addstr(0, 0, "Queue",
+        self._queue_window.addstr(0, 0, self._queue_menu.title,
                                   curses.color_pair(7) | curses.A_BOLD)
         self._metadata_window.addstr(0, 0, "Metadata",
                                      curses.color_pair(7) | curses.A_BOLD)
