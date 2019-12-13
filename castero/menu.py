@@ -53,6 +53,11 @@ class Menu(ABC):
 
     @abstractproperty
     @property
+    def title(self) -> str:
+        """str: the title of the menu to display in the window header"""
+
+    @abstractproperty
+    @property
     def item(self):
         """the selected item"""
 

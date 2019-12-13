@@ -76,10 +76,15 @@ class SimplePerspective(Perspective):
 
         Overrides method from Perspective; see documentation in that class.
         """
+        # clear dynamic menu headers
+        self._feed_window.addstr(0, 0, " " * self._feed_window.getmaxyx()[1])
+        self._episode_window.addstr(0, 0,
+                                    " " * self._episode_window.getmaxyx()[1])
+
         # add window headers
-        self._feed_window.addstr(0, 0, "Feeds",
+        self._feed_window.addstr(0, 0, self._feed_menu.title,
                                  curses.color_pair(7) | curses.A_BOLD)
-        self._episode_window.addstr(0, 0, "Episodes",
+        self._episode_window.addstr(0, 0, self._episode_menu.title,
                                     curses.color_pair(7) | curses.A_BOLD)
 
         # add window borders

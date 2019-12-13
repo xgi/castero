@@ -326,9 +326,9 @@ class Display:
             footer_str += " -- Press %s for help" % Config["key_help"]
 
         footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
-        self._footer_window.addstr(0, 0,
-                                   " " * self._footer_window.getmaxyx()[1])
-        self._footer_window.addstr(1, 0, footer_str,
+        max_width = self._footer_window.getmaxyx()[1] - 1
+        self._footer_window.addstr(1, 0,
+                                   footer_str.ljust(max_width)[:max_width],
                                    curses.color_pair(6) | curses.A_BOLD)
 
         # add window borders
