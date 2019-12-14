@@ -12,6 +12,27 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.7.0 - 2019-12-13
+**Added**
+* Added support for filtering menus with the `/` key.
+* Added individual config options for foreground text colors.
+* Added an option for default playback speed.
+* Added the number of unplayed episodes to the menu header.
+
+**Fixed**
+* Fixed support for OPML v2.
+* Fixed menu headers using the wrong background color.
+* Fixed the metadata window not properly filling the screen height.
+* Fixed the selected menu index being offscreen when resizing the window.
+* Fixed menu selections not being sanitized in the correct sequence.
+* Fixed menus not visually updating when modified.
+* Fixed ffmpeg output appearing in the client - Thanks @rien333 and @jaseg!
+* Fixed a crash when resizing the window at some ratios.
+* Fixed a crash when trying to invert menus.
+* Fixed a crash when an episode had no audio enclosure.
+* Fixed a crash when episode enclosure caused a request exception.
+* Fixed a crash when trying to play the current episode in the queue.
+
 ## 0.6.0 - 2019-06-10
 **Added**
 * Added support for importing/exporting subscriptions to and from OPML files.
