@@ -47,8 +47,13 @@ def export_subscriptions(path: str, database: Database) -> None:
 def redirect_stderr() -> io.TextIOWrapper:
     temp_file = tempfile.TemporaryFile(prefix="%s-" % castero.__title__)
 
+    # get os-specific stderr descriptor
+    stderr = 'stderr'
+    if sys.platform == 'darwin':
+        stderr = '__stderrp'
+
     libc = ctypes.CDLL(None)
-    c_stderr = ctypes.c_void_p.in_dll(libc, 'stderr')
+    c_stderr = ctypes.c_void_p.in_dll(libc, stderr)
 
     stderr_fd = sys.stderr.fileno()
     libc.fflush(c_stderr)
