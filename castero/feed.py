@@ -216,12 +216,16 @@ class Feed:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
                                 " link tags; expected 1, was: "
-                                + str(len(chan_link_tags)))
+                                + str(len(chan_link_tags))
+                                + ". The corresponding title is: "
+                                + str(chan_title_tags[0].text))
                         if len(chan_description_tags) != 1:
                             raise FeedStructureError(
                                 "RSS feed's channel has too many or too few"
                                 " description tags; expected 1, was: "
-                                + str(len(chan_description_tags)))
+                                + str(len(chan_description_tags))
+                                + ". The corresponding title is: "
+                                + str(chan_title_tags[0].text))
 
                         # if the channel has any items, each item should have
                         # at least a title or description tag
