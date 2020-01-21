@@ -299,32 +299,9 @@ class Display:
                                    curses.color_pair(6) | curses.A_BOLD)
 
         # add footer
-        footer_str = ""
-        if self._status == "" and not \
-                helpers.is_true(Config["disable_default_status"]):
-            feeds = self.database.feeds()
-            if len(feeds) > 0:
-                total_feeds = len(feeds)
-                lengths_of_feeds = \
-                    [len(self.database.episodes(feed)) for feed in feeds]
-                total_episodes = sum(lengths_of_feeds)
-                median_episodes = helpers.median(lengths_of_feeds)
-
-                footer_str += "Found %d feeds with %d total episodes (avg." \
-                              " %d episodes, med. %d)" % (
-                                  total_feeds,
-                                  total_episodes,
-                                  total_episodes / total_feeds,
-                                  median_episodes
-                              )
-            else:
-                footer_str += "No feeds added"
-        else:
-            footer_str = self._status
-
-        if footer_str != "":
-            footer_str += " -- Press %s for help" % Config["key_help"]
-
+        footer_str = "%sPress %s for help" % (
+            self._status + " -- " if len(self._status) > 0 else "",
+            Config["key_help"])
         footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
         max_width = self._footer_window.getmaxyx()[1] - 1
         self._footer_window.addstr(1, 0,
