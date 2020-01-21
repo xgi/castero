@@ -25,4 +25,4 @@ class Net:
         Returns:
             requests.models.Response: response
         """
-        return requests.get(url, headers=Net.HEADERS, **kwargs)
+        return requests.get(url, headers=Net.HEADERS, timeout=1, **kwargs)
