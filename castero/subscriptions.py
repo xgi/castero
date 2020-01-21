@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ElementTree
 from typing import List
 
-from castero.feed import Feed
+from castero.feed import Feed, FeedDownloadError
 
 
 class SubscriptionsError(Exception):
@@ -52,7 +52,6 @@ class Subscriptions():
         self._tree = None
         try:
             self._tree = ElementTree.parse(path)
-            self._parse_feeds()
         except IOError:
             raise SubscriptionsLoadError(
                 "An I/O exception occurred when attempting to load the file")
@@ -114,7 +113,7 @@ class Subscriptions():
         # .close returns an Element, so we need to cast to an ElementTree
         self._tree = ElementTree.ElementTree(builder.close())
 
-    def _parse_feeds(self) -> None:
+    def parse(self) -> None:
         """Parse the XML tree into a list of feeds.
 
         Raises:
@@ -133,8 +132,12 @@ class Subscriptions():
         if feeds_container is not None:
             self._feeds = []
             for entry in feeds_container.findall('outline'):
-                feed = Feed(url=entry.attrib['xmlUrl'])
-                self._feeds.append(feed)
+                try:
+                    feed = Feed(url=entry.attrib['xmlUrl'])
+                    self._feeds.append(feed)
+                    yield feed
+                except FeedDownloadError as e:
+                    yield (entry.attrib['xmlUrl'], e)
 
     def _find_rss_container(self, container):
         """Find potentially-nested container for RSS feeds.

@@ -15,6 +15,8 @@ def test_subscriptions_valid_complete():
     mysubscriptions = Subscriptions()
     Feed.__init__ = mock.MagicMock(return_value=None)
     mysubscriptions.load(my_dir + "/subscriptions/valid_complete.xml")
+    for generated in mysubscriptions.parse():
+        pass
     assert isinstance(mysubscriptions, Subscriptions)
     Feed.__init__.assert_any_call(url="http://feed1")
     Feed.__init__.assert_any_call(url="http://feed2")
@@ -26,6 +28,8 @@ def test_subscriptions_valid_base():
     mysubscriptions = Subscriptions()
     Feed.__init__ = mock.MagicMock(return_value=None)
     mysubscriptions.load(my_dir + "/subscriptions/valid_base.xml")
+    for generated in mysubscriptions.parse():
+        pass
     assert isinstance(mysubscriptions, Subscriptions)
     Feed.__init__.assert_any_call(url="http://feed1")
     Feed.__init__.assert_any_call(url="http://feed2")
@@ -37,6 +41,8 @@ def test_subscriptions_valid_no_head():
     mysubscriptions = Subscriptions()
     Feed.__init__ = mock.MagicMock(return_value=None)
     mysubscriptions.load(my_dir + "/subscriptions/valid_no_head.xml")
+    for generated in mysubscriptions.parse():
+        pass
     assert isinstance(mysubscriptions, Subscriptions)
     Feed.__init__.assert_any_call(url="http://feed1")
     Feed.__init__.assert_any_call(url="http://feed2")
@@ -71,6 +77,8 @@ def test_subscriptions_broken_no_body():
     Feed.__init__ = mock.MagicMock(return_value=None)
     with pytest.raises(SubscriptionsStructureError):
         mysubscriptions.load(my_dir + "/subscriptions/broken_no_body.xml")
+        for generated in mysubscriptions.parse():
+            pass
 
 
 def test_subscriptions_generate():
@@ -80,7 +88,8 @@ def test_subscriptions_generate():
     mysubscriptions.generate([feed1, feed2])
 
     Feed.__init__ = mock.MagicMock(return_value=None)
-    mysubscriptions._parse_feeds()
+    for generated in mysubscriptions.parse():
+        pass
     assert len(mysubscriptions.feeds) == 2
 
 

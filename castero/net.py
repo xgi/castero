@@ -25,4 +25,9 @@ class Net:
         Returns:
             requests.models.Response: response
         """
-        return requests.get(url, headers=Net.HEADERS, **kwargs)
+        return requests.get(
+            url,
+            headers=Net.HEADERS,
+            timeout=int(castero.config.Config['request_timeout']),
+            **kwargs
+        )
