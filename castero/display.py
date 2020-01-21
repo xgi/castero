@@ -38,8 +38,8 @@ class Display:
     """
     MIN_WIDTH = 20
     MIN_HEIGHT = 8
-    INPUT_TIMEOUT = 1000  # 1 second
-    STATUS_TIMEOUT = 4  # multiple of INPUT_TIMEOUT
+    INPUT_TIMEOUT = 1  # 1ms
+    STATUS_TIMEOUT = 4000  # multiple of INPUT_TIMEOUT
     COLOR_NAMES = {
         'black': curses.COLOR_BLACK,
         'blue': curses.COLOR_BLUE,
