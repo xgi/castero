@@ -1,4 +1,5 @@
 import curses
+import threading
 
 from castero.episode import Episode
 from castero.feed import Feed
@@ -90,13 +91,26 @@ class EpisodeMenu(Menu):
         if feed is None:
             self._episodes = []
         else:
-            self._episodes = \
-                [episode for episode in self._source.episodes(feed)]
-
-            if self._inverted:
-                self._episodes.reverse()
+            # self._episodes = self._source.episodes(feed)
+            t = threading.Thread(
+                target=self._request_source_episodes,
+                args=[feed],
+                name="episodes_%s" % feed
+            )
+            t.start()
 
         self._sanitize()
+
+    def _request_source_episodes(self, feed):
+        episodes = self._source.episodes(feed)
+
+        # the above may have taken some time; ensure the user hasn't
+        # selected another feed
+        if self._feed == feed:
+            self._episodes = episodes
+            if self._inverted:
+                self._episodes.reverse()
+            self._sanitize()
 
     def update_child(self):
         """Not necessary for this menu -- does nothing.
