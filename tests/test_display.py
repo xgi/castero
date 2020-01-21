@@ -26,18 +26,7 @@ def test_display_display_header(display):
 def test_display_display_footer_empty(display):
     display.display()
     args, kwargs = display._footer_window.addstr.call_args
-    assert "No feeds added -- Press h for help" in args[2]
-    display._stdscr.reset_mock()
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright")
-    display.database.feeds = mock.MagicMock(return_value=[feed])
-    display.display()
-    args, kwargs = display._footer_window.addstr.call_args
-    assert "Found 1 feeds with 0 total episodes" in args[2]
+    assert "Press h for help" in args[2]
 
 
 def test_display_display_borders(display):
