@@ -28,6 +28,6 @@ class Net:
         return requests.get(
             url,
             headers=Net.HEADERS,
-            timeout=int(castero.config.Config['request_timeout']),
+            timeout=float(castero.config.Config['request_timeout']),
             **kwargs
         )
