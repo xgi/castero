@@ -13,6 +13,7 @@ from castero import helpers
 from castero.config import Config
 from castero.database import Database
 from castero.display import Display
+from castero.feed import Feed, FeedDownloadError
 from castero.subscriptions import Subscriptions
 
 
@@ -23,13 +24,18 @@ def import_subscriptions(path: str, database: Database) -> None:
     # need to catch them here. It's also okay to crash at this point.
     subscriptions.load(path)
 
-    print("Importing %d feeds..." % len(subscriptions.feeds))
+    for generated in subscriptions.parse():
+        if isinstance(generated, Feed):
+            feed = generated
+            database.replace_feed(feed)
+            episodes = feed.parse_episodes()
+            database.replace_episodes(feed, episodes)
+            print("Added \"%s\" with %d episodes" % (str(feed), len(episodes)))
+        else:
+            print("ERROR: Failed to download %s -- %s" % 
+                (str(generated[0]), str(generated[1])))
 
-    for feed in subscriptions.feeds:
-        database.replace_feed(feed)
-        episodes = feed.parse_episodes()
-        database.replace_episodes(feed, episodes)
-        print("Imported '%s' with %d episodes" % (str(feed), len(episodes)))
+    print("Imported %d feeds" % len(subscriptions.feeds))
 
 
 def export_subscriptions(path: str, database: Database) -> None:
