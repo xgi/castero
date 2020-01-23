@@ -45,6 +45,7 @@ Commands
     {key_rate_increase} - increase playback speed
     {key_rate_decrease} - decrease playback speed
     {1-3} - change between client layouts
+    {key_show_url} - show episode URL
 """ % (
     __title__,
     __version__,
