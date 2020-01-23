@@ -554,17 +554,17 @@ class Display:
         self.menus_valid = False
 
     def show_episode_url(self, episode=None) -> None:
-        """Show episode URL in status line
+        """Show episode URL in status line.
 
         Args:
             episode: episode to show URL for
-            """
+        """
 
         max_width = self._footer_window.getmaxyx()[1] - 1
         self._footer_window.addstr(
             1, 0, " " * max_width
         )
-        self._get_input_str(episode.enclosure[:max_width])
+        self.change_status(episode.enclosure)
 
     def clear(self) -> None:
         """Clear the screen.
