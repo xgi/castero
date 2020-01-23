@@ -125,7 +125,9 @@ class QueuePerspective(Perspective):
         elif c == key_mapping[Config['key_delete']]:
             self._remove_selected_from_queue()
         elif c == key_mapping[Config['key_show_url']]:
-            self._display.show_episode_url(self._queue_menu.item.episode)
+            item = self._queue_menu.item
+            if item is not None:
+                self._display.show_episode_url(item.episode)
         elif c == key_mapping[Config['key_save']]:
             pass
         elif c == key_mapping[Config['key_mark_played']]:
