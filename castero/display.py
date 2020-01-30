@@ -39,7 +39,7 @@ class Display:
     MIN_WIDTH = 20
     MIN_HEIGHT = 8
     INPUT_TIMEOUT = int(Config["refresh_delay"])  # in ms
-    STATUS_TIMEOUT = 4000  # multiple of INPUT_TIMEOUT
+    STATUS_TIMEOUT = 5000 / INPUT_TIMEOUT  # multiple of INPUT_TIMEOUT
     COLOR_NAMES = {
         'black': curses.COLOR_BLACK,
         'blue': curses.COLOR_BLUE,
