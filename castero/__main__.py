@@ -146,7 +146,6 @@ def main():
         if char != -1:
             running = display.handle_input(char)
 
-    temp_file.close()
     sys.exit(0)
 
 
