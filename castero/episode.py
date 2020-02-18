@@ -46,9 +46,9 @@ class Episode:
             string: this episode's title, if it exists, else its description
         """
         if self._title is not None:
-            representation = self._title
+            representation = str(self._title)
         else:
-            representation = self._description
+            representation = str(self._description)
         return representation.split('\n')[0]
 
     def _feed_directory(self) -> str:
@@ -84,12 +84,10 @@ class Episode:
         """
         playable = self.enclosure
 
-        episode_partial_filename = helpers.sanitize_path(str(self))
         feed_directory = self._feed_directory()
-
         if os.path.exists(feed_directory):
             for File in os.listdir(feed_directory):
-                if File.startswith(episode_partial_filename + '.'):
+                if File.startswith(str(self.ep_id) + '-'):
                     playable = os.path.join(feed_directory, File)
 
         return playable
@@ -112,10 +110,12 @@ class Episode:
             return
 
         feed_directory = self._feed_directory()
-        episode_partial_filename = helpers.sanitize_path(str(self))
-        extension = os.path.splitext(self._enclosure)[1].split('?')[0]
-        output_path = os.path.join(feed_directory,
-                                   episode_partial_filename + str(extension))
+        filename = "%s-%s%s" % (
+            self.ep_id,
+            helpers.sanitize_path(str(self)),
+            str(os.path.splitext(self._enclosure)[1].split('?')[0])
+        )
+        output_path = os.path.join(feed_directory, filename)
         DataFile.ensure_path(output_path)
 
         if display is not None:
@@ -138,12 +138,10 @@ class Episode:
             display: (optional) the display to write status updates to
         """
         if self.downloaded:
-            episode_partial_filename = helpers.sanitize_path(str(self))
             feed_directory = self._feed_directory()
-
             if os.path.exists(feed_directory):
                 for File in os.listdir(feed_directory):
-                    if File.startswith(episode_partial_filename + '.'):
+                    if File.startswith(str(self.ep_id) + '-'):
                         os.remove(os.path.join(feed_directory, File))
                         self._downloaded = False
                         if display is not None:
@@ -164,12 +162,11 @@ class Episode:
             bool: whether or not the episode is downloaded
         """
         self._downloaded = False
-        episode_partial_filename = helpers.sanitize_path(str(self))
         feed_directory = self._feed_directory()
 
         if os.path.exists(feed_directory):
             for File in os.listdir(feed_directory):
-                if File.startswith(episode_partial_filename + '.'):
+                if File.startswith(str(self.ep_id) + '-'):
                     self._downloaded = True
         return self._downloaded
 
