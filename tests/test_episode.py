@@ -117,11 +117,12 @@ def test_episode_playable_local():
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     episode = myfeed.parse_episodes()[0]
+    episode.ep_id = 1
     playable = episode.get_playable()
     assert episode.downloaded
     assert playable == os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
                                     "myfeed_title",
-                                    "myfeed_item1_title.mp3")
+                                    "1-myfeed_item1_title.mp3")
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
@@ -130,12 +131,13 @@ def test_episode_playable_local():
 def test_episode_delete(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
     episode_location = os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
-                                    "myfeed_title/myfeed_item2_title.mp3")
+                                    "myfeed_title/2-myfeed_item2_title.mp3")
     with open(episode_location, "w") as file:
         file.write("temp file for test_episode.test_episode_delete")
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     display.change_status = mock.MagicMock(name="change_status")
     episode = myfeed.parse_episodes()[1]
+    episode.ep_id = 2
     assert episode.downloaded
     episode.delete(display=display)
     assert display.change_status.call_count == 1
