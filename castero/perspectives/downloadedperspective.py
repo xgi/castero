@@ -118,6 +118,13 @@ class DownloadedPerspective(Perspective):
         elif c == key_mapping[Config['key_add_selected']]:
             self._create_player_from_selected()
             self._get_active_menu().move(-1)
+        elif c == key_mapping[Config['key_show_url']]:
+            if self._downloaded_menu.item:
+                self._display.show_episode_url(self._downloaded_menu.item)
+        elif c == key_mapping[Config['key_save']]:
+            if self._downloaded_menu.item:
+                self._display.save_episodes(episode=self._downloaded_menu.item)
+                self._display.menus_valid = False
         elif c == key_mapping[Config['key_mark_played']]:
             if self._active_window == 0:
                 episode = self._downloaded_menu.item
@@ -125,6 +132,8 @@ class DownloadedPerspective(Perspective):
                     episode.played = not episode.played
                     self._display.modified_episodes.append(episode)
                     self._downloaded_menu.move(-1)
+        elif c == key_mapping[Config['key_delete']]:
+            pass
         else:
             keep_running = self._generic_handle_input(c)
 
