@@ -118,6 +118,10 @@ class DownloadedPerspective(Perspective):
         elif c == key_mapping[Config['key_add_selected']]:
             self._create_player_from_selected()
             self._get_active_menu().move(-1)
+        elif c == key_mapping[Config['key_save']]:
+            if self._downloaded_menu.item:
+                self._display.save_episodes(episode=self._downloaded_menu.item)
+                self._display.menus_valid = False
         elif c == key_mapping[Config['key_mark_played']]:
             if self._active_window == 0:
                 episode = self._downloaded_menu.item
