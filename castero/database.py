@@ -432,6 +432,8 @@ class Database():
             self.replace_feed(new_feed)
             self.replace_episodes(new_feed, new_episodes)
 
+            current_feed += 1
+
         if display is not None:
             display.change_status("Feeds successfully reloaded")
             display.menus_valid = False
