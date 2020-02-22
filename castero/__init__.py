@@ -26,12 +26,9 @@ Commands
     {key_delete} - delete the selected feed
     {key_reload} - reload/refresh feeds
     {key_save} - save episode for offline playback
-    {key_up} - navigate up in menus
-    {key_right} - navigate right in menus
-    {key_down} - navigate down in menus
-    {key_left} - navigate left in menus
-    {key_scroll_up} - scroll up in menus
-    {key_scroll_down} - scroll down in menus
+    {key_up/key_down} - navigate up/down in menus
+    {key_right/key_left} - navigate right/left in menus
+    {key_scroll_up/key_scroll_down} - scroll up/down in menus
     {key_play_selected} - play selected feed/episode
     {key_add_selected} - add selected feed/episode to queue
     {key_clear} - clear the queue
@@ -45,7 +42,7 @@ Commands
     {key_rate_increase} - increase playback speed
     {key_rate_decrease} - decrease playback speed
     {key_show_url} - show episode URL
-    {1-3} - change between client layouts
+    {1-4} - change between client layouts
 """ % (
     __title__,
     __version__,

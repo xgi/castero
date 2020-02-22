@@ -101,18 +101,25 @@ def main():
             castero.__help__ = \
                 castero.__help__.replace(
                     "{%s}" % field,
-                    Config[field].ljust(9)
+                    Config[field].ljust(11)
                 )
         elif "{%s|" % field in castero.__help__:
             field2 = castero.__help__.split("{%s|" % field)[1].split("}")[0]
             castero.__help__ = \
                 castero.__help__.replace(
                     "{%s|%s}" % (field, field2),
-                    ("%s or %s" % (Config[field], Config[field2])).ljust(9)
+                    ("%s or %s" % (Config[field], Config[field2])).ljust(11)
+                )
+        elif "{%s/" % field in castero.__help__:
+            field2 = castero.__help__.split("{%s/" % field)[1].split("}")[0]
+            castero.__help__ = \
+                castero.__help__.replace(
+                    "{%s/%s}" % (field, field2),
+                    ("%s/%s" % (Config[field], Config[field2])).ljust(11)
                 )
     remaining_brace_fields = re.compile('\\{.*?\\}').findall(castero.__help__)
     for field in remaining_brace_fields:
-        adjusted = field.replace("{", "").replace("}", "").ljust(9)
+        adjusted = field.replace("{", "").replace("}", "").ljust(11)
         castero.__help__ = \
             castero.__help__.replace(field, adjusted)
 
