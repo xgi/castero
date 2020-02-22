@@ -12,6 +12,28 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.8.0 - 2020-02-22
+**Added**
+* Made database operations multi-threaded to improve performance, especially
+for users with many feeds.
+* Added the `u` key for displaying an episode URL in the status bar - Thanks
+@jose1711!
+* Added a perspective to display downloaded episodes. Press `4` to access it.
+
+**Changed**
+* Reduced the default input timeout, which is tied to the display refresh rate.
+This will somewhat increase standby CPU usage. Users with low-end systems may
+wish to increase this timeout with the `refresh_delay` config setting.
+* Improved reporting of errors when importing OPML files - Thanks @hebecked!
+* Improved the overall UX of importing OPML files, with "live" database changes
+and status reports.
+* Changed the file naming format for downloaded episodes. Episodes downloaded
+in earlier versions of castero will not be detected and must be re-downloaded.
+
+**Fixed**
+* Fixed stderr file descriptor not being found on macOS, causing a crash.
+* Fixed the reloading status message to properly show the current feed number.
+
 ## 0.7.0 - 2019-12-13
 **Added**
 * Added support for filtering menus with the `/` key.

@@ -51,25 +51,29 @@ The help menu provides a list of controls and can be accessed by pressing
 
 ```text
 Commands
-    h            - show this help screen
-    q            - exit the client
-    a            - add a feed
-    d            - delete the selected feed
-    r            - reload/refresh feeds
-    s            - save episode for offline playback
-    arrows       - navigate menus
-    page up/down - scroll menus
-    enter        - play selected feed/episode
-    space        - add selected feed/episode to queue
-    c            - clear the queue
-    n            - go to the next episode in the queue
-    i            - invert the order of the menu
-    p or k       - pause/play the current episode
-    f or l       - seek forward
-    b or j       - seek backward
-    ]            - increase playback speed
-    [            - decrease playback speed
-    1-3          - change between client layouts
+    h           - show this help screen
+    q           - exit the client
+    a           - add a feed
+    d           - delete the selected feed
+    r           - reload/refresh feeds
+    s           - save episode for offline playback
+    UP/DOWN     - navigate up/down in menus
+    RIGHT/LEFT  - navigate right/left in menus
+    PPAGE/NPAGE - scroll up/down in menus
+    ENTER       - play selected feed/episode
+    SPACE       - add selected feed/episode to queue
+    c           - clear the queue
+    n           - go to the next episode in the queue
+    i           - invert the order of the menu
+    /           - filter the contents of the menu
+    m           - mark episode as played/unplayed
+    p or k      - pause/play the current episode
+    f or l      - seek forward
+    b or j      - seek backward
+    ]           - increase playback speed
+    [           - decrease playback speed
+    u           - show episode URL
+    1-4         - change between client layouts
 ```
 
 ### Importing/exporting feeds from another client
