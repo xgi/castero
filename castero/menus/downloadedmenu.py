@@ -5,7 +5,6 @@ import os
 from castero.config import Config
 from castero.datafile import DataFile
 from castero.episode import Episode
-from castero.feed import Feed
 from castero.menu import Menu
 
 
@@ -107,7 +106,7 @@ class DownloadedMenu(Menu):
                     episode = self._source.episode(int(ep_id))
                     if episode is not None:
                         self._episodes.append(episode)
-        
+
         if self._inverted:
             self._episodes.reverse()
         self._sanitize()

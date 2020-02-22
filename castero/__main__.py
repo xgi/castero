@@ -13,7 +13,7 @@ from castero import helpers
 from castero.config import Config
 from castero.database import Database
 from castero.display import Display
-from castero.feed import Feed, FeedDownloadError
+from castero.feed import Feed
 from castero.subscriptions import Subscriptions
 
 
@@ -32,8 +32,8 @@ def import_subscriptions(path: str, database: Database) -> None:
             database.replace_episodes(feed, episodes)
             print("Added \"%s\" with %d episodes" % (str(feed), len(episodes)))
         else:
-            print("ERROR: Failed to download %s -- %s" % 
-                (str(generated[0]), str(generated[1])))
+            print("ERROR: Failed to download %s -- %s" %
+                  (str(generated[0]), str(generated[1])))
 
     print("Imported %d feeds" % len(subscriptions.feeds))
 
@@ -124,7 +124,7 @@ def main():
             castero.__help__.replace(field, adjusted)
 
     # instantiate display
-    temp_file = redirect_stderr()
+    redirect_stderr()
     stdscr = curses.initscr()
     display = Display(stdscr, database)
     display.clear()
