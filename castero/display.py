@@ -3,6 +3,7 @@ import glob
 import importlib
 import threading
 from typing import List
+import subprocess
 from os.path import dirname, basename, isfile
 
 import castero
@@ -552,6 +553,18 @@ class Display:
     def filter_menu(self, menu: Menu) -> None:
         menu.filter_text = self._get_input_str("Filter: ")
         self.menus_valid = False
+
+    def execute_command(self, episode: Episode) -> None:
+        """Execute a system command on an episode's enclosure.
+
+        The command to run is set by the user with the execute_command config
+        setting.
+
+        Args:
+            episode: episode to execute the command on
+        """
+        command = Config["execute_command"].replace("%s", episode.enclosure)
+        subprocess.Popen(command, shell=True)
 
     def show_episode_url(self, episode: Episode) -> None:
         """Show episode URL in status line.
