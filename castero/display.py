@@ -558,12 +558,19 @@ class Display:
         """Execute a system command on an episode's enclosure.
 
         The command to run is set by the user with the execute_command config
-        setting.
+        setting. See the description in the config file above that setting for
+        details about how it may be formatted.
 
         Args:
             episode: episode to execute the command on
         """
-        command = Config["execute_command"].replace("%s", episode.enclosure)
+        command = Config["execute_command"]\
+            .replace("{file}", episode.enclosure)\
+            .replace("{title}", episode.title)\
+            .replace("{description}", episode.description)\
+            .replace("{link}", episode.link)\
+            .replace("{pubdate}", episode.pubdate)\
+            .replace("{copyright}", episode.copyright)
         subprocess.Popen(command, shell=True)
 
     def show_episode_url(self, episode: Episode) -> None:
