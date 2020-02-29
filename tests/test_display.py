@@ -7,6 +7,7 @@ import pytest
 import castero
 from castero.display import Display, DisplaySizeError
 from castero.feed import Feed
+from castero.episode import Episode
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -17,10 +18,11 @@ def test_display_init(display):
 
 
 def test_display_display_header(display):
-    display.display()
-    display._header_window.addstr.assert_called_with(
+    disp = display
+    disp.display()
+    disp._header_window.addstr.assert_called_with(
         0, 0, castero.__title__, curses.color_pair(6) | curses.A_BOLD)
-    display._stdscr.reset_mock()
+    disp._stdscr.reset_mock()
 
 
 def test_display_display_footer_empty(display):
@@ -147,3 +149,30 @@ def test_display_delete_feed(display):
     assert len(display.database.feeds()) == 1
     display.delete_feed(feed)
     assert len(display.database.feeds()) == 0
+
+
+def test_display_execute_command(display):
+    fname = "test_display_execute_command_output.mp3"
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed,
+        title="episode title",
+        description="episode description",
+        link="episode link",
+        pubdate="episode pubdate",
+        copyright="episode copyright",
+        enclosure=fname)
+    castero.config.Config.data = {'execute_command': 'touch {file}'}
+    if os.path.exists(fname):
+        os.remove(fname)
+    display.execute_command(myepisode)
+
+    successful = False
+    for i in range(10000):
+        if os.path.exists(fname):
+            successful = True
+            break
+
+    if successful:
+        os.remove(fname)
+    assert successful
+

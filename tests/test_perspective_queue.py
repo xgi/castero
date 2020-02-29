@@ -101,6 +101,7 @@ def test_perspective_queue_input_keys(display):
         display.KEY_MAPPING[Config['key_seek_forward_alt']],
         display.KEY_MAPPING[Config['key_seek_backward']],
         display.KEY_MAPPING[Config['key_seek_backward_alt']],
+        display.KEY_MAPPING[Config['key_execute']]
     ]
     for key in operation_keys:
         ret_val = perspective.handle_input(key)

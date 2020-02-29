@@ -103,6 +103,7 @@ def test_perspective_primary_input_keys(display):
         display.KEY_MAPPING[Config['key_seek_backward']],
         display.KEY_MAPPING[Config['key_seek_backward_alt']],
         display.KEY_MAPPING[Config['key_mark_played']],
+        display.KEY_MAPPING[Config['key_execute']]
     ]
     for key in operation_keys:
         display._active_window = 0

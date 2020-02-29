@@ -24,12 +24,6 @@ available_players = {
 }
 
 
-@pytest.fixture(autouse=True)
-def restore_config_data():
-    yield
-    Config.data = castero.config._Config().data
-
-
 def test_player_create_instance_success_direct():
     Config.data = {'player': 'someplayer'}
     Player.create_instance(available_players, "t", "p", episode)
