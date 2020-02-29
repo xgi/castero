@@ -104,6 +104,7 @@ def test_perspective_downloaded_input_keys(display):
         display.KEY_MAPPING[Config['key_rate_increase']],
         display.KEY_MAPPING[Config['key_rate_decrease']],
         display.KEY_MAPPING[Config['key_show_url']],
+        display.KEY_MAPPING[Config['key_execute']]
     ]
     for key in operation_keys:
         display._active_window = 0
