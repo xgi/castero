@@ -128,6 +128,10 @@ class QueuePerspective(Perspective):
             item = self._queue_menu.item
             if item is not None:
                 self._display.show_episode_url(item.episode)
+        elif c == key_mapping[Config['key_execute']]:
+            item = self._queue_menu.item
+            if item is not None:
+                self._display.execute_command(item.episode)
         elif c == key_mapping[Config['key_save']]:
             pass
         elif c == key_mapping[Config['key_mark_played']]:

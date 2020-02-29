@@ -135,6 +135,10 @@ class DownloadedPerspective(Perspective):
                     episode.played = not episode.played
                     self._display.modified_episodes.append(episode)
                     self._downloaded_menu.move(-1)
+        elif c == key_mapping[Config['key_execute']]:
+            episode = self._downloaded_menu.item
+            if episode is not None:
+                self._display.execute_command(episode)
         elif c == key_mapping[Config['key_delete']]:
             pass
         else:
