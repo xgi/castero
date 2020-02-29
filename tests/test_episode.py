@@ -154,10 +154,16 @@ def test_episode_download():
     myepisode = myfeed.parse_episodes()[1]
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     myepisode.download(mydownloadqueue)
-    assert DataFile.download_to_file.call_count == 1
+
+    successful = True
+    for i in range(5000):
+        if DataFile.download_to_file.call_count == 1:
+            successful = True
+            break
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
+    assert successful
 
 
 def test_episode_download_with_display(display):
@@ -168,10 +174,16 @@ def test_episode_download_with_display(display):
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)
-    assert DataFile.download_to_file.call_count == 1
+    
+    successful = True
+    for i in range(5000):
+        if DataFile.download_to_file.call_count == 1:
+            successful = True
+            break
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
+    assert successful
 
 
 def test_episode_download_with_display_no_enclosure(display):
@@ -182,7 +194,13 @@ def test_episode_download_with_display_no_enclosure(display):
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)
-    assert display.change_status.call_count == 1
+
+    successful = True
+    for i in range(5000):
+        if display.change_status.call_count == 1:
+            successful = True
+            break
 
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
+    assert successful
