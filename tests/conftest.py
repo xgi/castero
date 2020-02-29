@@ -4,6 +4,7 @@ from unittest import mock
 
 import pytest
 
+import castero.config
 from castero.datafile import DataFile
 from castero.display import Display
 from castero.database import Database
@@ -104,3 +105,9 @@ def prevent_modification():
 def display(prevent_modification, stdscr):
     database = Database()
     yield Display(stdscr, database)
+
+
+@pytest.fixture(autouse=True)
+def restore_config_data():
+    yield
+    castero.config.Config.data = castero.config._Config().data
