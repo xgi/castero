@@ -27,10 +27,10 @@ class Database():
     MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
 
     SQL_EPISODES_BY_ID = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
-    SQL_EPISODES_BY_FEED = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=?"
+    SQL_EPISODES_BY_FEED = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=? order by id"
     SQL_EPISODE_REPLACE = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?,?)"
     SQL_EPISODE_REPLACE_NOID = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?)"
-    SQL_FEEDS_ALL = "select key, title, description, link, last_build_date, copyright from feed"
+    SQL_FEEDS_ALL = "select key, title, description, link, last_build_date, copyright from feed order by lower(title)"
     SQL_FEED_BY_KEY = "select key, title, description, link, last_build_date, copyright from feed where key=?"
     SQL_FEED_REPLACE = "replace into feed (key, title, description, link, last_build_date, copyright)\nvalues (?,?,?,?,?,?)"
     SQL_FEED_DELETE = "delete from feed where key=?"
