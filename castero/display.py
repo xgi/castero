@@ -39,8 +39,9 @@ class Display:
     """
     MIN_WIDTH = 20
     MIN_HEIGHT = 8
-    INPUT_TIMEOUT = int(Config["refresh_delay"])  # in ms
-    STATUS_TIMEOUT = 5000 / INPUT_TIMEOUT  # multiple of INPUT_TIMEOUT
+    INPUT_TIMEOUT = int(Config["refresh_delay"])
+    UPDATE_TIMEOUT = 2000 / INPUT_TIMEOUT  # multiple of INPUT_TIMEOUT
+    STATUS_TIMEOUT = 3  # multiple of UPDATE_TIMEOUT
     COLOR_NAMES = {
         'black': curses.COLOR_BLACK,
         'blue': curses.COLOR_BLUE,
@@ -82,7 +83,10 @@ class Display:
         self._queue = Queue(self)
         self._download_queue = DownloadQueue(self)
         self._status = ""
+        self._header_str = ""
+        self._footer_str = ""
         self._status_timer = self.STATUS_TIMEOUT
+        self._update_timer = self.UPDATE_TIMEOUT
         self._menus_valid = True
         self._modified_episodes = []
 
@@ -273,40 +277,19 @@ class Display:
         # check if the screen size has changed
         self.update_parent_dimensions()
 
-        # check to see if menu contents have been invalidated
-        if not self.menus_valid:
-            for perspective_id in self._perspectives:
-                self._perspectives[perspective_id].update_menus()
-            self.menus_valid = True
+        # decrement the update timer
+        self._update_timer -= 1
+        if self._update_timer <= 0:
+            self._update_timer = self.UPDATE_TIMEOUT
+            self.update()
 
-        # add header
-        playing_str = castero.__title__
-        if self._queue.first is not None:
-            state = self._queue.first.state
-            playing_str = ["Stopped", "Playing", "Paused"][state] + \
-                ": %s" % self._queue.first.title
-            if self._queue.length > 1:
-                playing_str += " (+%d in queue)" % (self._queue.length - 1)
-
-            if helpers.is_true(Config["right_align_time"]):
-                playing_str += ("[%s]" % self._queue.first.time_str).rjust(
-                    self._header_window.getmaxyx()[1] - len(playing_str))
-            else:
-                playing_str += " [%s]" % self._queue.first.time_str
-
+        # display the header and footer
         self._header_window.addstr(0, 0,
                                    " " * self._header_window.getmaxyx()[1])
-        self._header_window.addstr(0, 0, playing_str,
+        self._header_window.addstr(0, 0, self._header_str,
                                    curses.color_pair(6) | curses.A_BOLD)
 
-        # add footer
-        footer_str = "%sPress %s for help" % (
-            self._status + " -- " if len(self._status) > 0 else "",
-            Config["key_help"])
-        footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
-        max_width = self._footer_window.getmaxyx()[1] - 1
-        self._footer_window.addstr(1, 0,
-                                   footer_str.ljust(max_width)[:max_width],
+        self._footer_window.addstr(1, 0, self._footer_str,
                                    curses.color_pair(6) | curses.A_BOLD)
 
         # add window borders
@@ -317,7 +300,7 @@ class Display:
                                   0, self._footer_window.getmaxyx()[1],
                                   curses.ACS_HLINE | curses.color_pair(8))
 
-        # update display for current perspective
+        # add display for current perspective
         self._perspectives[self._active_perspective].display()
 
     def _get_active_perspective(self) -> Perspective:
@@ -672,14 +655,37 @@ class Display:
             self.change_status("OSError: %s" % str(e))
             return
 
-        # update the status timer
-        # If the user is not doing anything, the status message will take
-        # INPUT_TIMEOUT * STATUS_TIMEOUT ms to be cleared. However, if the user
-        # is performing inputs (i.e. traversing a menu) the message may be
-        # cleared much quicker, since it will go away in STATUS_TIMEOUT
-        # keypresses. However, this seems reasonable, since if the user is
-        # actively controlling the client and not pausing to read the message,
-        # they probably don't care about it anyway.
+        # check to see if menu contents have been invalidated
+        if not self.menus_valid:
+            for perspective_id in self._perspectives:
+                self._perspectives[perspective_id].update_menus()
+            self.menus_valid = True
+
+        # update the header text
+        playing_str = castero.__title__
+        if self._queue.first is not None:
+            state = self._queue.first.state
+            playing_str = ["Stopped", "Playing", "Paused"][state] + \
+                ": %s" % self._queue.first.title
+            if self._queue.length > 1:
+                playing_str += " (+%d in queue)" % (self._queue.length - 1)
+
+            if helpers.is_true(Config["right_align_time"]):
+                playing_str += ("[%s]" % self._queue.first.time_str).rjust(
+                    self._header_window.getmaxyx()[1] - len(playing_str))
+            else:
+                playing_str += " [%s]" % self._queue.first.time_str
+        self._header_str = playing_str + " " + str(self._status_timer)
+
+        # update the footer text
+        footer_str = "%sPress %s for help" % (
+            self._status + " -- " if len(self._status) > 0 else "",
+            Config["key_help"])
+        footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
+        max_width = self._footer_window.getmaxyx()[1] - 1
+        self._footer_str = footer_str.ljust(max_width)[:max_width]
+
+        # decrement the status timer
         if self._status_timer > 0:
             self._status_timer -= 1
             if self._status_timer <= 0:
