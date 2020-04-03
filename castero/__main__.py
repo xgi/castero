@@ -147,7 +147,6 @@ def main():
     running = True
     while running:
         display.display()
-        display.update()
         display.refresh()
         char = display.getch()
         if char != -1:
