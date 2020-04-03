@@ -188,8 +188,46 @@ class Database():
             feed: the Feed all episode are a part of
             episodes: a list of Episode's to replace
         """
+        cursor = self._conn.cursor()
+
+        # there are different sql queries depending on whether the episode
+        # has an id, so we separate them into 2 operations
+        episodes_without_id = []
+        episodes_with_id = []
+
         for episode in episodes:
-            self.replace_episode(feed, episode)
+            if episode.ep_id is None:
+                episodes_without_id.append(episode)
+            else:
+                episodes_with_id.append(episode)
+
+        if len(episodes_without_id) > 0:
+            cursor.executemany(self.SQL_EPISODE_REPLACE_NOID,
+                ((
+                    episode.title,
+                    feed.key,
+                    episode.description,
+                    episode.link,
+                    episode.pubdate,
+                    episode.copyright,
+                    episode.enclosure,
+                    episode.played
+                ) for episode in episodes_without_id)
+            )
+        if len(episodes_with_id) > 0:
+            cursor.executemany(self.SQL_EPISODE_REPLACE,
+                ((
+                    episode.ep_id,
+                    episode.title,
+                    feed.key,
+                    episode.description,
+                    episode.link,
+                    episode.pubdate,
+                    episode.copyright,
+                    episode.enclosure,
+                    episode.played
+                ) for episode in episodes_with_id)
+            )
         self._conn.commit()
 
     def delete_queue(self) -> None:
