@@ -435,5 +435,6 @@ class Database():
             current_feed += 1
 
         if display is not None:
-            display.change_status("Feeds successfully reloaded")
+            display.change_status(
+                "Successfully reloaded %d feeds" % current_feed)
             display.menus_valid = False
