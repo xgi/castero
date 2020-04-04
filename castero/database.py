@@ -1,6 +1,7 @@
 import json
 import os
 import sqlite3
+import grequests
 from typing import List
 
 from castero.config import Config
@@ -8,6 +9,7 @@ from castero.datafile import DataFile
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.queue import Queue
+from castero.net import Net
 
 
 class Database():
@@ -437,23 +439,23 @@ class Database():
         """
         feeds = self.feeds()
         total_feeds = len(feeds)
-        current_feed = 1
+        completed_feeds = 1
 
-        for feed in self.feeds():
-            if display is not None:
-                display.change_status(
-                    "Reloading feeds (%d/%d)" % (current_feed, total_feeds)
-                )
+        reqs = []
+        url_pairs = {}
+        for feed in feeds:
+            if feed.key.startswith("http"):
+                url_pairs[feed.key] = feed
+                reqs.append(Net.GGet(feed.key))
 
-            # assume urls have http in them
-            if "http" in feed.key:
-                new_feed = Feed(url=feed.key)
-            else:
-                new_feed = Feed(file=feed.key)
+        # handle each response as downloads complete asynchronously
+        for response in grequests.imap(reqs, size=5):
+            old_feed = url_pairs[response.request.url]
+            new_feed = Feed(url=response.request.url, response=response)
 
             # keep user metadata for episodes intact
             new_episodes = new_feed.parse_episodes()
-            old_episodes = self.episodes(feed)
+            old_episodes = self.episodes(new_feed)
             for new_ep in new_episodes:
                 matching_olds = [
                     old_ep for old_ep in old_episodes if
@@ -467,12 +469,17 @@ class Database():
             if max_episodes != -1:
                 new_episodes = new_episodes[:max_episodes]
 
-            self.replace_feed(new_feed)
-            self.replace_episodes(new_feed, new_episodes)
+            # update the feed and its episodes in the database
+            # self.replace_feed(new_feed)
+            # self.replace_episodes(new_feed, new_episodes)
 
-            current_feed += 1
+            completed_feeds += 1
+            if display is not None:
+                display.change_status(
+                    "Reloading feeds (%d/%d)" % (completed_feeds, total_feeds)
+                )
 
         if display is not None:
             display.change_status(
-                "Successfully reloaded %d feeds" % current_feed)
+                "Successfully reloaded %d feeds" % total_feeds)
             display.menus_valid = False

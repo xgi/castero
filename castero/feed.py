@@ -46,7 +46,7 @@ class Feed:
     The url for the feed should point to an RSS document.
     """
 
-    def __init__(self, url=None, file=None, **kwargs) -> None:
+    def __init__(self, url=None, file=None, text=None, **kwargs) -> None:
         """
         A feed can be provided as either a url or a file, but exactly one must
         be given. Realistically, users will almost universally use a url to
@@ -56,6 +56,10 @@ class Feed:
         Args:
             url: (optional) the url where the feed is located
             file: (optional) the file where the feed is located
+            text: (optional) pre-retrieved text for the feed. Can be useful if
+                multiple feeds were downloaded previously; a URL or file is
+                still required, providing this field will only skip the
+                download step
         """
         # * Don't allow providing both a url and a file, but must provide one.
         # Check that one of them is None, and that they are not both the same.
@@ -77,8 +81,17 @@ class Feed:
         # assume that if we have been passed the title then we have also been
         # passed everything else and that the feed is valid
         if self._title is None:
-            # retrieve the feed and parse to XML document
-            self._download_feed()
+            if text:
+                # the content of a document was already provided, but we need
+                # to ensure it is valid RSS
+                try:
+                    self._tree = ElementTree.fromstring(text)
+                except ElementTree.ParseError:
+                    raise FeedParseError(
+                        "Unable to parse text as an XML document")
+            else:
+                # retrieve the feed and parse to XML document
+                self._download_feed()
             # check that the XML document is a properly structured RSS feed
             self._validate_feed()
             # set this object's metadata using rss feed

@@ -1,5 +1,6 @@
 import castero
 import requests
+import grequests
 
 
 class Net:
@@ -26,6 +27,15 @@ class Net:
             requests.models.Response: response
         """
         return requests.get(
+            *args,
+            headers=Net.HEADERS,
+            timeout=float(castero.config.Config['request_timeout']),
+            **kwargs
+        )
+
+    @staticmethod
+    def GGet(*args, **kwargs):
+        return grequests.get(
             *args,
             headers=Net.HEADERS,
             timeout=float(castero.config.Config['request_timeout']),
