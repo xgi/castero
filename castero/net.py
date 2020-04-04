@@ -15,18 +15,18 @@ class Net:
     }
 
     @staticmethod
-    def Get(url, **kwargs) -> requests.models.Response:
+    def Get(*args, **kwargs) -> requests.models.Response:
         """Send a GET request.
 
         Args:
-            url: URL to retrieve from
+            *args: arguments for requests.get(); particularly the URL
             **kwargs: optional arguments for requests.get()
 
         Returns:
             requests.models.Response: response
         """
         return requests.get(
-            url,
+            *args,
             headers=Net.HEADERS,
             timeout=float(castero.config.Config['request_timeout']),
             **kwargs
