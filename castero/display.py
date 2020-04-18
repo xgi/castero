@@ -270,6 +270,7 @@ class Display:
         self._stdscr.timeout(self.INPUT_TIMEOUT)
 
         self.clear()
+        self.display_all()
 
     def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
@@ -307,6 +308,15 @@ class Display:
         # add display for current perspective
         self._perspectives[self._active_perspective].display()
 
+    def display_all(self) -> None:
+        """Force all perspectives to completely redraw their content.
+        
+        For more details, see the description of the method in Perspective.
+        """
+        self.refresh()
+        self._perspectives[self._active_perspective].display_all()
+        self.refresh()
+
     def _get_active_perspective(self) -> Perspective:
         """Retrieve the active/visible Perspective.
         """
@@ -323,6 +333,7 @@ class Display:
         self.clear()
         self._active_perspective = perspective_id
         self._perspectives[perspective_id].made_active()
+        self.display_all()
 
     def _get_input_str(self, prompt) -> str:
         """Prompts the user for input and returns the resulting string.

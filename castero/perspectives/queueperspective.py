@@ -97,6 +97,15 @@ class QueuePerspective(Perspective):
 
         self._queue_window.refresh()
 
+    def display_all(self) -> None:
+        """Force all windows to completely redraw their content.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._metadata_updated = False
+        self._queue_menu.display()
+        self.display()
+
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
 

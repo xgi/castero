@@ -124,6 +124,16 @@ class PrimaryPerspective(Perspective):
         self._feed_window.refresh()
         self._episode_window.refresh()
 
+    def display_all(self) -> None:
+        """Force all windows to completely redraw their content.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._metadata_updated = False
+        self._feed_menu.display()
+        self._episode_menu.display()
+        self.display()
+
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
 

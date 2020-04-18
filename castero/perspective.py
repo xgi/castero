@@ -59,6 +59,19 @@ class Perspective(ABC):
         """
 
     @abstractmethod
+    def display_all(self) -> None:
+        """Force all windows to completely redraw their content.
+
+        The normal display() method, which is used in the core UI loop, does
+        not always redraw the contents of sub-features on each iteration. For
+        example, it often does not draw menu contents because they only
+        typically need to be drawn when the user moves within them.
+
+        However, if the screen is cleared, the contents of these sub-features
+        must be forcefully redrawn. That is what this method provides.
+        """
+
+    @abstractmethod
     def refresh(self) -> None:
         """Refresh the screen and all windows.
         """
