@@ -179,6 +179,13 @@ class Feed:
                   tag or a description tag
         See http://cyber.harvard.edu/rss/rss.html for more details.
 
+        Exceptions to these conditions:
+            - There are some feeds which have multiple children under the root,
+              rather than a single channel tag as expected. These additional
+              children tend to be warning or notices which don't otherwise
+              affect the content. Therefore, we allow multiple children and
+              simply use the first channel one.
+
         This method does not set this object's metadata. That is done in
         _process_feed().
 
@@ -199,62 +206,63 @@ class Feed:
             raise FeedStructureError(
                 "RSS feed does not have a version attribute")
 
-        # root should have one child, which is the channel tag
+        # root should a channel tag as its child
+        # theoretically the root should have only one child, but see the
+        # exception listed in the method description
         root_children = list(self._tree)
         if len(root_children) > 0:
-            if len(root_children) > 1:
+            channel = None
+            for root_child in root_children:
+                if root_child.tag == 'channel':
+                    channel = root_child
+                    break
+            if not channel:
                 raise FeedStructureError(
-                    "RSS feed has too many children; expected 1, was: "
-                    + str(len(root_children)))
-            else:
-                if root_children[0].tag != 'channel':
-                    raise FeedStructureError(
                         "RSS feed does not have a channel tag as its child")
-                else:
-                    # channel should have at least 3 children, including a
-                    # title, link, and description tag
-                    channel = root_children[0]
-                    channel_children = list(channel)
-                    if len(channel_children) >= 3:
-                        chan_title_tags = channel.findall('title')
-                        chan_link_tags = channel.findall('link')
-                        chan_description_tags = channel.findall('description')
 
-                        if len(chan_title_tags) != 1:
-                            raise FeedStructureError(
-                                "RSS feed's channel has too many or too few"
-                                " title tags; expected 1, was: "
-                                + str(len(chan_title_tags)))
-                        if len(chan_link_tags) != 1:
-                            raise FeedStructureError(
-                                "RSS feed's channel has too many or too few"
-                                " link tags; expected 1, was: "
-                                + str(len(chan_link_tags))
-                                + ". The corresponding title is: "
-                                + str(chan_title_tags[0].text))
-                        if len(chan_description_tags) != 1:
-                            raise FeedStructureError(
-                                "RSS feed's channel has too many or too few"
-                                " description tags; expected 1, was: "
-                                + str(len(chan_description_tags))
-                                + ". The corresponding title is: "
-                                + str(chan_title_tags[0].text))
+            # channel should have at least 3 children, including a
+            # title, link, and description tag
+            channel_children = list(channel)
+            if len(channel_children) >= 3:
+                chan_title_tags = channel.findall('title')
+                chan_link_tags = channel.findall('link')
+                chan_description_tags = channel.findall('description')
 
-                        # if the channel has any items, each item should have
-                        # at least a title or description tag
-                        channel_item_tags = channel.findall('item')
-                        for item in channel_item_tags:
-                            if len(item.findall('title')
-                                   + item.findall('description')) < 1:
-                                raise FeedStructureError(
-                                    "An item in the RSS feed's channel did not"
-                                    " have at least one of a title or a"
-                                    " description tag")
-                    else:
+                if len(chan_title_tags) != 1:
+                    raise FeedStructureError(
+                        "RSS feed's channel has too many or too few"
+                        " title tags; expected 1, was: "
+                        + str(len(chan_title_tags)))
+                if len(chan_link_tags) != 1:
+                    raise FeedStructureError(
+                        "RSS feed's channel has too many or too few"
+                        " link tags; expected 1, was: "
+                        + str(len(chan_link_tags))
+                        + ". The corresponding title is: "
+                        + str(chan_title_tags[0].text))
+                if len(chan_description_tags) != 1:
+                    raise FeedStructureError(
+                        "RSS feed's channel has too many or too few"
+                        " description tags; expected 1, was: "
+                        + str(len(chan_description_tags))
+                        + ". The corresponding title is: "
+                        + str(chan_title_tags[0].text))
+
+                # if the channel has any items, each item should have
+                # at least a title or description tag
+                channel_item_tags = channel.findall('item')
+                for item in channel_item_tags:
+                    if len(item.findall('title')
+                            + item.findall('description')) < 1:
                         raise FeedStructureError(
-                            "RSS feed's channel does not have enough required"
-                            " children; expected >=3, was: "
-                            + str(len(channel_children)))
+                            "An item in the RSS feed's channel did not"
+                            " have at least one of a title or a"
+                            " description tag")
+            else:
+                raise FeedStructureError(
+                    "RSS feed's channel does not have enough required"
+                    " children; expected >=3, was: "
+                    + str(len(channel_children)))
         else:
             raise FeedStructureError(
                 "RSS feed does not have any children; expected 1 (a channel"
@@ -269,7 +277,12 @@ class Feed:
         """
         assert self._validated
 
-        channel = list(self._tree)[0]
+        channel = None
+        for root_child in list(self._tree):
+            if root_child.tag == 'channel':
+                channel = root_child
+                break
+            
         self._title = channel.find('title').text
         self._description = channel.find('description').text
         self._link = channel.find('link').text
@@ -291,7 +304,11 @@ class Feed:
             List[Episode]: the episodes in this feed, which need to be added to
             the database
         """
-        channel = list(self._tree)[0]
+        channel = None
+        for root_child in list(self._tree):
+            if root_child.tag == 'channel':
+                channel = root_child
+                break
 
         episodes = []
         for item in channel.findall('item'):
