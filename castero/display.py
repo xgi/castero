@@ -662,7 +662,7 @@ class Display:
             self.menus_valid = True
 
         # update the header text
-        playing_str = castero.__title__
+        playing_str = ""
         if self._queue.first is not None:
             state = self._queue.first.state
             playing_str = ["Stopped", "Playing", "Paused"][state] + \
@@ -675,7 +675,7 @@ class Display:
                     self._header_window.getmaxyx()[1] - len(playing_str))
             else:
                 playing_str += " [%s]" % self._queue.first.time_str
-        self._header_str = playing_str + " " + str(self._status_timer)
+        self._header_str = "%s %s" % (castero.__title__, playing_str)
 
         # update the footer text
         footer_str = "%sPress %s for help" % (
