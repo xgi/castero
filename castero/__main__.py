@@ -8,6 +8,9 @@ import io
 import ctypes
 import tempfile
 
+from gevent import monkey as curious_george
+curious_george.patch_all(thread=False, select=False)
+
 import castero
 from castero import helpers
 from castero.config import Config
