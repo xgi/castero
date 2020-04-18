@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as ElementTree
+from lxml import etree
 
 import requests
 from typing import List
@@ -85,8 +85,8 @@ class Feed:
                 # the content of a document was already provided, but we need
                 # to ensure it is valid RSS
                 try:
-                    self._tree = ElementTree.fromstring(text)
-                except ElementTree.ParseError:
+                    self._tree = etree.fromstring(text)
+                except etree.ParseError:
                     raise FeedParseError(
                         "Unable to parse text as an XML document")
             else:
@@ -131,8 +131,8 @@ class Feed:
                 response = Net.Get(self._url)
                 if response.status_code == 200:
                     try:
-                        self._tree = ElementTree.fromstring(response.text)
-                    except ElementTree.ParseError:
+                        self._tree = etree.fromstring(response.content)
+                    except etree.ParseError:
                         raise FeedParseError(
                             "Unable to parse text as an XML document")
                 else:
@@ -151,8 +151,8 @@ class Feed:
                 file = open(self._file)
                 text = file.read()
                 try:
-                    self._tree = ElementTree.fromstring(text)
-                except ElementTree.ParseError:
+                    self._tree = etree.fromstring(text)
+                except etree.ParseError:
                     raise FeedParseError(
                         "Unable to parse text as an XML document")
             except IOError:
