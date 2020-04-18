@@ -454,8 +454,11 @@ class Database():
                 url_pairs[feed.key] = feed
                 reqs.append(Net.GGet(feed.key))
 
+        if display is not None:
+            display.change_status("Reloading feeds...")
+
         # handle each response as downloads complete asynchronously
-        for response in grequests.imap(reqs, size=5):
+        for response in grequests.imap(reqs, size=3):
             old_feed = url_pairs[response.request.url]
             new_feed = Feed(url=response.request.url, response=response)
             self._reload_feed(old_feed, new_feed)
