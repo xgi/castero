@@ -76,6 +76,7 @@ class FeedMenu(Menu):
             self._feeds.reverse()
 
         self._sanitize()
+        self.display()
 
     def update_child(self):
         """Update our child menu, the episode menu.

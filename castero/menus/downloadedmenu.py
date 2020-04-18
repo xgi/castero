@@ -110,6 +110,7 @@ class DownloadedMenu(Menu):
         if self._inverted:
             self._episodes.reverse()
         self._sanitize()
+        self.display()
 
     def update_child(self):
         """Not necessary for this menu -- does nothing.

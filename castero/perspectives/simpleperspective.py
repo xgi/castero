@@ -99,9 +99,8 @@ class SimplePerspective(Perspective):
                                     0, self._feed_window.getmaxyx()[0] - 2,
                                     curses.ACS_VLINE | curses.color_pair(8))
 
-        # display menu content
-        self._feed_menu.display()
-        self._episode_menu.display()
+        self._feed_window.refresh()
+        self._episode_window.refresh()
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.

@@ -207,6 +207,7 @@ class Menu(ABC):
         assert isinstance(active, bool)
 
         self._active = active
+        self.display()
 
     def move(self, direction) -> None:
         """Change the selected item to an adjacent item.
@@ -228,6 +229,7 @@ class Menu(ABC):
         self._sanitize()
         if self._child is not None:
             self.update_child()
+        self.display()
 
     def move_page(self, direction) -> None:
         """Change the selected item to the next "page".
@@ -255,6 +257,7 @@ class Menu(ABC):
         self._sanitize()
         if self._child is not None:
             self.update_child()
+        self.display()
 
     def refresh(self) -> None:
         """Refresh the menu, accounting for any changes to the display/window.

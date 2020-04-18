@@ -300,6 +300,10 @@ class Display:
                                   0, self._footer_window.getmaxyx()[1],
                                   curses.ACS_HLINE | curses.color_pair(8))
 
+        # refresh updated windows
+        self._footer_window.refresh()
+        self._header_window.refresh()
+
         # add display for current perspective
         self._perspectives[self._active_perspective].display()
 
@@ -316,9 +320,9 @@ class Display:
         """
         assert perspective_id in self._perspectives
 
+        self.clear()
         self._active_perspective = perspective_id
         self._perspectives[perspective_id].made_active()
-        self.clear()
 
     def _get_input_str(self, prompt) -> str:
         """Prompts the user for input and returns the resulting string.

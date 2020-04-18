@@ -115,16 +115,14 @@ class PrimaryPerspective(Perspective):
                                        self._episode_window.getmaxyx()[0] - 2,
                                        curses.ACS_VLINE | curses.color_pair(8))
 
-        # display menu content
-        self._feed_menu.display()
-        self._episode_menu.display()
-
         # draw metadata
         if not self._metadata_updated:
             self._draw_metadata(self._metadata_window)
+            self._metadata_window.refresh()
             self._metadata_updated = True
 
-        self._metadata_window.refresh()
+        self._feed_window.refresh()
+        self._episode_window.refresh()
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
