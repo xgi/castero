@@ -103,6 +103,7 @@ class DownloadedPerspective(Perspective):
         # draw metadata
         if not self._metadata_updated:
             self._draw_metadata(self._metadata_window)
+            self._metadata_updated = True
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
@@ -158,6 +159,7 @@ class DownloadedPerspective(Perspective):
         Overrides method from Perspective; see documentation in that class.
         """
         self._downloaded_menu.update_items(None)
+        self._metadata_updated = False
 
     def refresh(self) -> None:
         """Refresh the screen and all windows.
@@ -183,6 +185,7 @@ class DownloadedPerspective(Perspective):
         Overrides method from Perspective; see documentation in that class.
         """
         self._get_active_menu().invert()
+        self._metadata_updated = False
 
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.
@@ -200,3 +203,4 @@ class DownloadedPerspective(Perspective):
                 self._display.AVAILABLE_PLAYERS, str(episode),
                 episode.get_playable(), episode)
             self._display.queue.add(player)
+        self._metadata_updated = False

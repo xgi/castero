@@ -122,6 +122,9 @@ class PrimaryPerspective(Perspective):
         # draw metadata
         if not self._metadata_updated:
             self._draw_metadata(self._metadata_window)
+            self._metadata_updated = True
+
+        self._metadata_window.refresh()
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
@@ -158,6 +161,7 @@ class PrimaryPerspective(Perspective):
         """
         self._feed_menu.update_items(None)
         self._feed_menu.update_child()
+        self._metadata_updated = False
 
     def refresh(self) -> None:
         """Refresh the screen and all windows.
@@ -189,6 +193,7 @@ class PrimaryPerspective(Perspective):
         self._get_active_menu().invert()
         if self._feed_menu:
             self._feed_menu.update_child()
+        self._metadata_updated = False
 
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.

@@ -138,6 +138,7 @@ class SimplePerspective(Perspective):
         """
         self._feed_menu.update_items(None)
         self._feed_menu.update_child()
+        self._metadata_updated = False
 
     def refresh(self) -> None:
         """Refresh the screen and all windows.
@@ -168,6 +169,7 @@ class SimplePerspective(Perspective):
         self._get_active_menu().invert()
         if self._feed_menu:
             self._feed_menu.update_child()
+        self._metadata_updated = False
 
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.
@@ -194,3 +196,4 @@ class SimplePerspective(Perspective):
                     self._display.AVAILABLE_PLAYERS, str(episode),
                     episode.get_playable(), episode)
                 self._display.queue.add(player)
+        self._metadata_updated = False
