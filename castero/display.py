@@ -285,12 +285,11 @@ class Display:
             self.update()
 
         # display the header and footer
-        self._header_window.addstr(0, 0,
-                                   " " * self._header_window.getmaxyx()[1])
+        width = self._header_window.getmaxyx()[1]
+        self._header_window.addstr(0, 0, " " * width)
         self._header_window.addstr(0, 0, self._header_str,
                                    curses.color_pair(6) | curses.A_BOLD)
-
-        self._footer_window.addstr(1, 0, self._footer_str,
+        self._footer_window.addstr(1, 0, self._footer_str[:width-1],
                                    curses.color_pair(6) | curses.A_BOLD)
 
         # add window borders
