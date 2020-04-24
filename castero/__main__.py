@@ -142,9 +142,9 @@ def main():
         reload_thread.start()
 
     # run initial display operations
-    display.display()
-    display.update()
-    display.refresh()
+    display.display_all()
+    display._menus_valid = False
+    display._update_timer = 0
 
     # core loop for the client
     running = True
