@@ -453,6 +453,8 @@ class Database():
             if feed.key.startswith("http"):
                 url_pairs[feed.key] = feed
                 reqs.append(Net.GGet(feed.key))
+            else:
+                file_feeds.append(feed)
 
         if display is not None:
             display.change_status("Reloading feeds...")
