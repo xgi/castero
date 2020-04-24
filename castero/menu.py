@@ -36,9 +36,6 @@ class Menu(ABC):
         self._inverted = False
         self._filter_text = ""
 
-        if child is not None:
-            self.update_child()
-
     @abstractmethod
     def __len__(self) -> int:
         """int: the number of items in the menu"""
