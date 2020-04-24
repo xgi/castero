@@ -146,21 +146,15 @@ class Feed:
                     " page")
         elif self._file is not None:
             # handle feed from file
-            file = None
             try:
-                file = open(self._file)
-                text = file.read()
-                try:
-                    self._tree = etree.fromstring(text)
-                except etree.ParseError:
-                    raise FeedParseError(
-                        "Unable to parse text as an XML document")
+                tree = etree.parse(self._file)
+                self._tree = tree.getroot()
+            except etree.ParseError:
+                raise FeedParseError(
+                    "Unable to parse text as an XML document")
             except IOError:
                 raise FeedLoadError(
                     "An exception occurred when attempting to load the file")
-            finally:
-                if file is not None:
-                    file.close()
 
     def _validate_feed(self):
         """Checks that the provided XML document is a valid RSS feed.
