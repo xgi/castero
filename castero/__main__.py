@@ -150,7 +150,6 @@ def main():
     running = True
     while running:
         display.display()
-        display.refresh()
         char = display.getch()
         if char != -1:
             running = display.handle_input(char)
