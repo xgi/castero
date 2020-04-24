@@ -625,7 +625,7 @@ class Display:
             self._parent_y, self._parent_x = current_y, current_x
             self._create_windows()
             self.menus_valid = False
-            self.refresh()
+            self._update_timer = 0
 
         if self._parent_y < self.MIN_HEIGHT:
             raise DisplaySizeError("Display height is too small")
