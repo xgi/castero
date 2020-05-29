@@ -34,6 +34,7 @@ def test_perspective_simple_borders(display):
 def test_perspective_simple_input_keys(display):
     perspective = get_simple_perspective(display)
 
+    display._get_input_str = mock.Mock(return_value="")
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
     ret_val = perspective.handle_input(ord('q'))

@@ -1,6 +1,7 @@
 import json
 import os
 import sqlite3
+import grequests
 from typing import List
 
 from castero.config import Config
@@ -8,6 +9,7 @@ from castero.datafile import DataFile
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.queue import Queue
+from castero.net import Net
 
 
 class Database():
@@ -188,8 +190,46 @@ class Database():
             feed: the Feed all episode are a part of
             episodes: a list of Episode's to replace
         """
+        cursor = self._conn.cursor()
+
+        # there are different sql queries depending on whether the episode
+        # has an id, so we separate them into 2 operations
+        episodes_without_id = []
+        episodes_with_id = []
+
         for episode in episodes:
-            self.replace_episode(feed, episode)
+            if episode.ep_id is None:
+                episodes_without_id.append(episode)
+            else:
+                episodes_with_id.append(episode)
+
+        if len(episodes_without_id) > 0:
+            cursor.executemany(self.SQL_EPISODE_REPLACE_NOID,
+                ((
+                    episode.title,
+                    feed.key,
+                    episode.description,
+                    episode.link,
+                    episode.pubdate,
+                    episode.copyright,
+                    episode.enclosure,
+                    episode.played
+                ) for episode in episodes_without_id)
+            )
+        if len(episodes_with_id) > 0:
+            cursor.executemany(self.SQL_EPISODE_REPLACE,
+                ((
+                    episode.ep_id,
+                    episode.title,
+                    feed.key,
+                    episode.description,
+                    episode.link,
+                    episode.pubdate,
+                    episode.copyright,
+                    episode.enclosure,
+                    episode.played
+                ) for episode in episodes_with_id)
+            )
         self._conn.commit()
 
     def delete_queue(self) -> None:
@@ -399,41 +439,75 @@ class Database():
         """
         feeds = self.feeds()
         total_feeds = len(feeds)
-        current_feed = 1
+        completed_feeds = 1
 
-        for feed in self.feeds():
-            if display is not None:
-                display.change_status(
-                    "Reloading feeds (%d/%d)" % (current_feed, total_feeds)
-                )
-
-            # assume urls have http in them
-            if "http" in feed.key:
-                new_feed = Feed(url=feed.key)
+        reqs = []
+        url_pairs = {}
+        file_feeds = []
+        # Create async requests for each URL feed. We also keep a map from
+        # each feed's URL to the Feed object itself in order to access the
+        # object when a request completes (since the response object is all
+        # that we are given).
+        # We also keep track of file-based feeds, which are handled afterwards.
+        for feed in feeds:
+            if feed.key.startswith("http"):
+                url_pairs[feed.key] = feed
+                reqs.append(Net.GGet(feed.key))
             else:
-                new_feed = Feed(file=feed.key)
-
-            # keep user metadata for episodes intact
-            new_episodes = new_feed.parse_episodes()
-            old_episodes = self.episodes(feed)
-            for new_ep in new_episodes:
-                matching_olds = [
-                    old_ep for old_ep in old_episodes if
-                    str(old_ep) == str(new_ep)
-                ]
-                if len(matching_olds) == 1:
-                    new_ep.replace_from(matching_olds[0])
-
-            # limit number of episodes, if necessary
-            max_episodes = int(Config["max_episodes"])
-            if max_episodes != -1:
-                new_episodes = new_episodes[:max_episodes]
-
-            self.replace_feed(new_feed)
-            self.replace_episodes(new_feed, new_episodes)
-
-            current_feed += 1
+                file_feeds.append(feed)
 
         if display is not None:
-            display.change_status("Feeds successfully reloaded")
+            display.change_status("Reloading feeds...")
+
+        # handle each response as downloads complete asynchronously
+        for response in grequests.imap(reqs, size=3):
+            old_feed = url_pairs[response.request.url]
+            new_feed = Feed(url=response.request.url, response=response)
+            self._reload_feed(old_feed, new_feed)
+
+            completed_feeds += 1
+            if display is not None:
+                display.change_status(
+                    "Reloading feeds (%d/%d)" % (completed_feeds, total_feeds))
+
+        # handle each file-based feed
+        for old_feed in file_feeds:
+            new_feed = Feed(file=old_feed.key)
+            self._reload_feed(old_feed, new_feed)
+
+            completed_feeds += 1
+            if display is not None:
+                display.change_status(
+                    "Reloading feeds (%d/%d)" % (completed_feeds, total_feeds))
+
+        if display is not None:
+            display.change_status(
+                "Successfully reloaded %d feeds" % total_feeds)
             display.menus_valid = False
+
+    def _reload_feed(self, old_feed: Feed, new_feed: Feed):
+        """Helper method to update a feed and its episodes in the database.
+
+        Args:
+            old_feed: the original Feed to be replaced
+            new_feed: a Feed with new/updated data
+        """
+        # keep user metadata for episodes intact
+        new_episodes = new_feed.parse_episodes()
+        old_episodes = self.episodes(new_feed)
+        for new_ep in new_episodes:
+            matching_olds = [
+                old_ep for old_ep in old_episodes if
+                str(old_ep) == str(new_ep)
+            ]
+            if len(matching_olds) == 1:
+                new_ep.replace_from(matching_olds[0])
+
+        # limit number of episodes, if necessary
+        max_episodes = int(Config["max_episodes"])
+        if max_episodes != -1:
+            new_episodes = new_episodes[:max_episodes]
+
+        # update the feed and its episodes in the database
+        self.replace_feed(new_feed)
+        self.replace_episodes(new_feed, new_episodes)

@@ -59,8 +59,14 @@ def test_feed_validations_channel_empty():
 
 
 def test_feed_validations_two_channels():
-    with pytest.raises(feed.FeedStructureError):
-        feed.Feed(file=my_dir + "/feeds/broken_two_channels.xml")
+    # A feed having 2 root-level tags used to be disallowed, but since some
+    # otherwise valid feeds had this, they are now allowed.
+    # This test now checks that the first tag is loaded, which has 2 episodes
+    # instead of the second tag's single episode.
+    myfeed = feed.Feed(file=my_dir + "/feeds/valid_two_channels.xml")
+    assert isinstance(myfeed, feed.Feed)
+    assert myfeed.validated
+    assert len(myfeed.parse_episodes()) == 2
 
 
 def test_feed_validations_item_title():

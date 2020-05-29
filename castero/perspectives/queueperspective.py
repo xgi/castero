@@ -89,12 +89,22 @@ class QueuePerspective(Perspective):
                                      0, self._queue_window.getmaxyx()[0] - 2,
                                      curses.ACS_VLINE | curses.color_pair(8))
 
-        # display menu content
-        self._queue_menu.display()
-
         # draw metadata
         if not self._metadata_updated:
             self._draw_metadata(self._metadata_window)
+            self._metadata_window.refresh()
+            self._metadata_updated = True
+
+        self._queue_window.refresh()
+
+    def display_all(self) -> None:
+        """Force all windows to completely redraw their content.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._metadata_updated = False
+        self._queue_menu.display()
+        self.display()
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
@@ -165,6 +175,7 @@ class QueuePerspective(Perspective):
         Overrides method from Perspective; see documentation in that class.
         """
         self._queue_menu.update_items(None)
+        self._metadata_updated = False
 
     def _get_active_menu(self) -> Menu:
         """Retrieve the active Menu, if there is one.
@@ -191,3 +202,4 @@ class QueuePerspective(Perspective):
             self._queue_menu.update_items(None)
             for i in range(index):
                 self._get_active_menu().move(-1)
+        self._metadata_updated = False

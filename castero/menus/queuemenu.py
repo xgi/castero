@@ -65,6 +65,7 @@ class QueueMenu(Menu):
         Overrides method from Menu; see documentation in that class.
         """
         super().update_items(obj)
+        self.display()
 
     def update_child(self):
         """Not necessary for this menu -- does nothing.

@@ -20,8 +20,8 @@ def test_display_init(display):
 def test_display_display_header(display):
     disp = display
     disp.display()
-    disp._header_window.addstr.assert_called_with(
-        0, 0, castero.__title__, curses.color_pair(6) | curses.A_BOLD)
+    args, kwargs = display._header_window.addstr.call_args
+    assert castero.__title__ in args[2]
     disp._stdscr.reset_mock()
 
 
@@ -41,7 +41,7 @@ def test_display_display_borders(display):
 def test_display_help(display):
     display._stdscr.reset_mock()
     display.show_help()
-    assert display._stdscr.refresh.call_count == 1
+    assert display._stdscr.refresh.call_count == 3
     assert display._stdscr.timeout.call_count == 2
     display._stdscr.timeout.assert_any_call(-1)
     display._stdscr.timeout.assert_any_call(Display.INPUT_TIMEOUT)

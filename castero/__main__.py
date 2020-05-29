@@ -8,6 +8,9 @@ import io
 import ctypes
 import tempfile
 
+from gevent import monkey
+monkey.patch_all(thread=False, select=False)
+
 import castero
 from castero import helpers
 from castero.config import Config
@@ -139,16 +142,14 @@ def main():
         reload_thread.start()
 
     # run initial display operations
-    display.display()
-    display.update()
-    display.refresh()
+    display.display_all()
+    display._menus_valid = False
+    display._update_timer = 0
 
     # core loop for the client
     running = True
     while running:
         display.display()
-        display.update()
-        display.refresh()
         char = display.getch()
         if char != -1:
             running = display.handle_input(char)

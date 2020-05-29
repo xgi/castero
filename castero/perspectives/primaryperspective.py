@@ -115,13 +115,24 @@ class PrimaryPerspective(Perspective):
                                        self._episode_window.getmaxyx()[0] - 2,
                                        curses.ACS_VLINE | curses.color_pair(8))
 
-        # display menu content
-        self._feed_menu.display()
-        self._episode_menu.display()
-
         # draw metadata
         if not self._metadata_updated:
             self._draw_metadata(self._metadata_window)
+            self._metadata_window.refresh()
+            self._metadata_updated = True
+
+        self._feed_window.refresh()
+        self._episode_window.refresh()
+
+    def display_all(self) -> None:
+        """Force all windows to completely redraw their content.
+
+        Overrides method from Perspective; see documentation in that class.
+        """
+        self._metadata_updated = False
+        self._feed_menu.display()
+        self._episode_menu.display()
+        self.display()
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
@@ -158,6 +169,7 @@ class PrimaryPerspective(Perspective):
         """
         self._feed_menu.update_items(None)
         self._feed_menu.update_child()
+        self._metadata_updated = False
 
     def refresh(self) -> None:
         """Refresh the screen and all windows.
@@ -189,6 +201,7 @@ class PrimaryPerspective(Perspective):
         self._get_active_menu().invert()
         if self._feed_menu:
             self._feed_menu.update_child()
+        self._metadata_updated = False
 
     def _create_player_from_selected(self) -> None:
         """Creates player(s) based on the selected items and adds to the queue.

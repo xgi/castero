@@ -91,6 +91,7 @@ class DataFile:
         except requests.exceptions.RequestException as e:
             if display is not None:
                 display.change_status("RequestException: %s" % str(e))
+            download_queue.next()
             return
         else:
             handle = open(file, "wb")
