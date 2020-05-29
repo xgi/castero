@@ -61,6 +61,7 @@ def test_perspective_primary_display_episode_metadata(display):
 def test_perspective_primary_input_keys(display):
     perspective = get_primary_perspective(display)
 
+    display._get_input_str = mock.Mock(return_value="")
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
     ret_val = perspective.handle_input(ord('q'))
