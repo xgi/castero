@@ -8,8 +8,8 @@ import io
 import ctypes
 import tempfile
 
-from gevent import monkey as curious_george
-curious_george.patch_all(thread=False, select=False)
+from gevent import monkey
+monkey.patch_all(thread=False, select=False)
 
 import castero
 from castero import helpers

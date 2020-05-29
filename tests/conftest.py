@@ -4,6 +4,9 @@ from unittest import mock
 
 import pytest
 
+from gevent import monkey
+monkey.patch_all(thread=False, select=False)
+
 import castero.config
 from castero.datafile import DataFile
 from castero.display import Display
