@@ -487,7 +487,7 @@ class Database():
 
     def _reload_feed(self, old_feed: Feed, new_feed: Feed):
         """Helper method to update a feed and its episodes in the database.
-        
+
         Args:
             old_feed: the original Feed to be replaced
             new_feed: a Feed with new/updated data

@@ -309,7 +309,7 @@ class Display:
 
     def display_all(self) -> None:
         """Force all perspectives to completely redraw their content.
-        
+
         For more details, see the description of the method in Perspective.
         """
         self.refresh()

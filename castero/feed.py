@@ -276,7 +276,7 @@ class Feed:
             if root_child.tag == 'channel':
                 channel = root_child
                 break
-            
+
         self._title = channel.find('title').text
         self._description = channel.find('description').text
         self._link = channel.find('link').text
