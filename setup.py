@@ -4,8 +4,10 @@ import castero
 
 install_requires = [
     'requests',
+    'grequests',
     'cjkwrap',
     'beautifulsoup4',
+    'lxml',
     'python-vlc',
     'python-mpv'
 ]
