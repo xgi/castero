@@ -1,5 +1,6 @@
 import time
 
+from castero.config import Config
 from castero.player import Player, PlayerDependencyError
 
 
@@ -112,6 +113,23 @@ class VLCPlayer(Player):
         if self._player is not None:
             self._player.set_rate(rate)
 
+    def change_volume(self, direction) -> None:
+        """Increase or decrease the player volume.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        assert direction == 1 or direction == -1
+        if self._player is not None:
+            cur_volume = self._player.audio_get_volume()
+            new_volume = cur_volume + \
+                int(Config["volume_adjust_distance"]) * direction
+
+            # vlc doesn't actually cap the volume, so we will do so manually
+            if new_volume > 100:
+                new_volume = 100
+
+            self._player.audio_set_volume(new_volume)
+
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
@@ -120,6 +138,12 @@ class VLCPlayer(Player):
             self._duration = self._media.get_duration()
             result = self._duration
         return result
+
+    @property
+    def volume(self) -> int:
+        """int: the volume of the player"""
+        if self._player is not None:
+            return self._player.audio_get_volume()
 
     @property
     def time(self) -> int:
