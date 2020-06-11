@@ -684,14 +684,18 @@ class Display:
                 ": %s" % self._queue.first.title
             if self._queue.length > 1:
                 header_str += " (+%d in queue)" % (self._queue.length - 1)
-            time_str = " [%s]" % self._queue.first.time_str
-            # truncate the header string to ensure there is always space for the
-            # time to be displayed
-            header_str = header_str[:max_width - len(time_str)]
-            if helpers.is_true(Config["right_align_time"]):
-                header_str += time_str.rjust(max_width - len(header_str))
-            else:
-                header_str += time_str
+            
+            # the stats section of the header contains the volume (if its
+            # defined) and the time/duration of the media
+            stats_str = ""
+            if self._queue.first.volume is not None:
+                stats_str += " [%d%%]" % self._queue.first.volume
+            stats_str += " [%s]" % self._queue.first.time_str
+
+            # truncate the header string to ensure there is always space for
+            # the stats to be displayed
+            header_str = header_str[:max_width - len(stats_str)]
+            header_str += stats_str.rjust(max_width - len(header_str))
         self._header_str = header_str[:max_width]
 
         # update the footer text
