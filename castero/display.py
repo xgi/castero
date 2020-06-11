@@ -676,27 +676,30 @@ class Display:
             self.menus_valid = True
 
         # update the header text
-        playing_str = ""
+        max_width = self._header_window.getmaxyx()[1]
+        header_str = "%s " % castero.__title__
         if self._queue.first is not None:
             state = self._queue.first.state
-            playing_str = ["Stopped", "Playing", "Paused"][state] + \
+            header_str += ["Stopped", "Playing", "Paused"][state] + \
                 ": %s" % self._queue.first.title
             if self._queue.length > 1:
-                playing_str += " (+%d in queue)" % (self._queue.length - 1)
-
+                header_str += " (+%d in queue)" % (self._queue.length - 1)
+            time_str = " [%s]" % self._queue.first.time_str
+            # truncate the header string to ensure there is always space for the
+            # time to be displayed
+            header_str = header_str[:max_width - len(time_str)]
             if helpers.is_true(Config["right_align_time"]):
-                playing_str += ("[%s]" % self._queue.first.time_str).rjust(
-                    self._header_window.getmaxyx()[1] - len(playing_str))
+                header_str += time_str.rjust(max_width - len(header_str))
             else:
-                playing_str += " [%s]" % self._queue.first.time_str
-        self._header_str = "%s %s" % (castero.__title__, playing_str)
+                header_str += time_str
+        self._header_str = header_str[:max_width]
 
         # update the footer text
         footer_str = "%sPress %s for help" % (
             self._status + " -- " if len(self._status) > 0 else "",
             Config["key_help"])
-        footer_str = footer_str[:self._footer_window.getmaxyx()[1] - 1]
         max_width = self._footer_window.getmaxyx()[1] - 1
+        footer_str = footer_str[:max_width]
         self._footer_str = footer_str.ljust(max_width)[:max_width]
 
         # decrement the status timer
