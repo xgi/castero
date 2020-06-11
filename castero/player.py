@@ -164,6 +164,16 @@ class Player:
             rate: the desired playback speed
         """
 
+    @abstractmethod
+    def change_volume(self, direction) -> None:
+        """Increase or decrease the player volume.
+
+        The amount to adjust is taken from Config["volume_adjust_distance"].
+
+        Args:
+            direction: 1 to increase, -1 to decrease
+        """
+
     @property
     def state(self) -> int:
         """int: the state of the player"""
@@ -183,6 +193,11 @@ class Player:
     @abstractmethod
     def duration(self) -> int:
         """int: the duration of the player, in ms"""
+
+    @property
+    @abstractmethod
+    def volume(self) -> int:
+        """int: the volume of the player"""
 
     @property
     @abstractmethod
