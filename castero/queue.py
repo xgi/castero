@@ -12,6 +12,7 @@ class Queue:
     def __init__(self, display) -> None:
         self._players = []
         self._display = display
+        self._volume = 100
 
     def __getitem__(self, index):
         return self._players[index]
@@ -64,6 +65,7 @@ class Queue:
             self.first.episode.played = True
             self._display.modified_episodes.append(self.first.episode)
             self.first.play()
+            self.first.set_volume(self.volume)
             self.first.set_rate(float(Config["default_playback_speed"]))
 
     def pause(self) -> None:
@@ -115,6 +117,26 @@ class Queue:
         if self.first is not None:
             self.first.change_rate(direction, display=display)
 
+    def change_volume(self, direction) -> None:
+        """Increase or decrease volume of the current player.
+
+        Args:
+            direction: 1 to increase, -1 to decrease
+        """
+        assert direction == 1 or direction == -1
+
+        # First we change our volume value, then we set the player volume
+        # to that amount. This ensures the player volume is always derived
+        # from our value.
+        self._volume += int(Config["volume_adjust_distance"]) * direction
+        if self._volume > 100:
+            self._volume = 100
+        elif self._volume < 0:
+            self._volume = 0
+        
+        if self.first is not None:
+            self.first.set_volume(self._volume)
+
     def remove(self, player) -> int:
         """Remove a player from the queue, if it is currently in it.
 
@@ -153,3 +175,8 @@ class Queue:
     def length(self) -> int:
         """int: the length of the queue"""
         return len(self._players)
+
+    @property
+    def volume(self) -> int:
+        """int: the current playback volume"""
+        return self._volume

@@ -678,20 +678,22 @@ class Display:
         # update the header text
         max_width = self._header_window.getmaxyx()[1]
         header_str = "%s " % castero.__title__
+        stats_str = "[%d%%]" % self._queue.volume
         if self._queue.first is not None:
             state = self._queue.first.state
             header_str += ["Stopped", "Playing", "Paused"][state] + \
                 ": %s" % self._queue.first.title
             if self._queue.length > 1:
                 header_str += " (+%d in queue)" % (self._queue.length - 1)
-            time_str = " [%s]" % self._queue.first.time_str
-            # truncate the header string to ensure there is always space for the
-            # time to be displayed
-            header_str = header_str[:max_width - len(time_str)]
-            if helpers.is_true(Config["right_align_time"]):
-                header_str += time_str.rjust(max_width - len(header_str))
-            else:
-                header_str += time_str
+            
+            # the stats section of the header contains the volume and, if
+            # something is playing, time/duration of the media
+            stats_str += " [%s]" % self._queue.first.time_str
+
+        # truncate the header string to ensure there is always space for
+        # the stats to be displayed
+        header_str = header_str[:max_width - len(stats_str)]
+        header_str += stats_str.rjust(max_width - len(header_str))
         self._header_str = header_str[:max_width]
 
         # update the footer text

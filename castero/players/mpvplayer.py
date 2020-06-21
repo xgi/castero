@@ -1,5 +1,6 @@
 import time
 
+from castero.config import Config
 from castero.player import Player, PlayerDependencyError
 
 
@@ -104,6 +105,14 @@ class MPVPlayer(Player):
         if self._player is not None:
             self._player.speed = rate
 
+    def set_volume(self, volume) -> None:
+        """Set the player volume.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        if self._player is not None:
+            self._player.volume = volume
+
     @property
     def duration(self) -> int:
         """int: the duration of the player"""
@@ -112,6 +121,12 @@ class MPVPlayer(Player):
             d = self._player.duration
             result = 5000 if d is None else d * 1000
         return result
+
+    @property
+    def volume(self) -> int:
+        """int: the volume of the player"""
+        if self._player is not None:
+            return self._player.volume
 
     @property
     def time(self) -> int:
