@@ -70,8 +70,8 @@ Commands
     p or k      - pause/play the current episode
     f or l      - seek forward
     b or j      - seek backward
-    ]           - increase playback speed
-    [           - decrease playback speed
+    =/-         - increase/decrease volume
+    ]/[         - increase/decrease playback speed
     u           - show episode URL
     1-4         - change between client layouts
 ```

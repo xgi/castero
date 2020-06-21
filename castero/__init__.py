@@ -39,8 +39,8 @@ Commands
     {key_pause_play|key_pause_play_alt} - pause/play the current episode
     {key_seek_forward|key_seek_forward_alt} - seek forward
     {key_seek_backward|key_seek_backward_alt} - seek backward
-    {key_rate_increase} - increase playback speed
-    {key_rate_decrease} - decrease playback speed
+    {key_volume_increase/key_volume_decrease} - increase/decrease volume
+    {key_rate_increase/key_rate_decrease} - increase/decrease playback speed
     {key_show_url} - show episode URL
     {1-4} - change between client layouts
 """ % (
