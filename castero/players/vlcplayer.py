@@ -112,25 +112,14 @@ class VLCPlayer(Player):
         """
         if self._player is not None:
             self._player.set_rate(rate)
-
-    def change_volume(self, direction) -> None:
-        """Increase or decrease the player volume.
+            
+    def set_volume(self, volume) -> int:
+        """Set the player volume.
 
         Overrides method from Player; see documentation in that class.
         """
-        assert direction == 1 or direction == -1
         if self._player is not None:
-            cur_volume = self._player.audio_get_volume()
-            new_volume = cur_volume + \
-                int(Config["volume_adjust_distance"]) * direction
-
-            # vlc doesn't actually cap the volume, so we will do so manually
-            if new_volume > 100:
-                new_volume = 100
-            elif new_volume < 0:
-                new_volume = 0
-
-            self._player.audio_set_volume(new_volume)
+            self._player.audio_set_volume(volume)
 
     @property
     def duration(self) -> int:

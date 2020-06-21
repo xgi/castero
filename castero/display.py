@@ -89,6 +89,7 @@ class Display:
         self._update_timer = self.UPDATE_TIMEOUT
         self._menus_valid = True
         self._modified_episodes = []
+        self._volume = 100
 
         # basic preliminary operations
         self._stdscr.timeout(self.INPUT_TIMEOUT)
@@ -583,6 +584,25 @@ class Display:
             )
             self.change_status(episode.enclosure)
 
+    def change_volume(self, direction) -> None:
+        """Increase or decrease volume of the current player.
+
+        Args:
+            direction: 1 to increase, -1 to decrease
+        """
+        assert direction == 1 or direction == -1
+        
+        # First we change our volume value, then we set the player volume
+        # to that amount. This ensures the player volume is always derived
+        # from our value.
+        self._volume += int(Config["volume_adjust_distance"]) * direction
+        if self._volume > 100:
+            self._volume = 100
+        elif self._volume < 0:
+            self._volume = 0
+        
+        self._queue.set_volume(self.volume)
+
     def clear(self) -> None:
         """Clear the screen.
         """
@@ -685,12 +705,10 @@ class Display:
             if self._queue.length > 1:
                 header_str += " (+%d in queue)" % (self._queue.length - 1)
             
-            # the stats section of the header contains the volume (if its
-            # defined) and the time/duration of the media
-            stats_str = ""
-            if self._queue.first.volume is not None:
-                stats_str += " [%d%%]" % self._queue.first.volume
-            stats_str += " [%s]" % self._queue.first.time_str
+            # the stats section of the header contains the volume and the
+            # time/duration of the media
+            stats_str = "[%d%%] [%s]" % (
+                self.volume, self._queue.first.time_str)
 
             # truncate the header string to ensure there is always space for
             # the stats to be displayed
@@ -729,6 +747,11 @@ class Display:
     def parent_y(self) -> int:
         """int: the height of the parent screen, in characters"""
         return self._parent_y
+
+    @property
+    def volume(self) -> int:
+        """int: the current playback volume"""
+        return self._volume
 
     @property
     def database(self) -> Database:

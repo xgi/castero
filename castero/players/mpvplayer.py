@@ -105,24 +105,13 @@ class MPVPlayer(Player):
         if self._player is not None:
             self._player.speed = rate
 
-    def change_volume(self, direction) -> None:
-        """Increase or decrease the player volume.
+    def set_volume(self, volume) -> None:
+        """Set the player volume.
 
         Overrides method from Player; see documentation in that class.
         """
-        assert direction == 1 or direction == -1
         if self._player is not None:
-            cur_volume = self._player.volume
-            new_volume = cur_volume + \
-                int(Config["volume_adjust_distance"]) * direction
-
-            # mpv has an arbitrary volume cap, so we will add one manually
-            if new_volume > 100:
-                new_volume = 100
-            elif new_volume < 0:
-                new_volume = 0
-
-            self._player.volume = new_volume
+            self._player.volume = volume
 
     @property
     def duration(self) -> int:

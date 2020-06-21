@@ -115,16 +115,14 @@ class Queue:
         if self.first is not None:
             self.first.change_rate(direction, display=display)
 
-    def change_volume(self, direction) -> None:
-        """Increase or decrease the player volume.
+    def set_volume(self, volume) -> None:
+        """Set the player volume.
 
         Args:
-            direction: 1 to increase, -1 to decrease
+            volume: the desired volume
         """
-        assert direction == 1 or direction == -1
-
         if self.first is not None:
-            self.first.change_volume(direction)
+            self.first.set_volume(volume)
 
     def remove(self, player) -> int:
         """Remove a player from the queue, if it is currently in it.

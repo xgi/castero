@@ -165,13 +165,11 @@ class Player:
         """
 
     @abstractmethod
-    def change_volume(self, direction) -> None:
-        """Increase or decrease the player volume.
-
-        The amount to adjust is taken from Config["volume_adjust_distance"].
+    def set_volume(self, volume) -> int:
+        """Set the player volume.
 
         Args:
-            direction: 1 to increase, -1 to decrease
+            volume: the desired volume
         """
 
     @property
