@@ -30,6 +30,10 @@ class Net:
             *args,
             headers=Net.HEADERS,
             timeout=float(castero.config.Config['request_timeout']),
+            proxies={
+                'http': castero.config.Config['proxy_http'],
+                'https': castero.config.Config['proxy_https'],
+            },
             **kwargs
         )
 
@@ -39,5 +43,9 @@ class Net:
             *args,
             headers=Net.HEADERS,
             timeout=float(castero.config.Config['request_timeout']),
+            proxies={
+                'http': castero.config.Config['proxy_http'],
+                'https': castero.config.Config['proxy_https'],
+            },
             **kwargs
         )
