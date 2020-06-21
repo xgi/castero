@@ -71,7 +71,6 @@ def test_perspective_queue_input_keys(display):
 
     ret_val = perspective.handle_input(ord('h'))
     assert ret_val
-    display._stdscr.timeout.assert_any_call(-1)
     display._stdscr.reset_mock()
 
     movement_keys = [
