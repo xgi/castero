@@ -162,7 +162,7 @@ class Feed:
         This method is intended to be run only when this object is being
         created in order to raise any necessary exceptions at that time.
 
-        The conditions check are:
+        The conditions checked are:
             - the root of the XML document is an 'rss' tag
             - the root has a 'version' attribute which equals '2.0'
             - the root has exactly one child, which is the channel tag
@@ -179,6 +179,9 @@ class Feed:
               children tend to be warning or notices which don't otherwise
               affect the content. Therefore, we allow multiple children and
               simply use the first channel one.
+            - Although the channel tag should have a "link" child, we also
+              allow having an "atom:link" tag as a substitute. If multiple are
+              present, the first is used.
 
         This method does not set this object's metadata. That is done in
         _process_feed().
@@ -212,14 +215,17 @@ class Feed:
                     break
             if not channel:
                 raise FeedStructureError(
-                        "RSS feed does not have a channel tag as its child")
+                    "RSS feed does not have a channel tag as its child")
 
-            # channel should have at least 3 children, including a
-            # title, link, and description tag
+            # Channel should have at least 3 children, including a
+            # title and description tag. There should be a "link" tag, but we
+            # allow an "atom:link" tag as a substitute
             channel_children = list(channel)
             if len(channel_children) >= 3:
                 chan_title_tags = channel.findall('title')
                 chan_link_tags = channel.findall('link')
+                chan_atomlink_tags = channel.findall(
+                    '{http://www.w3.org/2005/Atom}link')
                 chan_description_tags = channel.findall('description')
 
                 if len(chan_title_tags) != 1:
@@ -227,13 +233,21 @@ class Feed:
                         "RSS feed's channel has too many or too few"
                         " title tags; expected 1, was: "
                         + str(len(chan_title_tags)))
-                if len(chan_link_tags) != 1:
+                if len(chan_link_tags) > 1:
                     raise FeedStructureError(
-                        "RSS feed's channel has too many or too few"
+                        "RSS feed's channel has too many"
                         " link tags; expected 1, was: "
                         + str(len(chan_link_tags))
                         + ". The corresponding title is: "
                         + str(chan_title_tags[0].text))
+                if len(chan_link_tags) == 0:
+                    if len(chan_atomlink_tags) == 0:
+                        raise FeedStructureError(
+                            "RSS feed's channel had 0 link tags, expected 1."
+                            + " There were also no atom:link tags available to"
+                            + " use as a substitute"
+                            + ". The corresponding title is: "
+                            + str(chan_title_tags[0].text))
                 if len(chan_description_tags) != 1:
                     raise FeedStructureError(
                         "RSS feed's channel has too many or too few"
@@ -279,7 +293,14 @@ class Feed:
 
         self._title = channel.find('title').text
         self._description = channel.find('description').text
-        self._link = channel.find('link').text
+
+        link_tags = channel.findall('link')
+        if len(link_tags) > 0:
+            self._link = link_tags[0].text
+        else:
+            atomlink_tags = channel.findall(
+                '{http://www.w3.org/2005/Atom}link')
+            self._link = atomlink_tags[0].attrib['href']
 
         last_build_date_tag = channel.find('lastBuildDate')
         copyright_tag = channel.find('copyright')
