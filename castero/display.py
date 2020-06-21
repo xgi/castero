@@ -247,27 +247,62 @@ class Display:
         is pressed. This means that typical loop actions, including checking
         the state of the current player, will not run while this screen is up.
         """
-        self.clear()
-        self._stdscr.refresh()
+        help_lines = castero.__help__.split('\n')
 
-        padding_yx = (1, 4)
+        # the first and last lines that content can be displayed, excluding
+        # the final line on the screen which is reserved for the "press any
+        # key to exit" line
+        y_bounds = (0, self._parent_y - 2)
+
+        # the current vertical offset set by the user with arrow keys
+        cur_offset = 0
+
+        # the max offset, which is the offset where the last line in help_lines
+        # is displayed at y_bounds[1]
+        max_offset = len(help_lines) - (y_bounds[1] - y_bounds[0]) - 2
 
         help_window = curses.newwin(self._parent_y, self._parent_x, 0, 0)
-
-        # display lines from __help__
-        help_lines = \
-            castero.__help__.split('\n')[:self._parent_y - padding_yx[0] - 1]
-        help_lines.append("Press any key to exit this screen.")
-        for i in range(len(help_lines)):
-            help_window.addstr(i + padding_yx[0], padding_yx[1],
-                               help_lines[i][:self._parent_x - padding_yx[1]],
-                               curses.A_BOLD)
         help_window.refresh()
 
-        # simply wait until any key is pressed (temporarily disable timeout)
-        self._stdscr.timeout(-1)
-        self._stdscr.getch()
-        self._stdscr.timeout(self.INPUT_TIMEOUT)
+        running = True
+        update_text = True
+        while running:
+            inp = self._stdscr.getch()
+
+            if inp == self.KEY_MAPPING["DOWN"]:
+                update_text = True
+                cur_offset += 1
+
+            elif inp == self.KEY_MAPPING["UP"]:
+                update_text = True
+                cur_offset -= 1
+            elif inp != -1:
+                running = False
+
+            if cur_offset > max_offset:
+                cur_offset = max_offset
+            if cur_offset < 0:
+                cur_offset = 0
+
+            if update_text:
+                # draw blank lines to clear the screen
+                for i in range(self._parent_y):
+                    help_window.addstr(i, 0, "".ljust(self._parent_x - 1))
+
+                # add text from help_lines based on offset
+                max_lineno = min(len(help_lines), cur_offset + y_bounds[1] + 1)
+                for i in range(cur_offset, max_lineno):
+                    help_window.addstr(
+                        i - cur_offset, 2, help_lines[i][:self._parent_x - 2])
+
+                bottom_line = "[%d/%d] Press arrow keys to scroll, or any"\
+                    " other key to exit this screen." % (
+                        min(len(help_lines), cur_offset + y_bounds[1] + 2),
+                        len(help_lines)
+                    )
+                help_window.addstr(y_bounds[1] + 1, 2, bottom_line)
+                help_window.refresh()
+                update_text = False
 
         self.clear()
         self.display_all()
@@ -289,7 +324,7 @@ class Display:
         self._header_window.addstr(0, 0, " " * width)
         self._header_window.addstr(0, 0, self._header_str,
                                    curses.color_pair(6) | curses.A_BOLD)
-        self._footer_window.addstr(1, 0, self._footer_str[:width-1],
+        self._footer_window.addstr(1, 0, self._footer_str[:width - 1],
                                    curses.color_pair(6) | curses.A_BOLD)
 
         # add window borders
@@ -685,7 +720,7 @@ class Display:
                 ": %s" % self._queue.first.title
             if self._queue.length > 1:
                 header_str += " (+%d in queue)" % (self._queue.length - 1)
-            
+
             # the stats section of the header contains the volume and, if
             # something is playing, time/duration of the media
             stats_str += " [%s]" % self._queue.first.time_str
