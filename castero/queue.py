@@ -63,6 +63,7 @@ class Queue:
         if self.first is not None:
             self.first.episode.played = True
             self._display.modified_episodes.append(self.first.episode)
+            self.set_volume(self._display.volume)
             self.first.play()
             self.first.set_rate(float(Config["default_playback_speed"]))
 

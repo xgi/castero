@@ -163,9 +163,9 @@ class Perspective(ABC):
                 c == key_mapping[Config['key_seek_backward_alt']]:
             queue.seek(-1)
         elif c == key_mapping[Config['key_volume_increase']]:
-            display.change_volume(1)
+            self._display.change_volume(1)
         elif c == key_mapping[Config['key_volume_decrease']]:
-            display.change_volume(-1)
+            self._display.change_volume(-1)
         elif c == key_mapping[Config['key_rate_increase']]:
             queue.change_rate(1, display=self._display)
         elif c == key_mapping[Config['key_rate_decrease']]:
