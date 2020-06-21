@@ -127,6 +127,8 @@ class VLCPlayer(Player):
             # vlc doesn't actually cap the volume, so we will do so manually
             if new_volume > 100:
                 new_volume = 100
+            elif new_volume < 0:
+                new_volume = 0
 
             self._player.audio_set_volume(new_volume)
 
