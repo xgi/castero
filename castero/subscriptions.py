@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ElementTree
 from typing import List
 
-from castero.feed import Feed, FeedDownloadError
+from castero.feed import Feed, FeedDownloadError, FeedParseError
 
 
 class SubscriptionsError(Exception):
@@ -138,6 +138,8 @@ class Subscriptions():
                     yield feed
                 except FeedDownloadError as e:
                     yield (entry.attrib['xmlUrl'], e)
+                except FeedParseError as e:
+                    yield (entry.attrib['xmlUrl'], e)
 
     def _find_rss_container(self, container):
         """Find potentially-nested container for RSS feeds.
@@ -153,7 +155,7 @@ class Subscriptions():
             return None
 
         if 'type' in outline.attrib and \
-                outline.attrib['type'].lower() == 'rss':
+                outline.attrib['type'].lower() in ['rss', 'link']:
             return container
         else:
             return self._find_rss_container(outline)

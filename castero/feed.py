@@ -213,7 +213,7 @@ class Feed:
                 if root_child.tag == 'channel':
                     channel = root_child
                     break
-            if not channel:
+            if channel is None:
                 raise FeedStructureError(
                     "RSS feed does not have a channel tag as its child")
 
