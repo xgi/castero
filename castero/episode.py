@@ -171,11 +171,12 @@ class Episode:
         return self._downloaded
 
     def replace_from(self, episode) -> None:
-        """Replace user-specific metadata from the given episode.
+        """Replace metadata from the given episode.
 
         Args:
             episode: the source Episode
         """
+        self._ep_id = episode._ep_id
         self._played = episode._played
 
     @property
