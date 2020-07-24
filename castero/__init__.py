@@ -23,10 +23,11 @@ Commands
     {key_help} - show this help screen
     {key_exit} - exit the client
     {key_add_feed} - add a feed
-    {key_delete} - delete the selected feed
-    {key_reload} - reload/refresh all feeds
-    {key_reload_selected} - reload/refresh selected feed
+    {key_remove} - remove the selected feed
+    {key_reload} - reload all feeds
+    {key_reload_selected} - reload the selected feed
     {key_save} - save episode for offline playback
+    {key_delete} - delete downloaded episodes
     {key_up/key_down} - navigate up/down in menus
     {key_right/key_left} - navigate right/left in menus
     {key_scroll_up/key_scroll_down} - scroll up/down in menus

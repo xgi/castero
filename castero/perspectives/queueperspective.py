@@ -132,7 +132,7 @@ class QueuePerspective(Perspective):
             queue.stop()
             queue.clear()
             self._display.menus_valid = False
-        elif c == key_mapping[Config['key_delete']]:
+        elif c == key_mapping[Config['key_remove']]:
             self._remove_selected_from_queue()
         elif c == key_mapping[Config['key_show_url']]:
             item = self._queue_menu.item
@@ -145,6 +145,8 @@ class QueuePerspective(Perspective):
         elif c == key_mapping[Config['key_reload_selected']]:
             pass
         elif c == key_mapping[Config['key_save']]:
+            pass
+        elif c == key_mapping[Config['key_delete']]:
             pass
         elif c == key_mapping[Config['key_mark_played']]:
             pass
