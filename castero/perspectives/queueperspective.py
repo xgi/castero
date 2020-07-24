@@ -142,6 +142,8 @@ class QueuePerspective(Perspective):
             item = self._queue_menu.item
             if item is not None:
                 self._display.execute_command(item.episode)
+        elif c == key_mapping[Config['key_reload_selected']]:
+            pass
         elif c == key_mapping[Config['key_save']]:
             pass
         elif c == key_mapping[Config['key_mark_played']]:

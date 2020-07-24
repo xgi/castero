@@ -412,8 +412,8 @@ class Database():
         # retrieved ep_ids to get complete list of desired episodes
         return [episodes_cache[ep_id] for ep_id in ep_ids]
 
-    def reload(self, display=None) -> None:
-        """Reload all feeds in the database.
+    def reload(self, display=None, feeds=None) -> None:
+        """Reload feeds in the database.
 
         To preserve user metadata for episodes (such as played/marked status),
         we use Episode.replace_from() which "manually" copies such fields to
@@ -436,10 +436,13 @@ class Database():
 
         Args:
             display: (optional) the display to write status updates to
+            feeds: (optional) a list of feeds to reload. If not specified,
+                all feeds in the database will be reloaded
         """
-        feeds = self.feeds()
+        if feeds is None:
+            feeds = self.feeds()
         total_feeds = len(feeds)
-        completed_feeds = 1
+        completed_feeds = 0
 
         reqs = []
         url_pairs = {}
@@ -456,24 +459,21 @@ class Database():
             else:
                 file_feeds.append(feed)
 
-        if display is not None:
-            display.change_status("Reloading feeds...")
-
         # handle each response as downloads complete asynchronously
         for response in grequests.imap(reqs, size=3):
-            old_feed = url_pairs[response.request.url]
-            new_feed = Feed(url=response.request.url, response=response)
-            self._reload_feed(old_feed, new_feed)
-
-            completed_feeds += 1
             if display is not None:
                 display.change_status(
                     "Reloading feeds (%d/%d)" % (completed_feeds, total_feeds))
+            old_feed = url_pairs[response.request.url]
+            new_feed = Feed(url=response.request.url, response=response)
+            self._reload_feed_data(old_feed, new_feed)
+
+            completed_feeds += 1
 
         # handle each file-based feed
         for old_feed in file_feeds:
             new_feed = Feed(file=old_feed.key)
-            self._reload_feed(old_feed, new_feed)
+            self._reload_feed_data(old_feed, new_feed)
 
             completed_feeds += 1
             if display is not None:
@@ -485,7 +485,7 @@ class Database():
                 "Successfully reloaded %d feeds" % total_feeds)
             display.menus_valid = False
 
-    def _reload_feed(self, old_feed: Feed, new_feed: Feed):
+    def _reload_feed_data(self, old_feed: Feed, new_feed: Feed):
         """Helper method to update a feed and its episodes in the database.
 
         Args:

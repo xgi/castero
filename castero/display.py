@@ -551,6 +551,14 @@ class Display:
             t = threading.Thread(target=self.database.reload, args=[self])
             t.start()
 
+    def reload_selected_feed(self, feed: Feed) -> None:
+        """Reloads the selected feed.
+
+        This method starts the reloading in a new un-managed thread.
+        """
+        t = threading.Thread(target=self.database.reload, args=[self, [feed]])
+        t.start()
+
     def save_episodes(self, feed=None, episode=None) -> None:
         """Save a feed or episode.
 

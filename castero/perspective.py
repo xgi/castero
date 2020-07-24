@@ -178,6 +178,10 @@ class Perspective(ABC):
                 self.update_menus()
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
+        elif c == key_mapping[Config['key_reload_selected']]:
+            feed = self._feed_menu.item
+            if feed is not None:
+                self._display.reload_selected_feed(feed)
         elif c == key_mapping[Config['key_show_url']]:
             if self._active_window == 1 and self._episode_menu.item:
                 self._display.show_episode_url(self._episode_menu.item)
