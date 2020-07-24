@@ -172,12 +172,16 @@ class Perspective(ABC):
             queue.change_rate(-1, display=self._display)
         elif c == key_mapping[Config['key_add_feed']]:
             self._display.add_feed()
-        elif c == key_mapping[Config['key_delete']]:
+        elif c == key_mapping[Config['key_remove']]:
             if self._active_window == 0:
                 self._display.delete_feed(self._feed_menu.item)
                 self.update_menus()
         elif c == key_mapping[Config['key_reload']]:
             self._display.reload_feeds()
+        elif c == key_mapping[Config['key_reload_selected']]:
+            feed = self._feed_menu.item
+            if feed is not None:
+                self._display.reload_selected_feed(feed)
         elif c == key_mapping[Config['key_show_url']]:
             if self._active_window == 1 and self._episode_menu.item:
                 self._display.show_episode_url(self._episode_menu.item)
@@ -186,6 +190,11 @@ class Perspective(ABC):
                 self._display.save_episodes(feed=self._feed_menu.item)
             elif self._active_window == 1 and self._episode_menu.item:
                 self._display.save_episodes(episode=self._episode_menu.item)
+        elif c == key_mapping[Config['key_delete']]:
+            if self._active_window == 0 and self._feed_menu.item:
+                self._display.delete_episodes(feed=self._feed_menu.item)
+            elif self._active_window == 1 and self._episode_menu.item:
+                self._display.delete_episodes(episode=self._episode_menu.item)
         elif c == key_mapping[Config['key_execute']]:
             if self._active_window == 1 and self._episode_menu.item:
                 self._display.execute_command(self._episode_menu.item)

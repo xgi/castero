@@ -551,27 +551,78 @@ class Display:
             t = threading.Thread(target=self.database.reload, args=[self])
             t.start()
 
+    def reload_selected_feed(self, feed: Feed) -> None:
+        """Reloads the selected feed.
+
+        This method starts the reloading in a new un-managed thread.
+        """
+        t = threading.Thread(target=self.database.reload, args=[self, [feed]])
+        t.start()
+
     def save_episodes(self, feed=None, episode=None) -> None:
         """Save a feed or episode.
-
-        If the user is saving an episode and the episode is already saved, this
-        method will instead ask the user if they would like to delete the
-        downloaded episode. However, if the user is saving a feed, there is no
-        prompt to delete episodes, even if some are downloaded. In this case,
-        downloaded episodes are simply skipped.
 
         Exactly one of either feed or episode must be given.
 
         Args:
             feed: (optional) a feed to download all episodes of
-            episode: (optional) an episode to download or delete
+            episode: (optional) an episode to download
         """
         assert (feed is None or episode is None) and (feed is not episode)
 
         if feed is not None:
+            num_saved = 0
+            num_to_save = 0
             for episode in self.database.episodes(feed):
                 if not episode.downloaded:
-                    self._download_queue.add(episode)
+                    num_to_save += 1
+
+            if num_to_save == 0:
+                return
+
+            should_delete = self._get_y_n(
+                    "Are you sure you want to download %d"
+                    " episodes from this feed? (y/n): " % num_to_save)
+            if should_delete:
+                for episode in self.database.episodes(feed):
+                    if not episode.downloaded:
+                        self._download_queue.add(episode)
+        else:
+            if not episode.downloaded:
+                self._download_queue.add(episode)
+
+    def delete_episodes(self, feed=None, episode=None) -> None:
+        """Delete a downloaded episode, or all of those from a feed.
+
+        Exactly one of either feed or episode must be given.
+
+        Args:
+            feed: (optional) a feed to delete all episodes of
+            episode: (optional) an episode or delete
+        """
+        assert (feed is None or episode is None) and (feed is not episode)
+
+        if feed is not None:
+            num_deleted = 0
+            num_to_delete = 0
+            for episode in self.database.episodes(feed):
+                if episode.downloaded:
+                    num_to_delete += 1
+
+            if num_to_delete == 0:
+                return
+
+            should_delete = self._get_y_n(
+                    "Are you sure you want to delete %d downloaded"
+                    " episodes from this feed? (y/n): " % num_to_delete)
+            if should_delete:
+                for episode in self.database.episodes(feed):
+                    if episode.downloaded:
+                        episode.delete(self)
+                        num_deleted += 1
+                self.menus_valid = False
+                self.change_status(
+                    "Successfully deleted %d episodes" % num_deleted)
         else:
             if episode.downloaded:
                 should_delete = self._get_y_n(
@@ -579,8 +630,6 @@ class Display:
                     " episode? (y/n): ")
                 if should_delete:
                     episode.delete(self)
-            else:
-                self._download_queue.add(episode)
 
     def filter_menu(self, menu: Menu) -> None:
         menu.filter_text = self._get_input_str("Filter: ")

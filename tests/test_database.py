@@ -142,7 +142,7 @@ def test_database_reload(prevent_modification, display):
 
     display.change_status = mock.MagicMock(name="change_status")
     mydatabase.reload(display)
-    assert display.change_status.call_count == 3
+    assert display.change_status.call_count == 2
     assert mydatabase.feeds()[0].title == real_title
 
 

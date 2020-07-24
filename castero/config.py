@@ -130,6 +130,13 @@ class _Config(DataFile):
             for key in default_conf[section]:
                 default_conf_dict[key] = default_conf[section][key]
 
+        # In an update, we renamed key_delete to key_remove and added a
+        # different key_delete value. If the user has key_delete but not
+        # key_removed, we swap these values manually.
+        if 'key_delete' in conf_dict and 'key_remove' not in conf_dict:
+            conf_dict['key_remove'] = conf_dict['key_delete']
+            conf_dict['key_delete'] = default_conf_dict['key_delete']
+
         with open(self._default_path, "r") as default_conf_file:
             lines = default_conf_file.readlines()
             for line in lines:

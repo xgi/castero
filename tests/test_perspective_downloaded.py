@@ -86,7 +86,9 @@ def test_perspective_downloaded_input_keys(display):
 
     operation_keys = [
         display.KEY_MAPPING[Config['key_delete']],
+        display.KEY_MAPPING[Config['key_remove']],
         display.KEY_MAPPING[Config['key_reload']],
+        display.KEY_MAPPING[Config['key_reload_selected']],
         display.KEY_MAPPING[Config['key_save']],
         display.KEY_MAPPING[Config['key_play_selected']],
         display.KEY_MAPPING[Config['key_add_selected']],

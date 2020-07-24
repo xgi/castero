@@ -138,6 +138,10 @@ class DownloadedPerspective(Perspective):
             if self._downloaded_menu.item:
                 self._display.save_episodes(episode=self._downloaded_menu.item)
                 self._display.menus_valid = False
+        elif c == key_mapping[Config['key_delete']]:
+            if self._downloaded_menu.item:
+                self._display.delete_episodes(episode=self._downloaded_menu.item)
+                self._display.menus_valid = False
         elif c == key_mapping[Config['key_mark_played']]:
             if self._active_window == 0:
                 episode = self._downloaded_menu.item
@@ -149,7 +153,9 @@ class DownloadedPerspective(Perspective):
             episode = self._downloaded_menu.item
             if episode is not None:
                 self._display.execute_command(episode)
-        elif c == key_mapping[Config['key_delete']]:
+        elif c == key_mapping[Config['key_reload_selected']]:
+            pass
+        elif c == key_mapping[Config['key_remove']]:
             pass
         else:
             keep_running = self._generic_handle_input(c)
