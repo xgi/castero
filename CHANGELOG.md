@@ -12,6 +12,25 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.8.1 - 2020-07-26
+**Added**
+* Added the `e` key to execute a system command on an episode. Command can
+be configured with the `execute_command` option.
+* Added volume control keybinds.
+* Added config options to use a proxy.
+
+**Changed**
+* Made the help menu scrollable.
+* Made separate keybinds for saving/deleting episodes for offline
+playback (`s` and `x` by default). Existing configs will be migrated.
+
+**Fixed**
+* Fixed an issue where feeds would, on some systems, not be displayed in order.
+* Fixed poor UI performance when reloading feeds.
+* Fixed time/duration display not being properly justified - Thanks @buck10!
+* Fixed an issue importing a certain structure of OPML subscriptions.
+* Fixed an issue with episode IDs being reset when feeds are reloaded.
+
 ## 0.8.0 - 2020-02-22
 **Added**
 * Made database operations multi-threaded to improve performance, especially
