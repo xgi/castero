@@ -11,13 +11,13 @@ castero is a TUI podcast client for the terminal.
 Install from [PyPi](https://pypi.org/project/castero) with pip:
 
 ```bash
-$ pip install castero
+$ pip3 install castero
 ```
 
 Upgrading:
 
 ```bash
-$ pip install castero --upgrade
+$ pip3 install castero --upgrade
 ```
 
 ### Manual Installation
