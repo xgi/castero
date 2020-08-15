@@ -1,4 +1,5 @@
 from unittest import mock
+import time
 
 from castero.episode import Episode
 from castero.feed import Feed
@@ -24,6 +25,7 @@ def test_menu_episode_update_items(mock_color_pair, mock_A_NORMAL):
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
     source.episodes.assert_called_with(feed)
+    time.sleep(1)  # hack to wait for thread
     assert len(mymenu._items) == 2
     assert len(mymenu) == 2
 
