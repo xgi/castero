@@ -233,6 +233,10 @@ class Feed:
                         "RSS feed's channel has too many or too few"
                         " title tags; expected 1, was: "
                         + str(len(chan_title_tags)))
+                else:
+                    if channel.find("title").text is None:
+                        raise FeedStructureError(
+                        "RSS feed's channel has no title text")
                 if len(chan_link_tags) > 1:
                     raise FeedStructureError(
                         "RSS feed's channel has too many"

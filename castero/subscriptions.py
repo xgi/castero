@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ElementTree
 from typing import List
 
-from castero.feed import Feed, FeedDownloadError, FeedParseError
+from castero.feed import Feed, FeedDownloadError, FeedStructureError, FeedParseError
 
 
 class SubscriptionsError(Exception):
@@ -137,6 +137,8 @@ class Subscriptions():
                     self._feeds.append(feed)
                     yield feed
                 except FeedDownloadError as e:
+                    yield (entry.attrib['xmlUrl'], e)
+                except FeedStructureError as e:
                     yield (entry.attrib['xmlUrl'], e)
                 except FeedParseError as e:
                     yield (entry.attrib['xmlUrl'], e)
