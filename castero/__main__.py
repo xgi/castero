@@ -35,7 +35,7 @@ def import_subscriptions(path: str, database: Database) -> None:
             database.replace_episodes(feed, episodes)
             print("Added \"%s\" with %d episodes" % (str(feed), len(episodes)))
         else:
-            print("ERROR: Failed to download %s -- %s" %
+            print("ERROR: Failed to load %s -- %s" %
                   (str(generated[0]), str(generated[1])))
 
     print("Imported %d feeds" % len(subscriptions.feeds))

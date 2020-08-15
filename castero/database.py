@@ -271,7 +271,7 @@ class Database():
 
         feeds = []
         for row in cursor.fetchall():
-            feeds.append(Feed(
+            feed = Feed(
                 url=row[0] if row[0].startswith('http') else None,
                 file=row[0] if not row[0].startswith('http') else None,
                 title=row[1],
@@ -279,7 +279,13 @@ class Database():
                 link=row[3],
                 last_build_date=row[4],
                 copyright=row[5]
-            ))
+            )
+
+            if feed.title:
+                feeds.append(feed)
+            else:
+                pass
+                self.delete_feed(feed)
         return feeds
 
     def episodes(self, feed: Feed) -> List[Episode]:
