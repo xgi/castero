@@ -4,6 +4,7 @@ import threading
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.menu import Menu
+from castero import helpers
 
 
 class EpisodeMenu(Menu):
@@ -106,9 +107,10 @@ class EpisodeMenu(Menu):
         # the above may have taken some time; ensure the user hasn't
         # selected another feed
         if self._feed == feed:
-            self._episodes = episodes
-            if self._inverted:
-                self._episodes.reverse()
+            self._episodes = sorted(
+                episodes, reverse=not self._inverted,
+                key=lambda ep: helpers.datetime_from_rfc822(ep.pubdate))
+
             self._sanitize()
             self.display()
 
