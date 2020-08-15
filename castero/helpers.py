@@ -1,5 +1,7 @@
 from bs4 import BeautifulSoup
 import re
+from email.utils import parsedate_to_datetime
+from datetime import datetime
 
 
 def third(n) -> int:
@@ -79,3 +81,21 @@ def html_to_plain(html) -> str:
     """
     soup = BeautifulSoup(html, 'html.parser')
     return soup.get_text()
+
+
+def datetime_from_rfc822(date) -> datetime:
+    """Convert a date string in RFC822 format into a datetime.
+
+    https://www.w3.org/Protocols/rfc822/
+    https://validator.w3.org/feed/docs/error/InvalidRFC2822Date.html
+
+    Args:
+        date: string for the date/time in RFC822 format
+    
+    Returns:
+        datetime: a matching datetime object, or -1
+    """
+    try:
+        return parsedate_to_datetime(date)
+    except (TypeError, ValueError):
+        return -1
