@@ -12,7 +12,8 @@ class Queue:
     def __init__(self, display) -> None:
         self._players = []
         self._display = display
-        self._volume = 100
+        self._volume = int(Config["default_volume"])
+        self._sanitize_volume()
 
     def __getitem__(self, index):
         return self._players[index]
@@ -129,10 +130,7 @@ class Queue:
         # to that amount. This ensures the player volume is always derived
         # from our value.
         self._volume += int(Config["volume_adjust_distance"]) * direction
-        if self._volume > 100:
-            self._volume = 100
-        elif self._volume < 0:
-            self._volume = 0
+        self._sanitize_volume()
         
         if self.first is not None:
             self.first.set_volume(self._volume)
@@ -162,6 +160,14 @@ class Queue:
                         (self.first.duration / 1000):
                     self.next()
                     self.play()
+
+    def _sanitize_volume(self) -> None:
+        """Ensure the volume is an acceptable value (0-100 inclusive).
+        """
+        if self._volume > 100:
+            self._volume = 100
+        elif self._volume < 0:
+            self._volume = 0
 
     @property
     def first(self) -> Player:
