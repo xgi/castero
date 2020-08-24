@@ -12,6 +12,15 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.8.2 - 2020-08-23
+**Added**
+* Added a config option for the default playback volume.
+
+**Fixed**
+* Fixed new episodes not being properly sorted in the menu.
+* Fixed detection for feeds with an empty title tag (they still aren't
+allowed, but we explicitly check for this now).
+
 ## 0.8.1 - 2020-07-26
 **Added**
 * Added the `e` key to execute a system command on an episode. Command can
