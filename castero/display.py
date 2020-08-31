@@ -694,6 +694,7 @@ class Display:
         self._queue.stop()
 
         self.database.replace_queue(self._queue)
+        self.database.close()
 
         curses.nocbreak()
         self._stdscr.keypad(False)
