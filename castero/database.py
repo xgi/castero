@@ -76,6 +76,9 @@ class Database():
         to the database file here.
         """
         if self._using_memory:
+            DataFile.ensure_path(self.PATH)
+            os.rename(self.PATH, self.PATH + ".old")
+
             file_conn = sqlite3.connect(self.PATH)
             self._copy_database(self._conn, file_conn)
         self._conn.close()

@@ -65,10 +65,6 @@ def test_perspective_queue_input_keys(display):
     display._queue = queue
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    ret_val = perspective.handle_input(ord('q'))
-    assert not ret_val
-    display._stdscr.reset_mock()
-
     ret_val = perspective.handle_input(ord('h'))
     assert ret_val
     display._stdscr.reset_mock()
@@ -107,6 +103,10 @@ def test_perspective_queue_input_keys(display):
     for key in operation_keys:
         ret_val = perspective.handle_input(key)
         assert ret_val
+
+    ret_val = perspective.handle_input(ord('q'))
+    assert not ret_val
+    display._stdscr.reset_mock()
 
 
 def test_perspective_queue_draw_metadata(display):

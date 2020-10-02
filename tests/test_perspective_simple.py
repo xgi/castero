@@ -37,10 +37,6 @@ def test_perspective_simple_input_keys(display):
     display._get_input_str = mock.Mock(return_value="")
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    ret_val = perspective.handle_input(ord('q'))
-    assert not ret_val
-    display._stdscr.reset_mock()
-
     ret_val = perspective.handle_input(ord('h'))
     assert ret_val
     display._stdscr.reset_mock()
@@ -85,6 +81,10 @@ def test_perspective_simple_input_keys(display):
         assert perspective.handle_input(key)
         display._active_window = 1
         assert perspective.handle_input(key)
+
+    ret_val = perspective.handle_input(ord('q'))
+    assert not ret_val
+    display._stdscr.reset_mock()
 
 
 def test_perspective_simple_get_active_menu(display):
