@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 import sqlite3
 import grequests
 from typing import List
@@ -98,6 +99,10 @@ class Database():
     def _copy_database(self, from_connection, to_connection):
         """Copy database contents from one connection to another.
         """
+        if sys.version_info.major == 3 and sys.version_info.minor >= 7:
+            from_connection.backup(to_connection)
+            return
+
         cursor = from_connection.cursor()
         cur_version = cursor.execute('pragma user_version').fetchone()[0]
         tempfile = StringIO()
