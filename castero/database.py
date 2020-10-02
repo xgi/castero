@@ -1,9 +1,12 @@
 import json
 import os
+import sys
 import sqlite3
 import grequests
 from typing import List
+from io import StringIO
 
+from castero import helpers
 from castero.config import Config
 from castero.datafile import DataFile
 from castero.episode import Episode
@@ -47,13 +50,38 @@ class Database():
         """
         existed = os.path.exists(self.PATH)
         DataFile.ensure_path(self.PATH)
-        self._conn = sqlite3.connect(self.PATH, check_same_thread=False)
-        self._conn.execute("PRAGMA foreign_keys = ON")
+
+        self._using_memory = not helpers.is_true(
+            Config["restrict_memory_usage"])
+
+        file_conn = sqlite3.connect(self.PATH, check_same_thread=False)
+        file_conn.execute("PRAGMA foreign_keys = ON")
+
+        if self._using_memory:
+            memory_conn = sqlite3.connect(":memory:", check_same_thread=False)
+            self._copy_database(file_conn, memory_conn)
+            self._conn = memory_conn
+        else:
+            self._conn = file_conn
 
         if not existed and os.path.exists(self.OLD_PATH):
             self._create_from_old_feeds()
 
         self.migrate()
+
+    def close(self):
+        """Close the database.
+
+        If we were using an in-memory copy of the data, it is written
+        to the database file here.
+        """
+        if self._using_memory:
+            DataFile.ensure_path(self.PATH)
+            os.rename(self.PATH, self.PATH + ".old")
+
+            file_conn = sqlite3.connect(self.PATH)
+            self._copy_database(self._conn, file_conn)
+        self._conn.close()
 
     def migrate(self):
         """Apply SQL migrations.
@@ -70,6 +98,26 @@ class Database():
                 path = os.path.join(self.MIGRATIONS_DIR, migration)
                 with open(path, 'rt') as f:
                     cursor.executescript(f.read())
+
+    def _copy_database(self, from_connection, to_connection):
+        """Copy database contents from one connection to another.
+        """
+        if sys.version_info.major == 3 and sys.version_info.minor >= 7:
+            from_connection.backup(to_connection)
+            return
+
+        cursor = from_connection.cursor()
+        cur_version = cursor.execute('pragma user_version').fetchone()[0]
+        tempfile = StringIO()
+        for line in from_connection.iterdump():
+            tempfile.write('%s\n' % line)
+        from_connection.close()
+        tempfile.seek(0)
+
+        to_connection.execute("PRAGMA user_version = " + str(cur_version))
+        to_connection.cursor().executescript(tempfile.read())
+        to_connection.commit()
+        to_connection.execute("PRAGMA foreign_keys = ON")
 
     def _create_from_old_feeds(self):
         """Create database from deprecated Feeds format.
@@ -205,31 +253,31 @@ class Database():
 
         if len(episodes_without_id) > 0:
             cursor.executemany(self.SQL_EPISODE_REPLACE_NOID,
-                ((
-                    episode.title,
-                    feed.key,
-                    episode.description,
-                    episode.link,
-                    episode.pubdate,
-                    episode.copyright,
-                    episode.enclosure,
-                    episode.played
-                ) for episode in episodes_without_id)
-            )
+                               ((
+                                   episode.title,
+                                   feed.key,
+                                   episode.description,
+                                   episode.link,
+                                   episode.pubdate,
+                                   episode.copyright,
+                                   episode.enclosure,
+                                   episode.played
+                               ) for episode in episodes_without_id)
+                               )
         if len(episodes_with_id) > 0:
             cursor.executemany(self.SQL_EPISODE_REPLACE,
-                ((
-                    episode.ep_id,
-                    episode.title,
-                    feed.key,
-                    episode.description,
-                    episode.link,
-                    episode.pubdate,
-                    episode.copyright,
-                    episode.enclosure,
-                    episode.played
-                ) for episode in episodes_with_id)
-            )
+                               ((
+                                   episode.ep_id,
+                                   episode.title,
+                                   feed.key,
+                                   episode.description,
+                                   episode.link,
+                                   episode.pubdate,
+                                   episode.copyright,
+                                   episode.enclosure,
+                                   episode.played
+                               ) for episode in episodes_with_id)
+                               )
         self._conn.commit()
 
     def delete_queue(self) -> None:

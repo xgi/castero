@@ -62,10 +62,6 @@ def test_perspective_downloaded_input_keys(display):
 
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    ret_val = perspective.handle_input(ord('q'))
-    assert not ret_val
-    display._stdscr.reset_mock()
-
     ret_val = perspective.handle_input(ord('h'))
     assert ret_val
     display._stdscr.reset_mock()
@@ -110,6 +106,10 @@ def test_perspective_downloaded_input_keys(display):
     for key in operation_keys:
         display._active_window = 0
         assert perspective.handle_input(key)
+
+    ret_val = perspective.handle_input(ord('q'))
+    assert not ret_val
+    display._stdscr.reset_mock()
 
 
 def test_perspective_downloaded_draw_metadata(display):
