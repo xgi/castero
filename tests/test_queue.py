@@ -166,3 +166,21 @@ def test_queue_seek_backward(display):
     myqueue.add(player1)
     myqueue.seek(-1)
     player1.seek.assert_called_with(-1, int(Config["seek_distance_backward"]))
+
+
+def test_queue_change_rate(display):
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+
+    myqueue.add(player1)
+    myqueue.change_rate(-1, display)
+    player1.change_rate.assert_called_with(-1, display=display)
+
+
+def test_queue_change_volume(display):
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+
+    myqueue.add(player1)
+    myqueue.change_volume(1)
+    assert player1.set_volume.call_count == 1
