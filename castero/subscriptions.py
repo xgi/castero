@@ -1,4 +1,4 @@
-import xml.etree.ElementTree as ElementTree
+from lxml import etree
 from typing import List
 
 from castero.feed import Feed, FeedDownloadError, FeedStructureError, FeedParseError
@@ -51,11 +51,11 @@ class Subscriptions():
         """
         self._tree = None
         try:
-            self._tree = ElementTree.parse(path)
+            self._tree = etree.parse(path)
         except IOError:
             raise SubscriptionsLoadError(
                 "An I/O exception occurred when attempting to load the file")
-        except ElementTree.ParseError:
+        except etree.ParseError:
             raise SubscriptionsParseError(
                 "Unable to parse text as an XML document")
 
@@ -91,7 +91,7 @@ class Subscriptions():
         Args:
             feeds: the list of feeds to include in the document
         """
-        builder = ElementTree.TreeBuilder()
+        builder = etree.TreeBuilder()
 
         builder.start("opml", {'version': '2.0'})
         builder.start("head", {})
@@ -111,7 +111,7 @@ class Subscriptions():
         builder.end("opml")
 
         # .close returns an Element, so we need to cast to an ElementTree
-        self._tree = ElementTree.ElementTree(builder.close())
+        self._tree = etree.ElementTree(builder.close())
 
     def parse(self) -> None:
         """Parse the XML tree into a list of feeds.
