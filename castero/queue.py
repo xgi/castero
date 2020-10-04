@@ -131,7 +131,7 @@ class Queue:
         # from our value.
         self._volume += int(Config["volume_adjust_distance"]) * direction
         self._sanitize_volume()
-        
+
         if self.first is not None:
             self.first.set_volume(self._volume)
 

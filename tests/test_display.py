@@ -173,3 +173,8 @@ def test_display_execute_command(display):
         os.remove(fname)
     assert successful
 
+
+def test_display_color_numbers(display):
+    assert display.color_number("2") == 2
+    assert display.color_number("3") == 3
+    assert display.color_number(str(curses.COLORS)) == -1

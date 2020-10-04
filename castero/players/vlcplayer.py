@@ -1,6 +1,5 @@
 import time
 
-from castero.config import Config
 from castero.player import Player, PlayerDependencyError
 
 
@@ -112,7 +111,7 @@ class VLCPlayer(Player):
         """
         if self._player is not None:
             self._player.set_rate(rate)
-            
+
     def set_volume(self, volume) -> int:
         """Set the player volume.
 

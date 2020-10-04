@@ -204,3 +204,9 @@ def test_episode_download_with_display_no_enclosure(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
                                                    "downloaded")
     assert successful
+
+
+def test_episode_metadata_no_error():
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    episode = myfeed.parse_episodes()[0]
+    assert isinstance(episode.metadata, str)

@@ -1,6 +1,5 @@
 import time
 
-from castero.config import Config
 from castero.player import Player, PlayerDependencyError
 
 

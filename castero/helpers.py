@@ -91,7 +91,7 @@ def datetime_from_rfc822(date) -> datetime:
 
     Args:
         date: string for the date/time in RFC822 format
-    
+
     Returns:
         datetime: a matching datetime object, or -1
     """

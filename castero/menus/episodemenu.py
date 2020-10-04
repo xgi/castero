@@ -78,7 +78,7 @@ class EpisodeMenu(Menu):
 
         return self._filtered_episodes[self._selected].metadata
 
-    def update_items(self, feed: Feed):
+    def update_items(self, feed):
         """Called by the parent menu (the feeds menu) to update our items.
 
         Overrides method from Menu; see documentation in that class.
