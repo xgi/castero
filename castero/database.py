@@ -332,7 +332,6 @@ class Database():
             if feed.title:
                 feeds.append(feed)
             else:
-                pass
                 self.delete_feed(feed)
         return feeds
 

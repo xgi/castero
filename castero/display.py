@@ -571,7 +571,6 @@ class Display:
         assert (feed is None or episode is None) and (feed is not episode)
 
         if feed is not None:
-            num_saved = 0
             num_to_save = 0
             for episode in self.database.episodes(feed):
                 if not episode.downloaded:
