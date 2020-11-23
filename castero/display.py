@@ -95,7 +95,7 @@ class Display:
         curses.start_color()
         curses.use_default_colors()
         curses.noecho()
-        curses.curs_set(0)
+        self._curs_set(0)
         curses.cbreak()
         self._stdscr.keypad(True)
 
@@ -384,7 +384,7 @@ class Display:
         assert self._footer_window is not None
         assert isinstance(prompt, str)
 
-        curses.curs_set(1)
+        self._curs_set(1)
         self._stdscr.timeout(-1)  # disable timeouts while waiting for entry
 
         # display input prompt
@@ -427,7 +427,7 @@ class Display:
 
         self._stdscr.timeout(self.INPUT_TIMEOUT)
         self._footer_window.clear()
-        curses.curs_set(0)
+        self._curs_set(0)
 
         return entry_pad.instr(0, 0, entry_pad.getmaxyx()[1]) \
             .decode('utf-8').strip()
@@ -445,7 +445,7 @@ class Display:
         assert isinstance(prompt, str)
 
         curses.echo()
-        curses.curs_set(1)
+        self._curs_set(1)
 
         self._footer_window.addstr(
             1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
@@ -454,10 +454,22 @@ class Display:
         char = self._footer_window.getch()
 
         self._footer_window.clear()
-        curses.curs_set(0)
+        self._curs_set(0)
         curses.noecho()
 
         return char == ord('y')
+
+    def _curs_set(self, visibility: int) -> None:
+        """Safely set the appearance of the cursor.
+
+        Args:
+            visibility: 0 (invisible), 1 (normal mode) or 2 (high visibility)
+        """
+        if hasattr(curses, 'curs_set'):
+            try:
+                curses.curs_set(visibility)
+            except curses.error:
+                pass
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
