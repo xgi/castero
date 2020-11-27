@@ -4,14 +4,16 @@ workflows:
   version: 2.1
   test:
     jobs:
+      - test-three-nine # python-3.9
+      - test-three-eight # python-3.8
       - test-three-seven # python-3.7
       - test-three-six   # python-3.6
       - test-three-five  # python-3.5
 
 jobs:
-  test-three-seven: &test-template
+  test-three-nine: &test-template
     docker:
-      - image: circleci/python:3.7-buster
+      - image: circleci/python:3.9-buster
 
     working_directory: ~/castero
 
@@ -59,6 +61,16 @@ jobs:
           command: |
             . venv/bin/activate
             python-codacy-coverage -r coverage.xml
+
+  test-three-eight:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.8-buster
+
+  test-three-seven:
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7-buster
 
   test-three-six:
     <<: *test-template
