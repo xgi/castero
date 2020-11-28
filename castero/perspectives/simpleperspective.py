@@ -27,6 +27,8 @@ class SimplePerspective(Perspective):
         self._episode_window = None
         self._feed_menu = None
         self._episode_menu = None
+        self._queue_unplayed_feed_episodes = helpers.is_true(
+            Config["add_only_unplayed_episodes"])
 
     def create_windows(self) -> None:
         """Create and set basic parameters for the windows.
@@ -193,7 +195,12 @@ class SimplePerspective(Perspective):
         if self._active_window == 0:
             feed = self._feed_menu.item
             if feed is not None:
-                for episode in self._display.database.episodes(feed):
+                if self._queue_unplayed_feed_episodes:
+                    episodes = self._display.database.unplayed_episodes(feed)
+                else:
+                    episodes = self._display.database.episodes(feed)
+
+                for episode in episodes:
                     player = Player.create_instance(
                         self._display.AVAILABLE_PLAYERS, str(episode),
                         episode.get_playable(), episode)

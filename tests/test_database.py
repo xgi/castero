@@ -60,6 +60,22 @@ def test_database_episodes_length(prevent_modification):
     assert len(mydatabase.episodes(feed2)) == 1
 
 
+def test_database_feed_unplayed_episode_length(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+    myfeed_path = my_dir + "/feeds/valid_basic.xml"
+    myfeed = Feed(file=myfeed_path)
+    episodes = myfeed.parse_episodes()
+
+    mydatabase.replace_feed(myfeed)
+    mydatabase.replace_episode(myfeed, episodes[0])
+    mydatabase.replace_episode(myfeed, episodes[1])
+    assert len(mydatabase.unplayed_episodes(myfeed)) == 2
+    episodes[0].played = True
+    mydatabase.replace_episode(myfeed, episodes[0])
+    assert len(mydatabase.unplayed_episodes(myfeed)) == 1
+
+
 def test_database_add_feed(prevent_modification):
     copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
     mydatabase = Database()
