@@ -71,8 +71,9 @@ def test_database_feed_unplayed_episode_length(prevent_modification):
     mydatabase.replace_episode(myfeed, episodes[0])
     mydatabase.replace_episode(myfeed, episodes[1])
     assert len(mydatabase.unplayed_episodes(myfeed)) == 2
-    episodes[0].played = True
-    mydatabase.replace_episode(myfeed, episodes[0])
+    feed_episodes = mydatabase.episodes(myfeed)
+    feed_episodes[0].played = 1
+    mydatabase.replace_episode(myfeed, feed_episodes[0])
     assert len(mydatabase.unplayed_episodes(myfeed)) == 1
 
 
