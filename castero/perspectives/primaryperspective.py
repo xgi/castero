@@ -29,6 +29,8 @@ class PrimaryPerspective(Perspective):
         self._feed_menu = None
         self._episode_menu = None
         self._metadata_updated = False
+        self._queue_unplayed_feed_episodes = helpers.is_true(
+            Config["add_only_unplayed_episodes"])
 
     def create_windows(self) -> None:
         """Create and set basic parameters for the windows.
@@ -213,10 +215,16 @@ class PrimaryPerspective(Perspective):
         This method will not clear the queue prior to adding the new player(s),
         nor will it play the episodes after running.
         """
+
         if self._active_window == 0:
             feed = self._feed_menu.item
             if feed is not None:
-                for episode in self._display.database.episodes(feed):
+                if self._queue_unplayed_feed_episodes:
+                    episodes = self._display.database.unplayed_episodes(feed)
+                else:
+                    episodes = self._display.database.episodes(feed)
+
+                for episode in episodes:
                     player = Player.create_instance(
                         self._display.AVAILABLE_PLAYERS, str(episode),
                         episode.get_playable(), episode)

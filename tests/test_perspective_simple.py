@@ -135,6 +135,46 @@ def test_perspective_simple_create_player(display):
     assert display.queue.length == 1
 
 
+def test_perspective_simple_queue_unplayed(display):
+    perspective = get_simple_perspective(display)
+
+    feed = Feed(url="feed url",
+                title="feed title",
+                description="feed description",
+                link="feed link",
+                last_build_date="feed last_build_date",
+                copyright="feed copyright",
+                episodes=[])
+    episode1 = Episode(feed,
+                       title="episode1 title",
+                       description="episode1 description",
+                       link="episode1 link",
+                       pubdate="episode1 pubdate",
+                       copyright="episode1 copyright",
+                       enclosure="episode1 enclosure")
+    episode2 = Episode(feed,
+                       title="episode2 title",
+                       description="episode2 description",
+                       link="episode2 link",
+                       pubdate="episode2 pubdate",
+                       copyright="episode2 copyright",
+                       enclosure="episode2 enclosure",
+                       played=True)
+    display.display()
+    display.database.replace_feed(feed)
+    display.database.replace_episodes(feed, [episode1, episode2])
+    perspective._feed_menu.update_items(None)
+    perspective._episode_menu.update_items(feed)
+    perspective._active_window = 0
+    perspective._queue_unplayed_feed_episodes = False
+    perspective._create_player_from_selected()
+    assert display.queue.length == 2
+    display.queue.clear()
+    perspective._queue_unplayed_feed_episodes = True
+    perspective._create_player_from_selected()
+    assert display.queue.length == 1
+
+
 def test_perspective_simple_invert_episodes(display):
     perspective = get_simple_perspective(display)
     perspective._active_window = 1

@@ -33,6 +33,7 @@ class Database():
 
     SQL_EPISODES_BY_ID = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
     SQL_EPISODES_BY_FEED = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=? order by id"
+    SQL_UNPLAYED_EPISODES_BY_FEED = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=? and played=0 order by id"
     SQL_EPISODE_REPLACE = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?,?)"
     SQL_EPISODE_REPLACE_NOID = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?)"
     SQL_FEEDS_ALL = "select key, title, description, link, last_build_date, copyright from feed order by lower(title)"
@@ -347,9 +348,32 @@ class Database():
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_EPISODES_BY_FEED, (feed.key,))
 
-        episodes = []
-        for row in cursor.fetchall():
-            episodes.append(Episode(
+        rows = cursor.fetchall()
+        return self._create_feed_episode_list(feed, rows)
+
+    def unplayed_episodes(self, feed: Feed) -> List[Episode]:
+        """Retrieve all unplayed episodes for a feed.
+
+        Args:
+            feed: the Feed to retrieve episodes of
+
+        Returns:
+            List[Episode]: all Episode's of the given Feed in the database
+        """
+        cursor = self._conn.cursor()
+        cursor.execute(self.SQL_UNPLAYED_EPISODES_BY_FEED, (feed.key,))
+        rows = cursor.fetchall()
+        return self._create_feed_episode_list(feed, rows)
+
+    def _create_feed_episode_list(self, feed: Feed, episode_rows) -> List[Episode]:
+        """Create a list of episode from feed episode query rows
+        Args:
+            feed: The feed the episodes are from,
+            episode_rows: Query result rows
+        Returns:
+            List[Episode]: List of the episodes
+        """
+        return [Episode(
                 feed,
                 ep_id=row[0],
                 title=row[1],
@@ -358,9 +382,8 @@ class Database():
                 pubdate=row[4],
                 copyright=row[5],
                 enclosure=row[6],
-                played=row[7]
-            ))
-        return episodes
+                played=row[7])
+                for row in episode_rows]
 
     def feed(self, key) -> Feed:
         """Retrieve a feed by key.
