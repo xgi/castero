@@ -12,7 +12,7 @@ class Episode:
 
     def __init__(self, feed, ep_id=None, title=None, description=None,
                  link=None, pubdate=None, copyright=None, enclosure=None,
-                 played=False) -> None:
+                 played=False, progress=None) -> None:
         """
         At least one of a title or description must be specified.
 
@@ -37,7 +37,9 @@ class Episode:
         self._copyright = copyright
         self._enclosure = enclosure
         self._played = played
+        self._progress = progress
         self._downloaded = None
+        self.PROGRESS_INDICATOR = "*"
 
     def __str__(self) -> str:
         """Represent this object as a single-line string.
@@ -49,7 +51,12 @@ class Episode:
             representation = str(self._title)
         else:
             representation = str(self._description)
-        return representation.split('\n')[0]
+
+        representation = representation.split('\n')[0]
+
+        if self._progress is not None and self._progress > 0:
+            representation = "{} {}".format(representation, self.PROGRESS_INDICATOR)
+        return representation
 
     def _feed_directory(self) -> str:
         """Gets the path to the downloaded episode's feed directory.
@@ -267,6 +274,18 @@ class Episode:
     @played.setter
     def played(self, played) -> None:
         self._played = played
+
+    @property
+    def progress(self) -> int:
+        """int: progress in second gathered from database"""
+        progress = self._progress
+        if progress is None:
+            progress = 0
+        return progress
+
+    @progress.setter
+    def progress(self, progress) -> None:
+        self._progress = progress
 
     @property
     def metadata(self) -> str:

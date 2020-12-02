@@ -63,6 +63,14 @@ def test_episode_str_title():
     assert str(myepisode) == title
 
 
+def test_episode_str_title_with_progress():
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    myepisode = Episode(myfeed, title=title)
+    myepisode.progress = 1000
+    assert str(myepisode) == \
+        "{} {}".format(title, myepisode.PROGRESS_INDICATOR)
+
+
 def test_episode_str_description():
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     myepisode = Episode(myfeed, description=description)
@@ -210,3 +218,16 @@ def test_episode_metadata_no_error():
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     episode = myfeed.parse_episodes()[0]
     assert isinstance(episode.metadata, str)
+
+
+def test_episode_without_progress():
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    episode = myfeed.parse_episodes()[0]
+    assert episode.progress == 0
+
+
+def test_episode_progress():
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    episode = myfeed.parse_episodes()[0]
+    episode._progress = 1000
+    assert episode.progress == 1000

@@ -78,6 +78,7 @@ class Queue:
     def stop(self) -> None:
         """Stops the first player in the queue."""
         if self.first is not None:
+            self.update_progress()
             self.first.stop()
 
     def toggle(self) -> None:
@@ -150,6 +151,14 @@ class Queue:
             self._players.remove(player)
         return result
 
+    def update_progress(self) -> None:
+        """Update progress of the current player
+        """
+        if self.first is not None and self.first.duration is not None:
+            episode = self.first.episode
+            progress = self.first.time
+            self._display.database.replace_progress(episode, progress)
+
     def update(self) -> None:
         """Checks the status of the current player.
         """
@@ -160,6 +169,7 @@ class Queue:
                         (self.first.duration / 1000):
                     self.next()
                     self.play()
+        self.update_progress()
 
     def _sanitize_volume(self) -> None:
         """Ensure the volume is an acceptable value (0-100 inclusive).

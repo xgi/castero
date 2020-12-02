@@ -236,3 +236,11 @@ class PrimaryPerspective(Perspective):
                     self._display.AVAILABLE_PLAYERS, str(episode),
                     episode.get_playable(), episode)
                 self._display.queue.add(player)
+
+    def _clear_progress_from_selected(self) -> None:
+        if self._active_window == 1:
+            episode = self._episode_menu.item
+            if episode is not None:
+                episode.progress = 0
+                self._display.database.replace_progress(episode, 0)
+                self._episode_window.refresh()

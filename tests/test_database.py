@@ -147,6 +147,14 @@ def test_database_add_episodes(prevent_modification):
     assert len(mydatabase.episodes(myfeed)) == len(episodes)
 
 
+def test_database_add_episode_progress(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+    ep = mydatabase.episode(1)
+    mydatabase.replace_progress(ep, 1000)
+    ep = mydatabase.episode(1)
+    assert ep.progress == 1000
+
 def test_database_reload(prevent_modification, display):
     mydatabase = Database()
 
