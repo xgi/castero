@@ -63,7 +63,6 @@ class Queue:
         """Plays the first player in the queue.
         """
         if self.first is not None:
-            self.first.episode.played = True
             self._display.modified_episodes.append(self.first.episode)
             self.first.play()
             self.first.set_volume(self.volume)
@@ -172,6 +171,7 @@ class Queue:
                 if (self.first.time / 1000) + 1 >= \
                         (self.first.duration / 1000):
                     # TODO(eriks): clear progress to 0
+                    self.first.episode.played = True
                     self.next()
                     self.play()
 
