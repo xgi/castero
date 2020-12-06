@@ -147,21 +147,26 @@ class Perspective(ABC):
             self._get_active_menu().move_page(-1)
             self._metadata_updated = False
         elif c == key_mapping[Config['key_clear']]:
+            self.update_current_episode_progress()
             queue.stop()
             queue.clear()
         elif c == key_mapping[Config['key_pause_play']] or \
                 c == key_mapping[Config['key_pause_play_alt']]:
+            self.update_current_episode_progress()
             queue.toggle()
         elif c == key_mapping[Config['key_next']]:
+            self.update_current_episode_progress()
             queue.stop()
             queue.next()
             queue.play()
         elif c == key_mapping[Config['key_seek_forward']] or \
                 c == key_mapping[Config['key_seek_forward_alt']]:
             queue.seek(1)
+            self.update_current_episode_progress()
         elif c == key_mapping[Config['key_seek_backward']] or \
                 c == key_mapping[Config['key_seek_backward_alt']]:
             queue.seek(-1)
+            self.update_current_episode_progress()
         elif c == key_mapping[Config['key_volume_increase']]:
             queue.change_volume(1)
         elif c == key_mapping[Config['key_volume_decrease']]:
@@ -216,6 +221,7 @@ class Perspective(ABC):
                     episodes = self._display.database.episodes(feed)
                     for episode in episodes:
                         episode.played = not episode.played
+                        self._clear_episode_progress(episode)
                     self._display.modified_episodes.extend(episodes)
             elif self._active_window == 1:
                 episode = self._episode_menu.item
@@ -223,6 +229,7 @@ class Perspective(ABC):
                     episode.played = not episode.played
                     self._display.modified_episodes.append(episode)
                     self._episode_menu.move(-1)
+                    self._clear_episode_progress(episode)
 
         return keep_running
 
@@ -286,3 +293,17 @@ class Perspective(ABC):
 
             window.addstr(y, 0, line, attr)
             y += 1
+
+    def update_current_episode_progress(self) -> None:
+        """Update progress of the first player in queue
+        """
+        (episode, progress) = self._display.queue.get_episode_progress()
+        if episode is not None and progress is not None:
+            episode.progress = progress
+            self._display.database.replace_progress(episode, progress)
+
+    def _clear_episode_progress(self, episode) -> None:
+        """Update progress of the first player in queue
+        """
+        episode.progress = 0
+        self._display.database.replace_progress(episode, 0)

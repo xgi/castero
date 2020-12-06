@@ -148,6 +148,14 @@ class Player:
         """
 
     @abstractmethod
+    def seek_from_start(self, amount) -> None:
+        """Seek forward amount from start.
+
+        Args:
+            amount: the amount of seconds to seek
+        """
+
+    @abstractmethod
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.
 

@@ -69,6 +69,14 @@ def test_player_vlc_seek():
         myplayer._player.get_time() + 10 * 1000)
 
 
+def test_player_vlc_seek_from_start():
+    myplayer = VLCPlayer("player1 title", "player1 path", episode)
+    myplayer._player = mock.MagicMock()
+
+    myplayer.seek_from_start(10)
+    myplayer._player.set_time.assert_called_with(10 * 1000)
+
+
 def test_player_vlc_change_rate_increase():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()

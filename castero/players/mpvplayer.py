@@ -82,6 +82,15 @@ class MPVPlayer(Player):
         if self._player is not None:
             self._player.seek(direction * amount)
 
+    def seek_from_start(self, amount) -> None:
+        """ forward or backward in the media.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        if self._player is not None:
+            self._player.wait_until_playing()
+            self._player.seek(amount)
+
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.
 

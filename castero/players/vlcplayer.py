@@ -91,6 +91,14 @@ class VLCPlayer(Player):
                 self._player.get_time() + (direction * amount * 1000)
             )
 
+    def seek_from_start(self, amount) -> None:
+        """Seek forward amount from start.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        if self._player is not None:
+            self._player.set_time((amount * 1000))
+
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.
 

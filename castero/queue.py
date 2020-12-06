@@ -69,6 +69,19 @@ class Queue:
             self.first.set_volume(self.volume)
             self.first.set_rate(float(Config["default_playback_speed"]))
 
+            if self.first.time == 0:
+                self._goto_progress()
+
+    def _goto_progress(self):
+        """Seek forward to progress from start of episode
+
+        Args:
+        """
+        progress = self.first.episode.progress
+        if progress is not None and progress != 0:
+            MILLISECONDS_IN_SECONDS = 1000
+            self.first.seek_from_start(self.first.episode.progress / MILLISECONDS_IN_SECONDS)
+
     def pause(self) -> None:
         """Pauses the first player in the queue.
         """
@@ -78,7 +91,6 @@ class Queue:
     def stop(self) -> None:
         """Stops the first player in the queue."""
         if self.first is not None:
-            self.update_progress()
             self.first.stop()
 
     def toggle(self) -> None:
@@ -151,14 +163,6 @@ class Queue:
             self._players.remove(player)
         return result
 
-    def update_progress(self) -> None:
-        """Update progress of the current player
-        """
-        if self.first is not None and self.first.duration is not None:
-            episode = self.first.episode
-            progress = self.first.time
-            self._display.database.replace_progress(episode, progress)
-
     def update(self) -> None:
         """Checks the status of the current player.
         """
@@ -167,9 +171,14 @@ class Queue:
             if self.first.duration > 0:
                 if (self.first.time / 1000) + 1 >= \
                         (self.first.duration / 1000):
+                    # TODO(eriks): clear progress to 0
                     self.next()
                     self.play()
-        self.update_progress()
+
+    def get_episode_progress(self):
+        if self.first is not None:
+            return (self.first.episode, self.first.time)
+        return (None, None)
 
     def _sanitize_volume(self) -> None:
         """Ensure the volume is an acceptable value (0-100 inclusive).
