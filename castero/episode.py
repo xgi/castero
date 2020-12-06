@@ -296,8 +296,7 @@ class Episode:
         description = description.replace('\n', '')
         downloaded = "Episode downloaded and available for offline playback." \
             if self.downloaded else "Episode not downloaded."
-
-        return \
+        metadata = \
             "!cb{title}\n" \
             "{pubdate}\n\n" \
             "{link}\n\n" \
@@ -313,3 +312,13 @@ class Episode:
                 copyright=self.copyright,
                 downloaded=downloaded,
                 description=description)
+
+        if self.progress is not None and self.progress > 0:
+            progress_string = helpers.seconds_to_time(self.progress / 1000)
+
+            metadata += "\n" \
+                "!cbTime Played:\n" \
+                "{progress}\n".format(
+                    progress=progress_string)
+
+        return metadata

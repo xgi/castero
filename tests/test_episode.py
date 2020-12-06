@@ -220,6 +220,13 @@ def test_episode_metadata_no_error():
     assert isinstance(episode.metadata, str)
 
 
+def test_episode_metadata_with_progress_no_error():
+    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
+    episode = myfeed.parse_episodes()[0]
+    episode._progress = 1000
+    assert isinstance(episode.metadata, str)
+
+
 def test_episode_without_progress():
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     episode = myfeed.parse_episodes()[0]

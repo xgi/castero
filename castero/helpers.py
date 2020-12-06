@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import re
 from email.utils import parsedate_to_datetime
 from datetime import datetime
+import time
 
 
 def third(n) -> int:
@@ -99,3 +100,8 @@ def datetime_from_rfc822(date) -> datetime:
         return parsedate_to_datetime(date)
     except (TypeError, ValueError):
         return -1
+
+
+def seconds_to_time(seconds: int) -> str:
+    seconds = max(0, seconds)
+    return time.strftime('%H:%M:%S', time.gmtime(seconds))

@@ -1,6 +1,5 @@
-import time
-
 from castero.player import Player, PlayerDependencyError
+from castero import helpers
 
 
 class MPVPlayer(Player):
@@ -141,7 +140,7 @@ class MPVPlayer(Player):
         if self._player is not None:
             time_seconds = int(self.time / 1000)
             length_seconds = int(self.duration / 1000)
-            t = time.strftime('%H:%M:%S', time.gmtime(time_seconds))
-            d = time.strftime('%H:%M:%S', time.gmtime(length_seconds))
+            t = helpers.seconds_to_time(time_seconds)
+            d = helpers.seconds_to_time(length_seconds)
             result = "%s/%s" % (t, d)
         return result
