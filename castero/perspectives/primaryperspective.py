@@ -153,6 +153,8 @@ class PrimaryPerspective(Perspective):
         elif c == key_mapping[Config['key_add_selected']]:
             self._create_player_from_selected()
             self._get_active_menu().move(-1)
+        elif c == key_mapping[Config['key_clear_progress']]:
+            self._clear_progress_from_selected()
         else:
             keep_running = self._generic_handle_input(c)
 
