@@ -157,6 +157,20 @@ def test_database_add_episode_progress(prevent_modification):
     assert ep.progress == 1000
 
 
+def test_database_delete_episode_progress(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+    ep = mydatabase.episode(1)
+    mydatabase.replace_progress(ep, 1000)
+    p = mydatabase.episode(1)
+    assert ep.progress == 1000
+    assert p.progress == 1000
+    mydatabase.delete_progress(ep)
+    p = mydatabase.episode(1)
+    assert ep.progress == 0
+    assert p.progress == 0
+
+
 def test_database_reload(prevent_modification, display):
     mydatabase = Database()
 

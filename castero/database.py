@@ -44,6 +44,7 @@ class Database():
     SQL_QUEUE_REPLACE = "replace into queue (id, ep_id)\nvalues (?,?)"
     SQL_QUEUE_DELETE = "delete from queue"
     SQL_EPISODE_PROGRESS_REPLACE = "replace into progress (ep_id, time)\nvalues (?,?)"
+    SQL_EPISODE_PROGRESS_DELETE = "delete from progress where ep_id=?"
 
     def __init__(self):
         """
@@ -569,6 +570,12 @@ class Database():
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_EPISODE_PROGRESS_REPLACE, (episode.ep_id, progress))
         episode.progress = progress
+        self._conn.commit()
+
+    def delete_progress(self, episode: Episode):
+        cursor = self._conn.cursor()
+        cursor.execute(self.SQL_EPISODE_PROGRESS_DELETE, (episode.ep_id,))
+        episode.progress = None
         self._conn.commit()
 
     def _reload_feed_data(self, old_feed: Feed, new_feed: Feed):

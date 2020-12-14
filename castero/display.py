@@ -811,6 +811,8 @@ class Display:
         if len(self._modified_episodes) > 0:
             for episode in self._modified_episodes:
                 self.database.replace_episode(episode._feed, episode)
+                self.database.replace_progress(episode, episode.progress)
+
             self.menus_valid = False
             self._modified_episodes = []
 
