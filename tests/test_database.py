@@ -152,8 +152,10 @@ def test_database_add_episode_progress(prevent_modification):
     mydatabase = Database()
     ep = mydatabase.episode(1)
     mydatabase.replace_progress(ep, 1000)
-    ep = mydatabase.episode(1)
+    ep_db = mydatabase.episode(1)
+    assert ep_db.progress == 1000
     assert ep.progress == 1000
+
 
 def test_database_reload(prevent_modification, display):
     mydatabase = Database()
