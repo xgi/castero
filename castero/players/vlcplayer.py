@@ -1,5 +1,6 @@
 import time
 
+from castero import constants
 from castero.player import Player, PlayerDependencyError
 
 
@@ -88,7 +89,8 @@ class VLCPlayer(Player):
         assert direction == 1 or direction == -1
         if self._player is not None:
             self._player.set_time(
-                self._player.get_time() + (direction * amount * 1000)
+                self._player.get_time() + (direction * amount *
+                    constants.MILLISECONDS_IN_SECOND)
             )
 
     def seek_from_start(self, amount) -> None:
@@ -97,7 +99,7 @@ class VLCPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
-            self._player.set_time((amount * 1000))
+            self._player.set_time((amount * constants.MILLISECONDS_IN_SECOND))
 
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.
@@ -154,8 +156,9 @@ class VLCPlayer(Player):
         """str: the formatted time and duration of the player"""
         result = "00:00:00/00:00:00"
         if self._player is not None:
-            time_seconds = int(self.time / 1000)
-            length_seconds = int(self.duration / 1000)
+            time_seconds = int(self.time / constants.MILLISECONDS_IN_SECOND)
+            length_seconds = int(self.duration /
+                    constants.MILLISECONDS_IN_SECOND)
             t = time.strftime('%H:%M:%S', time.gmtime(time_seconds))
             d = time.strftime('%H:%M:%S', time.gmtime(length_seconds))
             result = "%s/%s" % (t, d)

@@ -1,6 +1,7 @@
 import os
 import threading
 
+from castero import constants
 from castero import helpers
 from castero.config import Config
 from castero.datafile import DataFile
@@ -314,7 +315,8 @@ class Episode:
                 description=description)
 
         if self.progress > 0:
-            progress_string = helpers.seconds_to_time(self.progress / 1000)
+            progress_string = helpers.seconds_to_time(self.progress /
+                    constants.MILLISECONDS_IN_SECOND)
 
             metadata += "\n" \
                 "!cbTime Played:\n" \

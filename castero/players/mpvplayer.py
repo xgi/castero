@@ -1,5 +1,5 @@
 from castero.player import Player, PlayerDependencyError
-from castero import helpers
+from castero import helpers, constants
 
 
 class MPVPlayer(Player):
@@ -127,7 +127,7 @@ class MPVPlayer(Player):
         result = 0
         if self._player is not None:
             d = self._player.duration
-            result = 5000 if d is None else d * 1000
+            result = 5000 if d is None else d * constants.MILLISECONDS_IN_SECOND
         return result
 
     @property
@@ -141,15 +141,16 @@ class MPVPlayer(Player):
         """int: the current time of the player"""
         if self._player is not None:
             t = self._player.time_pos
-            return 0 if t is None else t * 1000
+            return 0 if t is None else t * constants.MILLISECONDS_IN_SECOND
 
     @property
     def time_str(self) -> str:
         """str: the formatted time and duration of the player"""
         result = "00:00:00/00:00:00"
         if self._player is not None:
-            time_seconds = int(self.time / 1000)
-            length_seconds = int(self.duration / 1000)
+            time_seconds = int(self.time / constants.MILLISECONDS_IN_SECOND)
+            length_seconds = int(self.duration /
+                    constants.MILLISECONDS_IN_SECOND)
             t = helpers.seconds_to_time(time_seconds)
             d = helpers.seconds_to_time(length_seconds)
             result = "%s/%s" % (t, d)

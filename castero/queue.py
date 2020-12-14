@@ -1,3 +1,4 @@
+from castero import constants
 from castero.config import Config
 from castero.player import Player
 
@@ -78,8 +79,7 @@ class Queue:
         """
         progress = self.first.episode.progress
         if progress is not None and progress != 0:
-            MILLISECONDS_IN_SECONDS = 1000
-            self.first.seek_from_start(self.first.episode.progress / MILLISECONDS_IN_SECONDS)
+            self.first.seek_from_start(self.first.episode.progress / constants.MILLISECONDS_IN_SECOND)
 
     def pause(self) -> None:
         """Pauses the first player in the queue.
@@ -168,8 +168,8 @@ class Queue:
         if self.first is not None and self.first.duration is not None:
             # sanity check the player's current time
             if self.first.duration > 0:
-                if (self.first.time / 1000) + 1 >= \
-                        (self.first.duration / 1000):
+                if (self.first.time / constants.MILLISECONDS_IN_SECOND) + 1 >= \
+                        (self.first.duration / constants.MILLISECONDS_IN_SECOND):
                     self.first.episode.played = True
                     self.first.episode.progress = None
                     # TODO: adding it to modified updates causes it to set
