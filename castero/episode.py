@@ -54,7 +54,7 @@ class Episode:
 
         representation = representation.split('\n')[0]
 
-        if self._progress is not None and self._progress > 0:
+        if self.progress > 0:
             representation = "{} {}".format(representation, self.PROGRESS_INDICATOR)
         return representation
 
@@ -313,7 +313,7 @@ class Episode:
                 downloaded=downloaded,
                 description=description)
 
-        if self.progress is not None and self.progress > 0:
+        if self.progress > 0:
             progress_string = helpers.seconds_to_time(self.progress / 1000)
 
             metadata += "\n" \
