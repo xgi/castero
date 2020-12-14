@@ -277,7 +277,7 @@ class Episode:
 
     @property
     def progress(self) -> int:
-        """int: progress in second gathered from database"""
+        """int: progress in milliseconds gathered from database"""
         progress = self._progress
         if progress is None:
             progress = 0

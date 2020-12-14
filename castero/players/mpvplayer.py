@@ -88,6 +88,7 @@ class MPVPlayer(Player):
         Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
+            # Wait for player to start before seek
             self._player.wait_until_playing()
             self._player.seek(amount)
 
