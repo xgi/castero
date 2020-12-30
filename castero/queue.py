@@ -13,7 +13,9 @@ class Queue:
         self._players = []
         self._display = display
         self._volume = int(Config["default_volume"])
+        self._speed = float(Config["default_playback_speed"])
         self._sanitize_volume()
+        self._sanitize_speed()
 
     def __getitem__(self, index):
         return self._players[index]
@@ -24,7 +26,7 @@ class Queue:
     def clear(self) -> None:
         """Clears the queue.
 
-        Tt is extremely likely that the caller of this method will also want to
+        It is extremely likely that the caller of this method will also want to
         stop the first player prior to calling this method.
         """
         for p in self._players:
@@ -67,7 +69,7 @@ class Queue:
             self._display.modified_episodes.append(self.first.episode)
             self.first.play()
             self.first.set_volume(self.volume)
-            self.first.set_rate(float(Config["default_playback_speed"]))
+            self.first.set_rate(self.speed)
 
     def pause(self) -> None:
         """Pauses the first player in the queue.
@@ -114,9 +116,18 @@ class Queue:
             display: (optional) the display to write status updates to
         """
         assert direction == 1 or direction == -1
+        
+        # First we change our speed value, then we set the player speed
+        # to that amount. This ensures the player speed is always derived
+        # from our value.
+        self._speed += 0.1 * direction
+        self._sanitize_speed()
 
         if self.first is not None:
-            self.first.change_rate(direction, display=display)
+            self.first.set_rate(self.speed)
+            #Update the display status
+            self._display.change_status (
+                "Playback speed set to {:0.2f}".format(self.speed))
 
     def change_volume(self, direction) -> None:
         """Increase or decrease volume of the current player.
@@ -169,6 +180,14 @@ class Queue:
         elif self._volume < 0:
             self._volume = 0
 
+    def _sanitize_speed(self) -> None:
+        """Ensure the speed is an acceptable value (0.5-2.0 inclusive)
+        """
+        if (self._speed < 0.5):
+            self._speed = 0.5
+        elif self._speed > 2.0:
+            self._speed =  2.0
+
     @property
     def first(self) -> Player:
         """Player: the first player in the queue"""
@@ -186,3 +205,8 @@ class Queue:
     def volume(self) -> int:
         """int: the current playback volume"""
         return self._volume
+
+    @property
+    def speed(self) -> float:
+        """float: the current playback speed"""
+        return self._speed
