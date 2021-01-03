@@ -93,13 +93,12 @@ class VLCPlayer(Player):
                     constants.MILLISECONDS_IN_SECOND)
             )
 
-    def seek_from_start(self, amount) -> None:
-        """Seek forward amount from start.
+    def play_from(self, seconds) -> None:
+        """start media from point.
 
         Overrides method from Player; see documentation in that class.
         """
-        if self._player is not None:
-            self._player.set_time((amount * constants.MILLISECONDS_IN_SECOND))
+        raise PlayerDependencyError("play_from not implemented for VLC player")
 
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.

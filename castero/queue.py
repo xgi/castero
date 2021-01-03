@@ -65,19 +65,20 @@ class Queue:
         """
         if self.first is not None:
             self._display.modified_episodes.append(self.first.episode)
-            self.first.play()
+            progress = self.first.episode.progress
+            if progress is None or progress != 0:
+                self.first.play()
+            else:
+                self._play_from_progress()
             self.first.set_volume(self.volume)
             self.first.set_rate(float(Config["default_playback_speed"]))
 
-            if self.first.time == 0:
-                self._goto_progress()
-
-    def _goto_progress(self):
+    def _play_from_progress(self):
         """Seek forward to progress from start of episode
         """
         progress = self.first.episode.progress
         if progress is not None and progress != 0:
-            self.first.seek_from_start(self.first.episode.progress / constants.MILLISECONDS_IN_SECOND)
+            self.first.play_from(self.first.episode.progress / constants.MILLISECONDS_IN_SECOND)
 
     def pause(self) -> None:
         """Pauses the first player in the queue.

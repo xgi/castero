@@ -65,12 +65,12 @@ def test_player_mpv_seek():
     myplayer._player.seek.assert_called_with(10)
 
 
-def test_player_mpv_seek_from_start():
+def test_player_mpv_play_from():
     myplayer = MPVPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
 
-    myplayer.seek_from_start(10)
-    myplayer._player.seek.assert_called_with(10)
+    myplayer.play_from(10)
+    assert myplayer._player.start == "00:00:10"
 
 
 def test_player_mpv_change_rate_increase():

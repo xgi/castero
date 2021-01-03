@@ -40,8 +40,6 @@ class MPVPlayer(Player):
         self._player.vid = False
         self._player.pause = False
 
-        self._player.play(self._path)
-
         self._duration = 5
 
     def play(self) -> None:
@@ -52,8 +50,23 @@ class MPVPlayer(Player):
         if self._player is None:
             self._create_player()
 
+        self._player.play(self._path)
+
         self._player.pause = False
         self._state = 1
+
+    def play_from(self, seconds) -> None:
+        """play media from point.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        if self._player is None:
+            self._create_player()
+
+        timestamp = helpers.seconds_to_time(seconds)
+        self._player.start = timestamp
+
+        self.play()
 
     def stop(self) -> None:
         """Stops the media.
@@ -81,16 +94,6 @@ class MPVPlayer(Player):
         assert direction == 1 or direction == -1
         if self._player is not None:
             self._player.seek(direction * amount)
-
-    def seek_from_start(self, amount) -> None:
-        """ forward or backward in the media.
-
-        Overrides method from Player; see documentation in that class.
-        """
-        if self._player is not None:
-            # Wait for player to start before seek
-            self._player.wait_until_playing()
-            self._player.seek(amount)
 
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.

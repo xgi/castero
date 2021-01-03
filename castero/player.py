@@ -148,11 +148,11 @@ class Player:
         """
 
     @abstractmethod
-    def seek_from_start(self, amount) -> None:
-        """Seek forward amount from start.
+    def play_from(self, seconds) -> None:
+        """play media from point.
 
         Args:
-            amount: the amount of seconds to seek
+            amount: the seconds to start from
         """
 
     @abstractmethod

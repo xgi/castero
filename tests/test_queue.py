@@ -120,7 +120,6 @@ def test_queue_play(display):
     myqueue.add(player1)
     myqueue.play()
     assert player1.play.call_count == 1
-    assert player1.seek_from_start.call_count == 0
 
 
 def test_queue_play_progress(display):
@@ -132,20 +131,18 @@ def test_queue_play_progress(display):
     player1.episode.progress = 1000
     myqueue.play()
     assert player1.play.call_count == 1
-    assert player1.seek_from_start.call_count == 1
-    player1.seek_from_start.assert_called_with(1)
 
 
-def test_queue_goto_progress(display):
+def test_queue_play_from_progress(display):
     myqueue = Queue(display)
     player1 = mock.MagicMock(spec=Player)
     player1.episode.progress = 1000
 
     myqueue.add(player1)
-    myqueue._goto_progress()
+    myqueue._play_from_progress()
 
-    assert player1.seek_from_start.call_count == 1
-    player1.seek_from_start.assert_called_with(1)
+    assert player1.play_from.call_count == 1
+    player1.play_from.assert_called_with(1)
 
 
 def test_queue_pause(display):
