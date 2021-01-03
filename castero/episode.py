@@ -308,7 +308,7 @@ class Episode:
             "!cbDownloaded:\n" \
             "{downloaded}\n\n" \
             "!cbDescription:\n" \
-            "{description}\n" \
+            "{description}\n\n" \
             "!cbTime Played:\n" \
             "{progress}\n".format(
                 title=self.title,
