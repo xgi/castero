@@ -303,6 +303,9 @@ class Perspective(ABC):
             self._display.database.replace_progress(episode, progress)
 
     def _clear_episode_progress(self, episode) -> None:
-        """Update progress of the first player in queue
+        """remove progress of the episode
+
+        Args:
+            episode: the episode to clear progress from
         """
         self._display.database.delete_progress(episode)

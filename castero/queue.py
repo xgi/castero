@@ -74,8 +74,6 @@ class Queue:
 
     def _goto_progress(self):
         """Seek forward to progress from start of episode
-
-        Args:
         """
         progress = self.first.episode.progress
         if progress is not None and progress != 0:
@@ -179,6 +177,11 @@ class Queue:
                     self.play()
 
     def get_episode_progress(self):
+        """ Get progress of the current playing episode
+        Returns:
+            Tuple: episode and its progress if currently playing, else
+            None is returned
+        """
         if self.first is not None:
             return (self.first.episode, self.first.time)
         return (None, None)

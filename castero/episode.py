@@ -11,6 +11,8 @@ class Episode:
     """A single episode from a podcast feed.
     """
 
+    PROGRESS_INDICATOR = "*"
+
     def __init__(self, feed, ep_id=None, title=None, description=None,
                  link=None, pubdate=None, copyright=None, enclosure=None,
                  played=False, progress=None) -> None:
@@ -40,7 +42,6 @@ class Episode:
         self._played = played
         self._progress = progress
         self._downloaded = None
-        self.PROGRESS_INDICATOR = "*"
 
     def __str__(self) -> str:
         """Represent this object as a single-line string.
@@ -295,6 +296,7 @@ class Episode:
             helpers.is_true(Config["clean_html_descriptions"]) else \
             self.description
         description = description.replace('\n', '')
+        progress = helpers.seconds_to_time(self.progress / constants.MILLISECONDS_IN_SECOND)
         downloaded = "Episode downloaded and available for offline playback." \
             if self.downloaded else "Episode not downloaded."
         metadata = \
@@ -306,21 +308,15 @@ class Episode:
             "!cbDownloaded:\n" \
             "{downloaded}\n\n" \
             "!cbDescription:\n" \
-            "{description}\n".format(
+            "{description}\n" \
+            "!cbTime Played:\n" \
+            "{progress}\n".format(
                 title=self.title,
                 pubdate=self.pubdate,
                 link=self.link,
                 copyright=self.copyright,
                 downloaded=downloaded,
-                description=description)
-
-        if self.progress > 0:
-            progress_string = helpers.seconds_to_time(self.progress /
-                    constants.MILLISECONDS_IN_SECOND)
-
-            metadata += "\n" \
-                "!cbTime Played:\n" \
-                "{progress}\n".format(
-                    progress=progress_string)
+                description=description,
+                progress=progress)
 
         return metadata
