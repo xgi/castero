@@ -66,7 +66,7 @@ class Queue:
         if self.first is not None:
             self._display.modified_episodes.append(self.first.episode)
             progress = self.first.episode.progress
-            if progress is None or progress != 0:
+            if progress is None or progress == 0:
                 self.first.play()
             else:
                 self._play_from_progress()

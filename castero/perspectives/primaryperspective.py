@@ -146,6 +146,7 @@ class PrimaryPerspective(Perspective):
 
         keep_running = True
         if c == key_mapping[Config['key_play_selected']]:
+            self.update_current_episode_progress()
             queue.stop()
             queue.clear()
             self._create_player_from_selected()
