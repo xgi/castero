@@ -124,6 +124,7 @@ class Perspective(ABC):
 
         keep_running = True
         if c == key_mapping[Config['key_exit']]:
+            self.update_current_episode_progress()
             self._display.terminate()
             keep_running = False
         elif c == key_mapping[Config['key_help']]:

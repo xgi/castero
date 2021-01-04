@@ -486,7 +486,8 @@ class Database():
                     pubdate=result[5],
                     copyright=result[6],
                     enclosure=result[7],
-                    played=result[8]
+                    played=result[8],
+                    progress=result[9]
                 )
 
         # queue may contain repeated ep_id's, so we need to go back to the
