@@ -98,7 +98,8 @@ class VLCPlayer(Player):
 
         Overrides method from Player; see documentation in that class.
         """
-        raise PlayerDependencyError("play_from not implemented for VLC player")
+        self.play()
+        self._player.set_time((int)(seconds * constants.MILLISECONDS_IN_SECOND))
 
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.
