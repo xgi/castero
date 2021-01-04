@@ -130,7 +130,7 @@ def test_queue_play_progress(display):
     player1.time = 0
     player1.episode.progress = 1000
     myqueue.play()
-    assert player1.play.call_count == 1
+    assert player1.play_from.call_count == 1
 
 
 def test_queue_play_from_progress(display):
@@ -166,6 +166,7 @@ def test_queue_stop(display):
 def test_queue_toggle(display):
     myqueue = Queue(display)
     player1 = mock.MagicMock(spec=Player)
+    player1.episode.progress = None
 
     myqueue.add(player1)
     myqueue.toggle()
