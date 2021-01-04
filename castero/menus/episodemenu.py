@@ -31,6 +31,8 @@ class EpisodeMenu(Menu):
             tags = []
             if episode.downloaded:
                 tags.append('D')
+            if episode.progress > 0:
+                tags.append(Episode.PROGRESS_INDICATOR)
 
             result.append({
                 'attr': curses.color_pair(5) if episode.played else

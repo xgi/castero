@@ -56,8 +56,6 @@ class Episode:
 
         representation = representation.split('\n')[0]
 
-        if self.progress > 0:
-            representation = "{} {}".format(representation, self.PROGRESS_INDICATOR)
         return representation
 
     def _feed_directory(self) -> str:
