@@ -8,6 +8,10 @@ class Queue:
     This class is also the display class' main interface for accessing
     information about the current player.
     """
+    MIN_VOLUME = 0
+    MAX_VOLUME = 100
+    MIN_SPEED = 0.5
+    MAX_SPEED = 2.0
 
     def __init__(self, display) -> None:
         self._players = []
@@ -175,18 +179,18 @@ class Queue:
     def _sanitize_volume(self) -> None:
         """Ensure the volume is an acceptable value (0-100 inclusive).
         """
-        if self._volume > 100:
-            self._volume = 100
-        elif self._volume < 0:
-            self._volume = 0
+        if self._volume > self.MAX_VOLUME:
+            self._volume = self.MAX_VOLUME
+        elif self._volume < self.MIN_VOLUME:
+            self._volume = self.MIN_VOLUME
 
     def _sanitize_speed(self) -> None:
         """Ensure the speed is an acceptable value (0.5-2.0 inclusive)
         """
-        if (self._speed < 0.5):
-            self._speed = 0.5
-        elif self._speed > 2.0:
-            self._speed =  2.0
+        if (self._speed < self.MIN_SPEED):
+            self._speed = self.MIN_SPEED
+        elif self._speed > self.MAX_SPEED:
+            self._speed = self.MAX_SPEED
 
     @property
     def first(self) -> Player:
