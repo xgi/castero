@@ -63,14 +63,6 @@ def test_episode_str_title():
     assert str(myepisode) == title
 
 
-def test_episode_str_title_with_progress():
-    myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    myepisode = Episode(myfeed, title=title)
-    myepisode.progress = 1000
-    assert str(myepisode) == \
-        "{} {}".format(title, myepisode.PROGRESS_INDICATOR)
-
-
 def test_episode_str_description():
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
     myepisode = Episode(myfeed, description=description)
