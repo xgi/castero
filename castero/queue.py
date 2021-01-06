@@ -171,8 +171,6 @@ class Queue:
                         (self.first.duration / constants.MILLISECONDS_IN_SECOND):
                     self.first.episode.played = True
                     self.first.episode.progress = None
-                    # TODO: adding it to modified updates causes it to set
-                    # progress when we actually should delete progress
                     self._display.modified_episodes.append(self.first.episode)
                     self.next()
                     self.play()
