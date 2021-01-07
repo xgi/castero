@@ -174,7 +174,7 @@ def test_queue_change_rate(display):
 
     myqueue.add(player1)
     myqueue.change_rate(-1, display)
-    player1.change_rate.assert_called_with(-1, display=display)
+    assert player1.set_rate.call_count == 1
 
 
 def test_queue_change_volume(display):

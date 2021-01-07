@@ -69,33 +69,12 @@ def test_player_vlc_seek():
         myplayer._player.get_time() + 10 * 1000)
 
 
-def test_player_vlc_change_rate_increase():
+def test_player_vlc_set_rate():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
     myplayer._player = mock.MagicMock()
-    myplayer._player.get_rate = mock.MagicMock(return_value=1)
 
-    myplayer.change_rate(1)
-    myplayer._player.set_rate.assert_called_with(1.1)
-
-
-def test_player_vlc_change_rate_decrease():
-    myplayer = VLCPlayer("player1 title", "player1 path", episode)
-    myplayer._player = mock.MagicMock()
-    myplayer._player.get_rate = mock.MagicMock(return_value=1)
-
-    myplayer.change_rate(-1)
-    myplayer._player.set_rate.assert_called_with(0.9)
-
-
-def test_player_vlc_change_rate_display():
-    myplayer = VLCPlayer("player1 title", "player1 path", episode)
-    myplayer._player = mock.MagicMock()
-    myplayer._player.get_rate = mock.MagicMock(return_value=1)
-    display = mock.MagicMock()
-
-    myplayer.change_rate(1, display=display)
-    assert display.change_status.call_count == 1
-
+    myplayer.set_rate(1.6)
+    assert myplayer._player.set_rate.call_count == 1
 
 def test_player_vlc_str():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)
