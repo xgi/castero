@@ -56,7 +56,6 @@ class Database():
             Config["restrict_memory_usage"])
 
         file_conn = sqlite3.connect(self.PATH, check_same_thread=False)
-        file_conn.execute("PRAGMA foreign_keys = ON")
 
         if self._using_memory:
             memory_conn = sqlite3.connect(":memory:", check_same_thread=False)
@@ -68,6 +67,7 @@ class Database():
         if not existed and os.path.exists(self.OLD_PATH):
             self._create_from_old_feeds()
 
+        self._conn.execute("PRAGMA foreign_keys = ON")
         self.migrate()
 
     def close(self):

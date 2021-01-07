@@ -31,6 +31,28 @@ def test_database_feed(prevent_modification):
     assert feed.title == "feed title"
 
 
+def test_database_delete_feed(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+    assert len(mydatabase.feeds()) == 2
+
+    feed = mydatabase.feeds()[0]
+    mydatabase.delete_feed(feed)
+    assert len(mydatabase.feeds()) == 1
+
+
+def test_database_delete_feed_and_episode(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+
+    feed = mydatabase.feeds()[0]
+    feed_episode = mydatabase.episodes(feed)[0]
+
+    mydatabase.delete_feed(feed)
+    feed_episode = mydatabase.episodes(feed)
+    assert len(feed_episode) == 0
+
+
 def test_database_feed_episodes(prevent_modification):
     copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
     mydatabase = Database()
