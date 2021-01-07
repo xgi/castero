@@ -145,6 +145,19 @@ def test_queue_play_from_progress(display):
     player1.play_from.assert_called_with(1)
 
 
+def test_queue_play_from_progress_with_rewind(display):
+    myqueue = Queue(display)
+    myqueue._resume_rewind = 2
+    player1 = mock.MagicMock(spec=Player)
+    player1.episode.progress = 5000
+
+    myqueue.add(player1)
+    player1.state = 0  # set state to stopped
+    myqueue.play()
+    assert player1.play_from.call_count == 1
+    player1.play_from.assert_called_with(3)
+
+
 def test_queue_pause(display):
     myqueue = Queue(display)
     player1 = mock.MagicMock(spec=Player)

@@ -14,6 +14,7 @@ class Queue:
         self._players = []
         self._display = display
         self._volume = int(Config["default_volume"])
+        self._resume_rewind = int(Config["resume_rewind_distance"])
         self._sanitize_volume()
 
     def __getitem__(self, index):
@@ -78,7 +79,13 @@ class Queue:
         """
         progress = self.first.episode.progress
         if progress is not None and progress != 0:
-            self.first.play_from(self.first.episode.progress / constants.MILLISECONDS_IN_SECOND)
+            resume_point = self.first.episode.progress / constants.MILLISECONDS_IN_SECOND
+
+            # Only rewind when state was stopped
+            if self.first.state == 0:
+                resume_point -= self._resume_rewind
+
+            self.first.play_from(resume_point)
 
     def pause(self) -> None:
         """Pauses the first player in the queue.
