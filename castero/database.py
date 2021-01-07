@@ -302,11 +302,13 @@ class Database():
 
         i = 1
         for player in queue:
-            cursor.execute(self.SQL_QUEUE_REPLACE, (
-                i,
-                player.episode.ep_id
-            ))
-            i += 1
+            episode = player.episode
+            if self.episode(episode.ep_id) is not None:
+                cursor.execute(self.SQL_QUEUE_REPLACE, (
+                    i,
+                    player.episode.ep_id
+                ))
+                i += 1
         self._conn.commit()
 
     def feeds(self) -> List[Feed]:
