@@ -5,6 +5,8 @@ from unittest import mock
 from castero.episode import Episode
 from castero.feed import Feed
 from castero.database import Database
+from castero.queue import Queue
+from castero.player import Player
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -29,6 +31,28 @@ def test_database_feed(prevent_modification):
     assert isinstance(feed, Feed)
     assert feed.key == "feed key"
     assert feed.title == "feed title"
+
+
+def test_database_delete_feed(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+    assert len(mydatabase.feeds()) == 2
+
+    feed = mydatabase.feeds()[0]
+    mydatabase.delete_feed(feed)
+    assert len(mydatabase.feeds()) == 1
+
+
+def test_database_delete_feed_and_episode(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+
+    feed = mydatabase.feeds()[0]
+    feed_episode = mydatabase.episodes(feed)[0]
+
+    mydatabase.delete_feed(feed)
+    feed_episode = mydatabase.episodes(feed)
+    assert len(feed_episode) == 0
 
 
 def test_database_feed_episodes(prevent_modification):
@@ -162,6 +186,55 @@ def test_database_reload(prevent_modification, display):
     assert display.change_status.call_count == 2
     assert mydatabase.feeds()[0].title == real_title
 
+
+def test_database_replace_queue(display):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+
+    assert len(mydatabase.queue()) == 0
+
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+    feed = mydatabase.feeds()[0]
+    episode = mydatabase.episodes(feed)[0]
+    player1.episode = episode
+    myqueue.add(player1)
+
+    mydatabase.replace_queue(myqueue)
+    assert len(mydatabase.queue()) == 1
+
+
+def test_database_delete_queue(display):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+    feed = mydatabase.feeds()[0]
+    episode = mydatabase.episodes(feed)[0]
+    player1.episode = episode
+    myqueue.add(player1)
+
+    mydatabase.replace_queue(myqueue)
+    assert len(mydatabase.queue()) == 1
+    mydatabase.delete_queue()
+    assert len(mydatabase.queue()) == 0
+
+
+def test_database_replace_queue_with_deleted_episode(display):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+    feed = mydatabase.feeds()[0]
+    episode = mydatabase.episodes(feed)[0]
+    player1.episode = episode
+    myqueue.add(player1)
+
+    mydatabase.delete_feed(feed)
+    mydatabase.replace_queue(myqueue)
+    assert len(mydatabase.queue()) == 0
 
 def test_database_from_json(prevent_modification):
     copyfile(my_dir + "/datafiles/feeds_working", Database.OLD_PATH)
