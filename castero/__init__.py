@@ -34,6 +34,7 @@ Commands
     {key_play_selected} - play selected feed/episode
     {key_add_selected} - add selected feed/episode to queue
     {key_clear} - clear the queue
+    {key_clear_progress} - clear progress of selected episode
     {key_next} - go to the next episode in the queue
     {key_invert} - invert the order of the menu
     {key_filter} - filter the contents of the menu

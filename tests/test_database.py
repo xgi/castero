@@ -171,6 +171,46 @@ def test_database_add_episodes(prevent_modification):
     assert len(mydatabase.episodes(myfeed)) == len(episodes)
 
 
+def test_database_delete_feed_episode_and_progress(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+
+    feed = mydatabase.feeds()[0]
+    feed_episode = mydatabase.episodes(feed)[0]
+    mydatabase.replace_progress(feed_episode, 1000)
+
+    feed_episode = mydatabase.episodes(feed)[0]
+    assert feed_episode.progress == 1000
+    mydatabase.replace_progress(feed_episode, 1000)
+    mydatabase.delete_feed(feed)
+    # returns None since nothing was deleted
+    assert mydatabase.delete_progress(feed_episode) is None
+
+
+def test_database_add_episode_progress(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+    ep = mydatabase.episode(1)
+    mydatabase.replace_progress(ep, 1000)
+    ep_db = mydatabase.episode(1)
+    assert ep_db.progress == 1000
+    assert ep.progress == 1000
+
+
+def test_database_delete_episode_progress(prevent_modification):
+    copyfile(my_dir + "/datafiles/database_example1.db", Database.PATH)
+    mydatabase = Database()
+    ep = mydatabase.episode(1)
+    mydatabase.replace_progress(ep, 1000)
+    p = mydatabase.episode(1)
+    assert ep.progress == 1000
+    assert p.progress == 1000
+    mydatabase.delete_progress(ep)
+    p = mydatabase.episode(1)
+    assert ep.progress == 0
+    assert p.progress == 0
+
+
 def test_database_reload(prevent_modification, display):
     mydatabase = Database()
 

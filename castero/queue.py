@@ -1,3 +1,4 @@
+from castero import constants
 from castero.config import Config
 from castero.player import Player
 
@@ -18,6 +19,7 @@ class Queue:
         self._display = display
         self._volume = int(Config["default_volume"])
         self._speed = float(Config["default_playback_speed"])
+        self._resume_rewind = int(Config["resume_rewind_distance"])
         self._sanitize_volume()
         self._sanitize_speed()
 
@@ -69,11 +71,27 @@ class Queue:
         """Plays the first player in the queue.
         """
         if self.first is not None:
-            self.first.episode.played = True
             self._display.modified_episodes.append(self.first.episode)
-            self.first.play()
+            progress = self.first.episode.progress
+            if progress is None or progress == 0:
+                self.first.play()
+            else:
+                self._play_from_progress()
             self.first.set_volume(self.volume)
             self.first.set_rate(self.speed)
+
+    def _play_from_progress(self):
+        """Seek forward to progress from start of episode
+        """
+        progress = self.first.episode.progress
+        if progress is not None and progress != 0:
+            resume_point = self.first.episode.progress / constants.MILLISECONDS_IN_SECOND
+
+            # Only rewind when state was stopped
+            if self.first.state == 0:
+                resume_point -= self._resume_rewind
+
+            self.first.play_from(resume_point)
 
     def pause(self) -> None:
         """Pauses the first player in the queue.
@@ -171,10 +189,23 @@ class Queue:
         if self.first is not None and self.first.duration is not None:
             # sanity check the player's current time
             if self.first.duration > 0:
-                if (self.first.time / 1000) + 1 >= \
-                        (self.first.duration / 1000):
+                if (self.first.time / constants.MILLISECONDS_IN_SECOND) + 1 >= \
+                        (self.first.duration / constants.MILLISECONDS_IN_SECOND):
+                    self.first.episode.played = True
+                    self.first.episode.progress = None
+                    self._display.modified_episodes.append(self.first.episode)
                     self.next()
                     self.play()
+
+    def get_episode_progress(self):
+        """ Get progress of the current playing episode
+        Returns:
+            Tuple: episode and its progress if currently playing, else
+            None is returned
+        """
+        if self.first is not None:
+            return (self.first.episode, self.first.time)
+        return (None, None)
 
     def _sanitize_volume(self) -> None:
         """Ensure the volume is an acceptable value (0-100 inclusive).

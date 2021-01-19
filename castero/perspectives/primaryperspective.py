@@ -146,6 +146,7 @@ class PrimaryPerspective(Perspective):
 
         keep_running = True
         if c == key_mapping[Config['key_play_selected']]:
+            self.update_current_episode_progress()
             queue.stop()
             queue.clear()
             self._create_player_from_selected()
@@ -153,6 +154,8 @@ class PrimaryPerspective(Perspective):
         elif c == key_mapping[Config['key_add_selected']]:
             self._create_player_from_selected()
             self._get_active_menu().move(-1)
+        elif c == key_mapping[Config['key_clear_progress']]:
+            self._clear_progress_from_selected()
         else:
             keep_running = self._generic_handle_input(c)
 
@@ -236,3 +239,10 @@ class PrimaryPerspective(Perspective):
                     self._display.AVAILABLE_PLAYERS, str(episode),
                     episode.get_playable(), episode)
                 self._display.queue.add(player)
+
+    def _clear_progress_from_selected(self) -> None:
+        if self._active_window == 1:
+            episode = self._episode_menu.item
+            if episode is not None:
+                self._display.database.delete_progress(episode)
+                self._episode_window.refresh()

@@ -1,5 +1,5 @@
 python-vlc==3.0.7110
-python-mpv==0.4.5
+python-mpv==0.5.2
 requests[socks]==2.24.0
 grequests==0.6.0
 pytest==5.3.5

@@ -1,6 +1,5 @@
-import time
-
 from castero.player import Player, PlayerDependencyError
+from castero import helpers, constants
 
 
 class MPVPlayer(Player):
@@ -41,8 +40,6 @@ class MPVPlayer(Player):
         self._player.vid = False
         self._player.pause = False
 
-        self._player.play(self._path)
-
         self._duration = 5
 
     def play(self) -> None:
@@ -53,8 +50,23 @@ class MPVPlayer(Player):
         if self._player is None:
             self._create_player()
 
+        self._player.play(self._path)
+
         self._player.pause = False
         self._state = 1
+
+    def play_from(self, seconds) -> None:
+        """play media from point.
+
+        Overrides method from Player; see documentation in that class.
+        """
+        if self._player is None:
+            self._create_player()
+
+        timestamp = helpers.seconds_to_time(seconds)
+        self._player.start = timestamp
+
+        self.play()
 
     def stop(self) -> None:
         """Stops the media.
@@ -105,7 +117,7 @@ class MPVPlayer(Player):
         result = 0
         if self._player is not None:
             d = self._player.duration
-            result = 5000 if d is None else d * 1000
+            result = 5000 if d is None else d * constants.MILLISECONDS_IN_SECOND
         return result
 
     @property
@@ -119,16 +131,17 @@ class MPVPlayer(Player):
         """int: the current time of the player"""
         if self._player is not None:
             t = self._player.time_pos
-            return 0 if t is None else t * 1000
+            return 0 if t is None else t * constants.MILLISECONDS_IN_SECOND
 
     @property
     def time_str(self) -> str:
         """str: the formatted time and duration of the player"""
         result = "00:00:00/00:00:00"
         if self._player is not None:
-            time_seconds = int(self.time / 1000)
-            length_seconds = int(self.duration / 1000)
-            t = time.strftime('%H:%M:%S', time.gmtime(time_seconds))
-            d = time.strftime('%H:%M:%S', time.gmtime(length_seconds))
+            time_seconds = int(self.time / constants.MILLISECONDS_IN_SECOND)
+            length_seconds = int(self.duration /
+                    constants.MILLISECONDS_IN_SECOND)
+            t = helpers.seconds_to_time(time_seconds)
+            d = helpers.seconds_to_time(length_seconds)
             result = "%s/%s" % (t, d)
         return result

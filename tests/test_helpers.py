@@ -70,6 +70,17 @@ def test_sanitize_path_many():
     assert result == "_" * len(path)
 
 
+def test_seconds_to_time():
+    seconds = (60 * 60) + (60 * 23) + 45
+    result = helpers.seconds_to_time(seconds)
+    assert result == "01:23:45"
+
+
+def test_negative_seconds_to_time():
+    result = helpers.seconds_to_time(-10)
+    assert result == "00:00:00"
+
+
 def test_is_true_yes():
     assert helpers.is_true('True')
     assert helpers.is_true('true')

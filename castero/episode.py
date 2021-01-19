@@ -1,6 +1,7 @@
 import os
 import threading
 
+from castero import constants
 from castero import helpers
 from castero.config import Config
 from castero.datafile import DataFile
@@ -10,9 +11,11 @@ class Episode:
     """A single episode from a podcast feed.
     """
 
+    PROGRESS_INDICATOR = "*"
+
     def __init__(self, feed, ep_id=None, title=None, description=None,
                  link=None, pubdate=None, copyright=None, enclosure=None,
-                 played=False) -> None:
+                 played=False, progress=None) -> None:
         """
         At least one of a title or description must be specified.
 
@@ -37,6 +40,7 @@ class Episode:
         self._copyright = copyright
         self._enclosure = enclosure
         self._played = played
+        self._progress = progress
         self._downloaded = None
 
     def __str__(self) -> str:
@@ -49,7 +53,10 @@ class Episode:
             representation = str(self._title)
         else:
             representation = str(self._description)
-        return representation.split('\n')[0]
+
+        representation = representation.split('\n')[0]
+
+        return representation
 
     def _feed_directory(self) -> str:
         """Gets the path to the downloaded episode's feed directory.
@@ -269,16 +276,28 @@ class Episode:
         self._played = played
 
     @property
+    def progress(self) -> int:
+        """int: progress in milliseconds gathered from database"""
+        progress = self._progress
+        if progress is None:
+            progress = 0
+        return progress
+
+    @progress.setter
+    def progress(self, progress) -> None:
+        self._progress = progress
+
+    @property
     def metadata(self) -> str:
         """str: the user-displayed metadata of the episode"""
         description = helpers.html_to_plain(self.description) if \
             helpers.is_true(Config["clean_html_descriptions"]) else \
             self.description
         description = description.replace('\n', '')
+        progress = helpers.seconds_to_time(self.progress / constants.MILLISECONDS_IN_SECOND)
         downloaded = "Episode downloaded and available for offline playback." \
             if self.downloaded else "Episode not downloaded."
-
-        return \
+        metadata = \
             "!cb{title}\n" \
             "{pubdate}\n\n" \
             "{link}\n\n" \
@@ -287,10 +306,15 @@ class Episode:
             "!cbDownloaded:\n" \
             "{downloaded}\n\n" \
             "!cbDescription:\n" \
-            "{description}\n".format(
+            "{description}\n\n" \
+            "!cbTime Played:\n" \
+            "{progress}\n".format(
                 title=self.title,
                 pubdate=self.pubdate,
                 link=self.link,
                 copyright=self.copyright,
                 downloaded=downloaded,
-                description=description)
+                description=description,
+                progress=progress)
+
+        return metadata

@@ -114,10 +114,48 @@ def test_queue_jump(display):
 def test_queue_play(display):
     myqueue = Queue(display)
     player1 = mock.MagicMock(spec=Player)
+    player1.episode.progress = None
+    player1.episode.time = 100
 
     myqueue.add(player1)
     myqueue.play()
     assert player1.play.call_count == 1
+
+
+def test_queue_play_progress(display):
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+
+    myqueue.add(player1)
+    player1.time = 0
+    player1.episode.progress = 1000
+    myqueue.play()
+    assert player1.play_from.call_count == 1
+
+
+def test_queue_play_from_progress(display):
+    myqueue = Queue(display)
+    player1 = mock.MagicMock(spec=Player)
+    player1.episode.progress = 1000
+
+    myqueue.add(player1)
+    myqueue._play_from_progress()
+
+    assert player1.play_from.call_count == 1
+    player1.play_from.assert_called_with(1)
+
+
+def test_queue_play_from_progress_with_rewind(display):
+    myqueue = Queue(display)
+    myqueue._resume_rewind = 2
+    player1 = mock.MagicMock(spec=Player)
+    player1.episode.progress = 5000
+
+    myqueue.add(player1)
+    player1.state = 0  # set state to stopped
+    myqueue.play()
+    assert player1.play_from.call_count == 1
+    player1.play_from.assert_called_with(3)
 
 
 def test_queue_pause(display):
@@ -141,6 +179,7 @@ def test_queue_stop(display):
 def test_queue_toggle(display):
     myqueue = Queue(display)
     player1 = mock.MagicMock(spec=Player)
+    player1.episode.progress = None
 
     myqueue.add(player1)
     myqueue.toggle()

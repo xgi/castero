@@ -148,6 +148,23 @@ class Player:
         """
 
     @abstractmethod
+    def play_from(self, seconds) -> None:
+        """play media from point.
+
+        Args:
+            amount: the seconds to start from
+        """
+
+    @abstractmethod
+    def change_rate(self, direction, display=None) -> None:
+        """Increase or decrease the playback speed.
+
+        Args:
+            direction: 1 to increase, -1 to decrease
+            display: (optional) the display to write status updates to
+        """
+
+    @abstractmethod
     def set_rate(self, rate) -> None:
         """Set the playback speed.
 

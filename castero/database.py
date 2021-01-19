@@ -31,9 +31,9 @@ class Database():
     OLD_PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
     MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
 
-    SQL_EPISODES_BY_ID = "select feed_key, id, title, description, link, pubdate, copyright, enclosure, played from episode where id=?"
-    SQL_EPISODES_BY_FEED = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=? order by id"
-    SQL_UNPLAYED_EPISODES_BY_FEED = "select id, title, description, link, pubdate, copyright, enclosure, played from episode where feed_key=? and played=0 order by id"
+    SQL_EPISODES_BY_FEED_WITH_PROGRESS = "select episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where feed_key=? order by episode.id"
+    SQL_EPISODES_BY_ID = "select episode.feed_key, episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where episode.id=?"
+    SQL_UNPLAYED_EPISODES_BY_FEED = "select episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where feed_key=? and played=0 order by episode.id"
     SQL_EPISODE_REPLACE = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?,?)"
     SQL_EPISODE_REPLACE_NOID = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?)"
     SQL_FEEDS_ALL = "select key, title, description, link, last_build_date, copyright from feed order by lower(title)"
@@ -43,6 +43,8 @@ class Database():
     SQL_QUEUE_ALL = "select id, ep_id from queue"
     SQL_QUEUE_REPLACE = "replace into queue (id, ep_id)\nvalues (?,?)"
     SQL_QUEUE_DELETE = "delete from queue"
+    SQL_EPISODE_PROGRESS_REPLACE = "replace into progress (ep_id, time)\nvalues (?,?)"
+    SQL_EPISODE_PROGRESS_DELETE = "delete from progress where ep_id=?"
 
     def __init__(self):
         """
@@ -348,7 +350,7 @@ class Database():
             List[Episode]: all Episode's of the given Feed in the database
         """
         cursor = self._conn.cursor()
-        cursor.execute(self.SQL_EPISODES_BY_FEED, (feed.key,))
+        cursor.execute(self.SQL_EPISODES_BY_FEED_WITH_PROGRESS, (feed.key,))
 
         rows = cursor.fetchall()
         return self._create_feed_episode_list(feed, rows)
@@ -384,7 +386,9 @@ class Database():
                 pubdate=row[4],
                 copyright=row[5],
                 enclosure=row[6],
-                played=row[7])
+                played=row[7],
+                progress=row[8]
+                )
                 for row in episode_rows]
 
     def feed(self, key) -> Feed:
@@ -442,7 +446,8 @@ class Database():
                 pubdate=result[5],
                 copyright=result[6],
                 enclosure=result[7],
-                played=result[8]
+                played=result[8],
+                progress=result[9],
             )
 
     def queue(self) -> List[Episode]:
@@ -483,7 +488,8 @@ class Database():
                     pubdate=result[5],
                     copyright=result[6],
                     enclosure=result[7],
-                    played=result[8]
+                    played=result[8],
+                    progress=result[9]
                 )
 
         # queue may contain repeated ep_id's, so we need to go back to the
@@ -562,6 +568,18 @@ class Database():
             display.change_status(
                 "Successfully reloaded %d feeds" % total_feeds)
             display.menus_valid = False
+
+    def replace_progress(self, episode: Episode, progress: int):
+        cursor = self._conn.cursor()
+        cursor.execute(self.SQL_EPISODE_PROGRESS_REPLACE, (episode.ep_id, progress))
+        episode.progress = progress
+        self._conn.commit()
+
+    def delete_progress(self, episode: Episode):
+        cursor = self._conn.cursor()
+        cursor.execute(self.SQL_EPISODE_PROGRESS_DELETE, (episode.ep_id,))
+        episode.progress = None
+        self._conn.commit()
 
     def _reload_feed_data(self, old_feed: Feed, new_feed: Feed):
         """Helper method to update a feed and its episodes in the database.

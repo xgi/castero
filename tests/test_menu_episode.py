@@ -13,6 +13,9 @@ window.getmaxyx = mock.MagicMock(return_value=(40, 80))
 source = mock.MagicMock()
 source.episodes = mock.MagicMock(return_value=[episode1, episode2])
 
+episode1.progress = 0
+episode2.progress = 0
+
 
 def test_menu_episode_init():
     mymenu = EpisodeMenu(window, source)
