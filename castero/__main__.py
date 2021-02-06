@@ -38,6 +38,7 @@ def import_subscriptions(path: str, database: Database) -> None:
             print("ERROR: Failed to load %s -- %s" %
                   (str(generated[0]), str(generated[1])))
 
+    database.close()
     print("Imported %d feeds" % len(subscriptions.feeds))
 
 
