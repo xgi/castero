@@ -10,7 +10,7 @@ from castero import helpers
 from castero.config import Config
 from castero.datafile import DataFile
 from castero.episode import Episode
-from castero.feed import Feed
+from castero.feed import Feed, FeedError
 from castero.queue import Queue
 from castero.net import Net
 
@@ -527,6 +527,7 @@ class Database():
             feeds = self.feeds()
         total_feeds = len(feeds)
         completed_feeds = 0
+        errors = 0
 
         reqs = []
         url_pairs = {}
@@ -546,23 +547,41 @@ class Database():
         # handle each response as downloads complete asynchronously
         for response in grequests.imap(reqs, size=3):
             if display is not None:
+                error_str = "(%s errors)" % errors if errors > 0 else ""
                 display.change_status(
-                    "Reloading feeds (%d/%d)" % (completed_feeds, total_feeds))
-            old_feed = url_pairs[response.request.url]
-            new_feed = Feed(url=response.request.url, response=response)
-            self._reload_feed_data(old_feed, new_feed)
+                    "Reloading feeds (%d/%d) %s" % (completed_feeds, total_feeds, error_str))
 
-            completed_feeds += 1
+            old_feed = None
+            response_url = response.request.url
+            if response_url in url_pairs:
+                old_feed = url_pairs[response.request.url]
+            elif hasattr(response, 'history') and len(response.history) > 0:
+                response_url = response.history[0].url
+                old_feed = url_pairs[response_url]
+            else:
+                errors += 1
+                continue
+
+            try:
+                new_feed = Feed(url=response_url, response=response)
+                self._reload_feed_data(old_feed, new_feed)
+                completed_feeds += 1
+            except FeedError:
+                errors += 1
 
         # handle each file-based feed
         for old_feed in file_feeds:
-            new_feed = Feed(file=old_feed.key)
-            self._reload_feed_data(old_feed, new_feed)
-
-            completed_feeds += 1
             if display is not None:
+                error_str = "(%s errors)" % errors if errors > 0 else ""
                 display.change_status(
-                    "Reloading feeds (%d/%d)" % (completed_feeds, total_feeds))
+                    "Reloading feeds (%d/%d) %s" % (completed_feeds, total_feeds, error_str))
+
+            try:
+                new_feed = Feed(file=old_feed.key)
+                self._reload_feed_data(old_feed, new_feed)
+                completed_feeds += 1
+            except FeedError:
+                errors += 1
 
         if display is not None:
             display.change_status(
@@ -571,7 +590,8 @@ class Database():
 
     def replace_progress(self, episode: Episode, progress: int):
         cursor = self._conn.cursor()
-        cursor.execute(self.SQL_EPISODE_PROGRESS_REPLACE, (episode.ep_id, progress))
+        cursor.execute(self.SQL_EPISODE_PROGRESS_REPLACE,
+                       (episode.ep_id, progress))
         episode.progress = progress
         self._conn.commit()
 
