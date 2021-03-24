@@ -12,6 +12,30 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.9.1 - 2021-03-23
+**Added**
+* @tistatos - Playback position is saved/restored when restarting the
+client.
+* @tistatos - Created add_only_unplayed_episodes config option for
+playing/queueing a feed.
+* @DGambrinus - Maintain playback speed when playing different episodes.
+
+**Changed**
+* To improve performance, the client now (by default) uses an in-memory
+database, which is only saved to disk when the client is closed. This
+can be disabled with the restrict_memory_usage config option.
+* Improved the performance of importing subscriptions (especially those
+with many feeds).
+
+**Fixed**
+* @tistatos - Fixed episode data not being deleted when removing feeds.
+* Fixed player volume occasionally not being retained when switching
+between episodes.
+* Fixed exception with terminals that don't support an invisible cursor
+mode.
+* Fixed reload operation failing when reloading one feed would fail in a
+specific way.
+
 ## 0.8.2 - 2020-08-23
 **Added**
 * Added a config option for the default playback volume.
