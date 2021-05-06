@@ -619,6 +619,11 @@ class Database():
             if len(matching_olds) == 1:
                 new_ep.replace_from(matching_olds[0])
 
+                # create a new progress entry, if necessary
+                if matching_olds[0].progress != 0:
+                    delete_progress(matching_olds[0])
+                    replace_progress(new_ep, matching_olds[0].progress)
+
         # limit number of episodes, if necessary
         max_episodes = int(Config["max_episodes"])
         if max_episodes != -1:
