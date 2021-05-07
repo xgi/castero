@@ -611,6 +611,7 @@ class Database():
         # keep user metadata for episodes intact
         new_episodes = new_feed.parse_episodes()
         old_episodes = self.episodes(new_feed)
+        episode_progresses = {}
         for new_ep in new_episodes:
             matching_olds = [
                 old_ep for old_ep in old_episodes if
@@ -618,6 +619,8 @@ class Database():
             ]
             if len(matching_olds) == 1:
                 new_ep.replace_from(matching_olds[0])
+                if (matching_olds[0].progress != 0):
+                    episode_progresses[str(new_ep)] = new_ep.progress
 
         # limit number of episodes, if necessary
         max_episodes = int(Config["max_episodes"])
@@ -628,8 +631,8 @@ class Database():
         self.replace_feed(new_feed)
         self.replace_episodes(new_feed, new_episodes)
 
-        # add progress entries for all episode, if necessary
+        # ensure episodes have their progress carried over, if necessary
         added_episodes = self.episodes(new_feed)
         for episode in added_episodes:
-            if episode.progress and episode.progress != 0:
+            if str(episode) in episode_progresses:
                 self.replace_progress(episode, episode.progress)
