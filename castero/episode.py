@@ -185,6 +185,7 @@ class Episode:
         """
         self._ep_id = episode._ep_id
         self._played = episode._played
+        self._progress = episode._progress
 
     @property
     def downloaded(self) -> bool:
