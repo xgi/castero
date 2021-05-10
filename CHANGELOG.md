@@ -12,6 +12,10 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.9.2 - 2021-05-09
+**Fixed**
+* Fixed reloading feeds not propagating saved playback position.
+
 ## 0.9.1 - 2021-03-23
 **Added**
 * @tistatos - Playback position is saved/restored when restarting the
