@@ -32,6 +32,7 @@ class Database():
     MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
 
     SQL_EPISODES_BY_FEED_WITH_PROGRESS = "select episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where feed_key=? order by episode.id"
+    SQL_EPISODES_WITH_PROGRESS = "select episode.feed_key, episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id order by episode.id"
     SQL_EPISODES_BY_ID = "select episode.feed_key, episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where episode.id=?"
     SQL_UNPLAYED_EPISODES_BY_FEED = "select episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where feed_key=? and played=0 order by episode.id"
     SQL_EPISODE_REPLACE = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?,?)"
@@ -340,7 +341,7 @@ class Database():
                 self.delete_feed(feed)
         return feeds
 
-    def episodes(self, feed: Feed) -> List[Episode]:
+    def episodes(self, feed: Feed = None) -> List[Episode]:
         """Retrieve all episodes for a feed.
 
         Args:
@@ -350,10 +351,35 @@ class Database():
             List[Episode]: all Episode's of the given Feed in the database
         """
         cursor = self._conn.cursor()
-        cursor.execute(self.SQL_EPISODES_BY_FEED_WITH_PROGRESS, (feed.key,))
 
-        rows = cursor.fetchall()
-        return self._create_feed_episode_list(feed, rows)
+        if feed is None:
+            cursor.execute(self.SQL_EPISODES_WITH_PROGRESS, ())
+            rows = cursor.fetchall()
+
+            feed_entries = {}
+            for row in rows:
+                feed_key = row[0]
+                if feed_key not in feed_entries:
+                    feed_entries[feed_key] = self.feed(feed_key)
+
+            return [Episode(
+                feed_entries[row[0]],
+                ep_id=row[1],
+                title=row[2],
+                description=row[3],
+                link=row[4],
+                pubdate=row[5],
+                copyright=row[6],
+                enclosure=row[7],
+                played=row[8],
+                progress=row[9]
+            )
+                for row in rows]
+        else:
+            cursor.execute(
+                self.SQL_EPISODES_BY_FEED_WITH_PROGRESS, (feed.key,))
+            rows = cursor.fetchall()
+            return self._create_feed_episode_list(feed, rows)
 
     def unplayed_episodes(self, feed: Feed) -> List[Episode]:
         """Retrieve all unplayed episodes for a feed.
