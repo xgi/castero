@@ -14,7 +14,7 @@ class ChronoPerspective(Perspective):
     This class handles display elements while in the chronological perspective,
     which is a listing of episodes from all feeds ordered chronologically.
     """
-    ID = 4
+    ID = 5
 
     def __init__(self, display) -> None:
         """
@@ -131,8 +131,32 @@ class ChronoPerspective(Perspective):
         elif c == key_mapping[Config['key_add_selected']]:
             self._create_player_from_selected()
             self._get_active_menu().move(-1)
-        elif c == key_mapping[Config['key_clear_progress']]:
-            self._clear_progress_from_selected()
+        elif c == key_mapping[Config['key_show_url']]:
+            if self._episode_menu.item:
+                self._display.show_episode_url(self._episode_menu.item)
+        elif c == key_mapping[Config['key_save']]:
+            if self._episode_menu.item:
+                self._display.save_episodes(episode=self._episode_menu.item)
+                self._display.menus_valid = False
+        elif c == key_mapping[Config['key_delete']]:
+            if self._episode_menu.item:
+                self._display.delete_episodes(episode=self._episode_menu.item)
+                self._display.menus_valid = False
+        elif c == key_mapping[Config['key_mark_played']]:
+            if self._active_window == 0:
+                episode = self._episode_menu.item
+                if episode is not None:
+                    episode.played = not episode.played
+                    self._display.modified_episodes.append(episode)
+                    self._episode_menu.move(-1)
+        elif c == key_mapping[Config['key_execute']]:
+            episode = self._episode_menu.item
+            if episode is not None:
+                self._display.execute_command(episode)
+        elif c == key_mapping[Config['key_reload_selected']]:
+            pass
+        elif c == key_mapping[Config['key_remove']]:
+            pass
         else:
             keep_running = self._generic_handle_input(c)
 
