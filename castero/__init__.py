@@ -45,7 +45,7 @@ Commands
     {key_volume_increase/key_volume_decrease} - increase/decrease volume
     {key_rate_increase/key_rate_decrease} - increase/decrease playback speed
     {key_show_url} - show episode URL
-    {1-4} - change between client layouts
+    {1-5} - change between client layouts
 """ % (
     __title__,
     __version__,
