@@ -6,6 +6,7 @@ install_requires = [
     'requests',
     'grequests',
     'cjkwrap',
+    'pytz',
     'beautifulsoup4',
     'lxml',
     'python-vlc',
