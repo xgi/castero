@@ -3,6 +3,7 @@ import re
 from email.utils import parsedate_to_datetime
 from datetime import datetime
 import time
+import pytz
 
 
 def third(n) -> int:
@@ -97,7 +98,7 @@ def datetime_from_rfc822(date) -> datetime:
         datetime: a matching datetime object, or -1
     """
     try:
-        return parsedate_to_datetime(date)
+        return parsedate_to_datetime(date).replace(tzinfo=pytz.UTC)
     except (TypeError, ValueError):
         return -1
 
