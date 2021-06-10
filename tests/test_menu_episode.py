@@ -16,6 +16,9 @@ source.episodes = mock.MagicMock(return_value=[episode1, episode2])
 episode1.progress = 0
 episode2.progress = 0
 
+episode1.title = "episode1"
+episode2.title = "episode1"
+
 
 def test_menu_episode_init():
     mymenu = EpisodeMenu(window, source)
