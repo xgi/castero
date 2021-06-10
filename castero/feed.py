@@ -295,12 +295,12 @@ class Feed:
                 channel = root_child
                 break
 
-        self._title = channel.find('title').text
-        self._description = channel.find('description').text
+        self._title = channel.find('title').text.strip()
+        self._description = channel.find('description').text.strip()
 
         link_tags = channel.findall('link')
         if len(link_tags) > 0:
-            self._link = link_tags[0].text
+            self._link = "" if link_tags[0].text is None else link_tags[0].text.strip()
         else:
             atomlink_tags = channel.findall(
                 '{http://www.w3.org/2005/Atom}link')
@@ -310,9 +310,9 @@ class Feed:
         copyright_tag = channel.find('copyright')
 
         if last_build_date_tag is not None:
-            self._last_build_date = last_build_date_tag.text
+            self._last_build_date = last_build_date_tag.text.strip()
         if copyright_tag is not None:
-            self._copyright = copyright_tag.text
+            self._copyright = copyright_tag.text.strip()
 
     def parse_episodes(self) -> List[Episode]:
         """Process the RSS feed to retrieve episodes.
@@ -345,16 +345,16 @@ class Feed:
             item_copyright_str = None
             item_enclosure_str = None
 
-            if item_title is not None:
-                item_title_str = item_title.text
-            if item_description is not None:
-                item_description_str = item_description.text
-            if item_link is not None:
-                item_link_str = item_link.text
-            if item_pubdate is not None:
-                item_pubdate_str = item_pubdate.text
-            if item_copyright is not None:
-                item_copyright_str = item_copyright.text
+            if item_title is not None and item_title.text is not None:
+                item_title_str = item_title.text.strip()
+            if item_description is not None and item_description.text is not None:
+                item_description_str = item_description.text.strip()
+            if item_link is not None and item_link.text is not None:
+                item_link_str = item_link.text.strip()
+            if item_pubdate is not None and item_pubdate.text is not None:
+                item_pubdate_str = item_pubdate.text.strip()
+            if item_copyright is not None and item_copyright.text is not None:
+                item_copyright_str = item_copyright.text.strip()
             if item_enclosure is not None:
                 if 'url' in item_enclosure.attrib.keys():
                     item_enclosure_str = item_enclosure.attrib['url']
