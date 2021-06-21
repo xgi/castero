@@ -12,6 +12,15 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.9.3 - 2021-06-20
+**Added**
+* Added a perspective (accessible by pressing `5`) that displays
+episodes from all feeds chronologically.
+
+**Fixed**
+* Fixed an issue with parsing timestamps from some (invalid) feeds.
+* Fixed an issue with parsing titles/descriptions from some feeds.
+
 ## 0.9.2 - 2021-05-09
 **Fixed**
 * Fixed reloading feeds not propagating saved playback position.

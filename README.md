@@ -73,7 +73,7 @@ Commands
     =/-         - increase/decrease volume
     ]/[         - increase/decrease playback speed
     u           - show episode URL
-    1-4         - change between client layouts
+    1-5         - change between client layouts
 ```
 
 ### Importing/exporting feeds from another client
