@@ -236,7 +236,7 @@ class Feed:
                 else:
                     if channel.find("title").text is None:
                         raise FeedStructureError(
-                        "RSS feed's channel has no title text")
+                            "RSS feed's channel has no title text")
                 if len(chan_link_tags) > 1:
                     raise FeedStructureError(
                         "RSS feed's channel has too many"
@@ -300,7 +300,8 @@ class Feed:
 
         link_tags = channel.findall('link')
         if len(link_tags) > 0:
-            self._link = "" if link_tags[0].text is None else link_tags[0].text.strip()
+            self._link = "" if link_tags[0].text is None else link_tags[0].text.strip(
+            )
         else:
             atomlink_tags = channel.findall(
                 '{http://www.w3.org/2005/Atom}link')
@@ -309,9 +310,9 @@ class Feed:
         last_build_date_tag = channel.find('lastBuildDate')
         copyright_tag = channel.find('copyright')
 
-        if last_build_date_tag is not None:
+        if last_build_date_tag is not None and last_build_date_tag.text is not None:
             self._last_build_date = last_build_date_tag.text.strip()
-        if copyright_tag is not None:
+        if copyright_tag is not None and copyright_tag.text is not None:
             self._copyright = copyright_tag.text.strip()
 
     def parse_episodes(self) -> List[Episode]:
