@@ -1,2 +1,3 @@
-duplication:
-  enabled: false
+engines:
+  duplication:
+    enabled: false
