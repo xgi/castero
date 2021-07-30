@@ -22,7 +22,7 @@ jobs:
       - name: Test
         run: |
           coverage run -m pytest
-          coverage xml
+          coverage xml -o cobertura.xml
       - name: Upload coverage report
         env:
           CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
@@ -30,4 +30,4 @@ jobs:
           CODACY_USERNAME: xgi
           CODACY_PROJECT_NAME: castero
         run: |
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r coverage.xml
+          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r cobertura.xml
