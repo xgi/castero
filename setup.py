@@ -16,7 +16,6 @@ install_requires = [
 tests_require = [
     'pytest',
     'coverage',
-    'codacy-coverage'
 ]
 
 extras_require = {

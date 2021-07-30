@@ -22,12 +22,13 @@ jobs:
       - name: Test
         run: |
           coverage run -m pytest
-          coverage xml -o cobertura.xml
+          coverage xml
+      - name: Setup Code Climate test-reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
       - name: Upload coverage report
         env:
-          CODACY_API_TOKEN: ${{ secrets.CODACY_API_TOKEN }}
-          CODACY_ORGANIZATION_PROVIDER: gh
-          CODACY_USERNAME: xgi
-          CODACY_PROJECT_NAME: castero
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         run: |
-          bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r cobertura.xml
+          ./cc-test-reporter after-build -t coverage.py
