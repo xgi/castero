@@ -12,6 +12,10 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.9.4 - 2021-09-17
+**Fixed**
+* Fixed a crash when adding series with empty copyright or builddate tags.
+
 ## 0.9.3 - 2021-06-20
 **Added**
 * Added a perspective (accessible by pressing `5`) that displays
