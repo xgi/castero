@@ -10,13 +10,15 @@ from castero.queue import Queue
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
 feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-episode = Episode(feed,
-                  title="episode title",
-                  description="episode description",
-                  link="episode link",
-                  pubdate="episode pubdate",
-                  copyright="episode copyright",
-                  enclosure="episode enclosure")
+episode = Episode(
+    feed,
+    title="episode title",
+    description="episode description",
+    link="episode link",
+    pubdate="episode pubdate",
+    copyright="episode copyright",
+    enclosure="episode enclosure",
+)
 player1 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player2 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
 player3 = Player("MLK Dream", my_dir + "/media/MLK_Dream_10s.mp3", episode)
@@ -62,17 +64,17 @@ def test_perspective_queue_input_keys(display):
     display._queue = queue
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    ret_val = perspective.handle_input(ord('h'))
+    ret_val = perspective.handle_input(ord("h"))
     assert ret_val
     display._stdscr.reset_mock()
 
     movement_keys = [
-        display.KEY_MAPPING[Config['key_up']],
-        display.KEY_MAPPING[Config['key_right']],
-        display.KEY_MAPPING[Config['key_down']],
-        display.KEY_MAPPING[Config['key_left']],
-        display.KEY_MAPPING[Config['key_scroll_up']],
-        display.KEY_MAPPING[Config['key_scroll_down']],
+        display.KEY_MAPPING[Config["key_up"]],
+        display.KEY_MAPPING[Config["key_right"]],
+        display.KEY_MAPPING[Config["key_down"]],
+        display.KEY_MAPPING[Config["key_left"]],
+        display.KEY_MAPPING[Config["key_scroll_up"]],
+        display.KEY_MAPPING[Config["key_scroll_down"]],
     ]
     for key in movement_keys:
         perspective._metadata_updated = True
@@ -81,27 +83,27 @@ def test_perspective_queue_input_keys(display):
         assert not perspective._metadata_updated
 
     operation_keys = [
-        display.KEY_MAPPING[Config['key_delete']],
-        display.KEY_MAPPING[Config['key_remove']],
-        display.KEY_MAPPING[Config['key_reload']],
-        display.KEY_MAPPING[Config['key_reload_selected']],
-        display.KEY_MAPPING[Config['key_play_selected']],
-        display.KEY_MAPPING[Config['key_add_selected']],
-        display.KEY_MAPPING[Config['key_clear']],
-        display.KEY_MAPPING[Config['key_next']],
-        display.KEY_MAPPING[Config['key_pause_play']],
-        display.KEY_MAPPING[Config['key_pause_play_alt']],
-        display.KEY_MAPPING[Config['key_seek_forward']],
-        display.KEY_MAPPING[Config['key_seek_forward_alt']],
-        display.KEY_MAPPING[Config['key_seek_backward']],
-        display.KEY_MAPPING[Config['key_seek_backward_alt']],
-        display.KEY_MAPPING[Config['key_execute']]
+        display.KEY_MAPPING[Config["key_delete"]],
+        display.KEY_MAPPING[Config["key_remove"]],
+        display.KEY_MAPPING[Config["key_reload"]],
+        display.KEY_MAPPING[Config["key_reload_selected"]],
+        display.KEY_MAPPING[Config["key_play_selected"]],
+        display.KEY_MAPPING[Config["key_add_selected"]],
+        display.KEY_MAPPING[Config["key_clear"]],
+        display.KEY_MAPPING[Config["key_next"]],
+        display.KEY_MAPPING[Config["key_pause_play"]],
+        display.KEY_MAPPING[Config["key_pause_play_alt"]],
+        display.KEY_MAPPING[Config["key_seek_forward"]],
+        display.KEY_MAPPING[Config["key_seek_forward_alt"]],
+        display.KEY_MAPPING[Config["key_seek_backward"]],
+        display.KEY_MAPPING[Config["key_seek_backward_alt"]],
+        display.KEY_MAPPING[Config["key_execute"]],
     ]
     for key in operation_keys:
         ret_val = perspective.handle_input(key)
         assert ret_val
 
-    ret_val = perspective.handle_input(ord('q'))
+    ret_val = perspective.handle_input(ord("q"))
     assert not ret_val
     display._stdscr.reset_mock()
 

@@ -52,7 +52,7 @@ def test_display_refresh(display):
 
 def test_display_get_input_str(display):
     display._footer_window.getch = mock.Mock()
-    display._footer_window.getch.side_effect = [ord('a'), ord('b'), 10]
+    display._footer_window.getch.side_effect = [ord("a"), ord("b"), 10]
     display._get_input_str("prompt")
     assert display._footer_window.getch.call_count == 3
     assert display._footer_window.clear.call_count == 1
@@ -124,8 +124,12 @@ def test_display_add_feed(display):
 
 
 def test_display_add_feed_errors(display):
-    test_inputs = ["fake", "http://fake", my_dir + "/feeds/broken_is_rss.xml",
-                   my_dir + "/datafiles/parse_error.conf"]
+    test_inputs = [
+        "fake",
+        "http://fake",
+        my_dir + "/feeds/broken_is_rss.xml",
+        my_dir + "/datafiles/parse_error.conf",
+    ]
     for test_input in test_inputs:
         display._get_input_str = mock.MagicMock(return_value=test_input)
         display.add_feed()
@@ -135,13 +139,15 @@ def test_display_add_feed_errors(display):
 
 
 def test_display_delete_feed(display):
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
+    feed = Feed(
+        url="feed url",
+        title="feed title",
+        description="feed description",
+        link="feed link",
+        last_build_date="feed last_build_date",
+        copyright="feed copyright",
+        episodes=[],
+    )
     display.database.replace_feed(feed)
     assert len(display.database.feeds()) == 1
     display.delete_feed(feed)
@@ -151,14 +157,16 @@ def test_display_delete_feed(display):
 def test_display_execute_command(display):
     fname = "test_display_execute_command_output.mp3"
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    myepisode = Episode(myfeed,
+    myepisode = Episode(
+        myfeed,
         title="episode title",
         description="episode description",
         link="episode link",
         pubdate="episode pubdate",
         copyright="episode copyright",
-        enclosure=fname)
-    castero.config.Config.data = {'execute_command': 'touch {file}'}
+        enclosure=fname,
+    )
+    castero.config.Config.data = {"execute_command": "touch {file}"}
     if os.path.exists(fname):
         os.remove(fname)
     display.execute_command(myepisode)

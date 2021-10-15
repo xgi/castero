@@ -114,10 +114,10 @@ class Menu(ABC):
         :param selected whether the item is selected
         """
         tag_str = ""
-        if len(item['tags']) > 0:
-            tag_str = "".join(["[%s]" % tag for tag in item['tags']]) + " "
+        if len(item["tags"]) > 0:
+            tag_str = "".join(["[%s]" % tag for tag in item["tags"]]) + " "
 
-        text = tag_str + item['text']
+        text = tag_str + item["text"]
 
         attr = curses.color_pair(1)
         if selected:
@@ -126,10 +126,9 @@ class Menu(ABC):
             else:
                 attr = curses.color_pair(4)
         else:
-            attr = attr | item['attr']
+            attr = attr | item["attr"]
 
-        self._window.addstr(self._display_start_y + position, 0,
-                            self._pad_text(text), attr)
+        self._window.addstr(self._display_start_y + position, 0, self._pad_text(text), attr)
 
     def _sanitize(self) -> None:
         """Sanitizes _selected and _top_index.
@@ -170,8 +169,7 @@ class Menu(ABC):
         items = self._items
 
         position = 0
-        for i in range(self._top_index,
-                       self._top_index + self.max_displayed_items):
+        for i in range(self._top_index, self._top_index + self.max_displayed_items):
             if i <= len(self) - 1:
                 selected = i == self._selected
                 self._draw_item(items[i], position, selected)
@@ -180,8 +178,7 @@ class Menu(ABC):
         # fill unused rows with blank lines
         # avoids an issue with entries not being properly removed when the
         # items are updated
-        for y in range(self._display_start_y + position,
-                       self._display_start_y + self.max_displayed_items):
+        for y in range(self._display_start_y + position, self._display_start_y + self.max_displayed_items):
             self._window.addstr(y, 0, self._pad_text(""))
 
     def set_active(self, active) -> None:

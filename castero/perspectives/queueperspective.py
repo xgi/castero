@@ -14,6 +14,7 @@ class QueuePerspective(Perspective):
     is a listing of the user's current Queue in which they can directly modify
     its state.
     """
+
     ID = 2
 
     def __init__(self, display) -> None:
@@ -25,8 +26,7 @@ class QueuePerspective(Perspective):
         self._metadata_updated = False
 
     def create_windows(self) -> None:
-        """Create and set basic parameters for the windows.
-        """
+        """Create and set basic parameters for the windows."""
         # delete old windows if they exist
         if self._queue_window is not None:
             del self._queue_window
@@ -38,47 +38,44 @@ class QueuePerspective(Perspective):
         parent_x = self._display.parent_x
         parent_y = self._display.parent_y
         third_x = helpers.third(parent_x)
-        self._queue_window = curses.newwin(parent_y - 2, third_x * 2,
-                                           2, 0)
+        self._queue_window = curses.newwin(parent_y - 2, third_x * 2, 2, 0)
         metadata_width = parent_x - ((third_x * 2) - 1)
-        self._metadata_window = curses.newwin(parent_y - 3, metadata_width,
-                                              2, 2 * third_x)
+        self._metadata_window = curses.newwin(parent_y - 3, metadata_width, 2, 2 * third_x)
 
         # update menus if necessary
         if self._queue_menu is not None:
             self._queue_menu.window = self._queue_window
 
     def create_menus(self) -> None:
-        """Create the menus used in each window.
-        """
+        """Create the menus used in each window."""
         assert self._queue_window is not None
 
-        self._queue_menu = QueueMenu(self._queue_window, self._display.queue,
-                                     active=True)
+        self._queue_menu = QueueMenu(self._queue_window, self._display.queue, active=True)
 
     def display(self) -> None:
-        """Draws all windows and sub-features, including titles and borders.
-        """
+        """Draws all windows and sub-features, including titles and borders."""
         # clear dynamic menu headers
         self._queue_window.addstr(0, 0, " " * self._queue_window.getmaxyx()[1])
 
         # add window headers
-        self._queue_window.addstr(0, 0, self._queue_menu.title,
-                                  curses.color_pair(7) | curses.A_BOLD)
-        self._metadata_window.addstr(0, 0, "Metadata",
-                                     curses.color_pair(7) | curses.A_BOLD)
+        self._queue_window.addstr(0, 0, self._queue_menu.title, curses.color_pair(7) | curses.A_BOLD)
+        self._metadata_window.addstr(0, 0, "Metadata", curses.color_pair(7) | curses.A_BOLD)
 
         # add window borders
-        self._queue_window.hline(1, 0,
-                                 0, self._queue_window.getmaxyx()[1],
-                                 curses.ACS_HLINE | curses.color_pair(8))
-        self._metadata_window.hline(1, 0,
-                                    0, self._metadata_window.getmaxyx()[1] - 1,
-                                    curses.ACS_HLINE | curses.color_pair(8))
+        self._queue_window.hline(
+            1, 0, 0, self._queue_window.getmaxyx()[1], curses.ACS_HLINE | curses.color_pair(8)
+        )
+        self._metadata_window.hline(
+            1, 0, 0, self._metadata_window.getmaxyx()[1] - 1, curses.ACS_HLINE | curses.color_pair(8)
+        )
         if not helpers.is_true(Config["disable_vertical_borders"]):
-            self._queue_window.vline(0, self._queue_window.getmaxyx()[1] - 1,
-                                     0, self._queue_window.getmaxyx()[0] - 2,
-                                     curses.ACS_VLINE | curses.color_pair(8))
+            self._queue_window.vline(
+                0,
+                self._queue_window.getmaxyx()[1] - 1,
+                0,
+                self._queue_window.getmaxyx()[0] - 2,
+                curses.ACS_VLINE | curses.color_pair(8),
+            )
 
         # draw metadata
         if not self._metadata_updated:
@@ -89,55 +86,53 @@ class QueuePerspective(Perspective):
         self._queue_window.refresh()
 
     def display_all(self) -> None:
-        """Force all windows to completely redraw their content.
-        """
+        """Force all windows to completely redraw their content."""
         self._metadata_updated = False
         self._queue_menu.display()
         self.display()
 
     def handle_input(self, c) -> bool:
-        """Performs action corresponding to the user's input.
-        """
+        """Performs action corresponding to the user's input."""
         queue = self._display.queue
         key_mapping = self._display.KEY_MAPPING
 
         keep_running = True
-        if c == key_mapping[Config['key_play_selected']]:
+        if c == key_mapping[Config["key_play_selected"]]:
             target = self._queue_menu.item
             self._display.queue.jump(target)
             while self._queue_menu.selected_index > 0:
                 self._queue_menu.move(1)
             queue.play()
             self._display.menus_valid = False
-        elif c == key_mapping[Config['key_next']]:
+        elif c == key_mapping[Config["key_next"]]:
             queue.stop()
             queue.next()
             self._queue_menu.move(1)
             queue.play()
             self._display.menus_valid = False
-        elif c == key_mapping[Config['key_clear']]:
+        elif c == key_mapping[Config["key_clear"]]:
             queue.stop()
             queue.clear()
             self._display.menus_valid = False
-        elif c == key_mapping[Config['key_remove']]:
+        elif c == key_mapping[Config["key_remove"]]:
             self._remove_selected_from_queue()
-        elif c == key_mapping[Config['key_show_url']]:
+        elif c == key_mapping[Config["key_show_url"]]:
             item = self._queue_menu.item
             if item is not None:
                 self._display.show_episode_url(item.episode)
-        elif c == key_mapping[Config['key_execute']]:
+        elif c == key_mapping[Config["key_execute"]]:
             item = self._queue_menu.item
             if item is not None:
                 self._display.execute_command(item.episode)
-        elif c == key_mapping[Config['key_reload_selected']]:
+        elif c == key_mapping[Config["key_reload_selected"]]:
             pass
-        elif c == key_mapping[Config['key_save']]:
+        elif c == key_mapping[Config["key_save"]]:
             pass
-        elif c == key_mapping[Config['key_delete']]:
+        elif c == key_mapping[Config["key_delete"]]:
             pass
-        elif c == key_mapping[Config['key_mark_played']]:
+        elif c == key_mapping[Config["key_mark_played"]]:
             pass
-        elif c == key_mapping[Config['key_filter']]:
+        elif c == key_mapping[Config["key_filter"]]:
             pass
         else:
             keep_running = self._generic_handle_input(c)
@@ -145,38 +140,32 @@ class QueuePerspective(Perspective):
         return keep_running
 
     def refresh(self) -> None:
-        """Refresh the screen and all windows.
-        """
+        """Refresh the screen and all windows."""
         self._queue_window.refresh()
         self._metadata_window.refresh()
         self._queue_menu.refresh()
 
     def made_active(self) -> None:
-        """Called each time the perspective is made active (switched to).
-        """
+        """Called each time the perspective is made active (switched to)."""
         pass
 
     def update_menus(self) -> None:
-        """Update/refresh the contents of all menus.
-        """
+        """Update/refresh the contents of all menus."""
         self._queue_menu.update_items(None)
         self._metadata_updated = False
 
     def _get_active_menu(self) -> Menu:
-        """Retrieve the active Menu, if there is one.
-        """
+        """Retrieve the active Menu, if there is one."""
         assert 0 <= self._active_window < 2
 
         return self._queue_menu
 
     def _invert_selected_menu(self) -> None:
-        """Inverts the contents of the selected menu.
-        """
+        """Inverts the contents of the selected menu."""
         pass
 
     def _remove_selected_from_queue(self) -> None:
-        """Remove the selected player from the queue.
-        """
+        """Remove the selected player from the queue."""
         player = self._queue_menu.item
         if player is not None:
             index = self._display.queue.remove(player)

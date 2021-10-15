@@ -18,25 +18,29 @@ my_dir = os.path.dirname(os.path.realpath(__file__))
 
 def test_episode_init():
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    myepisode = Episode(myfeed,
-                        title=title,
-                        description=description,
-                        link=link,
-                        pubdate=pubdate,
-                        copyright=copyright,
-                        enclosure=enclosure)
+    myepisode = Episode(
+        myfeed,
+        title=title,
+        description=description,
+        link=link,
+        pubdate=pubdate,
+        copyright=copyright,
+        enclosure=enclosure,
+    )
     assert isinstance(myepisode, Episode)
 
 
 def test_episode_properties():
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-    myepisode = Episode(myfeed,
-                        title=title,
-                        description=description,
-                        link=link,
-                        pubdate=pubdate,
-                        copyright=copyright,
-                        enclosure=enclosure)
+    myepisode = Episode(
+        myfeed,
+        title=title,
+        description=description,
+        link=link,
+        pubdate=pubdate,
+        copyright=copyright,
+        enclosure=enclosure,
+    )
     assert myepisode.title == title
     assert myepisode.description == description
     assert myepisode.link == link
@@ -120,18 +124,16 @@ def test_episode_playable_local():
     episode.ep_id = 1
     playable = episode.get_playable()
     assert episode.downloaded
-    assert playable == os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
-                                    "myfeed_title",
-                                    "1-myfeed_item1_title.mp3")
+    assert playable == os.path.join(
+        DataFile.DEFAULT_DOWNLOADED_DIR, "myfeed_title", "1-myfeed_item1_title.mp3"
+    )
 
-    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
-                                                   "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR, "downloaded")
 
 
 def test_episode_delete(display):
     DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(my_dir, "downloaded")
-    episode_location = os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR,
-                                    "myfeed_title/2-myfeed_item2_title.mp3")
+    episode_location = os.path.join(DataFile.DEFAULT_DOWNLOADED_DIR, "myfeed_title/2-myfeed_item2_title.mp3")
     with open(episode_location, "w") as file:
         file.write("temp file for test_episode.test_episode_delete")
     myfeed = Feed(file=my_dir + "/feeds/valid_basic.xml")
@@ -143,8 +145,7 @@ def test_episode_delete(display):
     assert display.change_status.call_count == 1
     assert not episode.downloaded
 
-    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
-                                                   "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR, "downloaded")
 
 
 def test_episode_download():
@@ -161,8 +162,7 @@ def test_episode_download():
             successful = True
             break
 
-    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
-                                                   "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR, "downloaded")
     assert successful
 
 
@@ -174,15 +174,14 @@ def test_episode_download_with_display(display):
     DataFile.download_to_file = mock.MagicMock(name="download_to_file")
     display.change_status = mock.MagicMock(name="change_status")
     myepisode.download(mydownloadqueue, display=display)
-    
+
     successful = True
     for i in range(5000):
         if DataFile.download_to_file.call_count == 1:
             successful = True
             break
 
-    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
-                                                   "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR, "downloaded")
     assert successful
 
 
@@ -201,8 +200,7 @@ def test_episode_download_with_display_no_enclosure(display):
             successful = True
             break
 
-    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR,
-                                                   "downloaded")
+    DataFile.DEFAULT_DOWNLOADED_DIR = os.path.join(DataFile.DATA_DIR, "downloaded")
     assert successful
 
 

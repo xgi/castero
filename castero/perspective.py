@@ -22,6 +22,7 @@ class Perspective(ABC):
     instance of the Database class. We instead reference the variables held in
     the Display instance.
     """
+
     ID = -1
 
     @abstractmethod
@@ -41,8 +42,7 @@ class Perspective(ABC):
 
     @abstractmethod
     def create_windows(self) -> None:
-        """Create and set basic parameters for the windows.
-        """
+        """Create and set basic parameters for the windows."""
 
     @abstractmethod
     def create_menus(self) -> None:
@@ -54,8 +54,7 @@ class Perspective(ABC):
 
     @abstractmethod
     def display(self) -> None:
-        """Draws all windows and sub-features, including titles and borders.
-        """
+        """Draws all windows and sub-features, including titles and borders."""
 
     @abstractmethod
     def display_all(self) -> None:
@@ -72,8 +71,7 @@ class Perspective(ABC):
 
     @abstractmethod
     def refresh(self) -> None:
-        """Refresh the screen and all windows.
-        """
+        """Refresh the screen and all windows."""
 
     @abstractmethod
     def handle_input(self, c) -> bool:
@@ -85,18 +83,15 @@ class Perspective(ABC):
 
     @abstractmethod
     def made_active(self) -> None:
-        """Called each time the perspective is made active (switched to).
-        """
+        """Called each time the perspective is made active (switched to)."""
 
     @abstractmethod
     def update_menus(self) -> None:
-        """Update/refresh the contents of all menus.
-        """
+        """Update/refresh the contents of all menus."""
 
     @abstractmethod
     def _invert_selected_menu(self) -> None:
-        """Inverts the contents of the selected menu.
-        """
+        """Inverts the contents of the selected menu."""
 
     @abstractmethod
     def _get_active_menu(self) -> Menu:
@@ -115,90 +110,92 @@ class Perspective(ABC):
         key_mapping = self._display.KEY_MAPPING
 
         keep_running = True
-        if c == key_mapping[Config['key_exit']]:
+        if c == key_mapping[Config["key_exit"]]:
             self.update_current_episode_progress()
             self._display.terminate()
             keep_running = False
-        elif c == key_mapping[Config['key_help']]:
+        elif c == key_mapping[Config["key_help"]]:
             self._display.show_help()
-        elif c == key_mapping[Config['key_right']]:
+        elif c == key_mapping[Config["key_right"]]:
             self._change_active_window(1)
             self._metadata_updated = False
-        elif c == key_mapping[Config['key_left']]:
+        elif c == key_mapping[Config["key_left"]]:
             self._change_active_window(-1)
             self._metadata_updated = False
-        elif c == key_mapping[Config['key_up']]:
+        elif c == key_mapping[Config["key_up"]]:
             self._get_active_menu().move(1)
             self._metadata_updated = False
-        elif c == key_mapping[Config['key_down']]:
+        elif c == key_mapping[Config["key_down"]]:
             self._get_active_menu().move(-1)
             self._metadata_updated = False
-        elif c == key_mapping[Config['key_scroll_up']]:
+        elif c == key_mapping[Config["key_scroll_up"]]:
             self._get_active_menu().move_page(1)
             self._metadata_updated = False
-        elif c == key_mapping[Config['key_scroll_down']]:
+        elif c == key_mapping[Config["key_scroll_down"]]:
             self._get_active_menu().move_page(-1)
             self._metadata_updated = False
-        elif c == key_mapping[Config['key_clear']]:
+        elif c == key_mapping[Config["key_clear"]]:
             self.update_current_episode_progress()
             queue.stop()
             queue.clear()
-        elif c == key_mapping[Config['key_pause_play']] or \
-                c == key_mapping[Config['key_pause_play_alt']]:
+        elif c == key_mapping[Config["key_pause_play"]] or c == key_mapping[Config["key_pause_play_alt"]]:
             self.update_current_episode_progress()
             queue.toggle()
-        elif c == key_mapping[Config['key_next']]:
+        elif c == key_mapping[Config["key_next"]]:
             self.update_current_episode_progress()
             queue.stop()
             queue.next()
             queue.play()
-        elif c == key_mapping[Config['key_seek_forward']] or \
-                c == key_mapping[Config['key_seek_forward_alt']]:
+        elif (
+            c == key_mapping[Config["key_seek_forward"]] or c == key_mapping[Config["key_seek_forward_alt"]]
+        ):
             queue.seek(1)
             self.update_current_episode_progress()
-        elif c == key_mapping[Config['key_seek_backward']] or \
-                c == key_mapping[Config['key_seek_backward_alt']]:
+        elif (
+            c == key_mapping[Config["key_seek_backward"]]
+            or c == key_mapping[Config["key_seek_backward_alt"]]
+        ):
             queue.seek(-1)
             self.update_current_episode_progress()
-        elif c == key_mapping[Config['key_volume_increase']]:
+        elif c == key_mapping[Config["key_volume_increase"]]:
             queue.change_volume(1)
-        elif c == key_mapping[Config['key_volume_decrease']]:
+        elif c == key_mapping[Config["key_volume_decrease"]]:
             queue.change_volume(-1)
-        elif c == key_mapping[Config['key_rate_increase']]:
+        elif c == key_mapping[Config["key_rate_increase"]]:
             queue.change_rate(1, display=self._display)
-        elif c == key_mapping[Config['key_rate_decrease']]:
+        elif c == key_mapping[Config["key_rate_decrease"]]:
             queue.change_rate(-1, display=self._display)
-        elif c == key_mapping[Config['key_add_feed']]:
+        elif c == key_mapping[Config["key_add_feed"]]:
             self._display.add_feed()
-        elif c == key_mapping[Config['key_remove']]:
+        elif c == key_mapping[Config["key_remove"]]:
             if self._active_window == 0:
                 self._display.delete_feed(self._feed_menu.item)
                 self.update_menus()
-        elif c == key_mapping[Config['key_reload']]:
+        elif c == key_mapping[Config["key_reload"]]:
             self._display.reload_feeds()
-        elif c == key_mapping[Config['key_reload_selected']]:
+        elif c == key_mapping[Config["key_reload_selected"]]:
             feed = self._feed_menu.item
             if feed is not None:
                 self._display.reload_selected_feed(feed)
-        elif c == key_mapping[Config['key_show_url']]:
+        elif c == key_mapping[Config["key_show_url"]]:
             if self._active_window == 1 and self._episode_menu.item:
                 self._display.show_episode_url(self._episode_menu.item)
-        elif c == key_mapping[Config['key_save']]:
+        elif c == key_mapping[Config["key_save"]]:
             if self._active_window == 0 and self._feed_menu.item:
                 self._display.save_episodes(feed=self._feed_menu.item)
             elif self._active_window == 1 and self._episode_menu.item:
                 self._display.save_episodes(episode=self._episode_menu.item)
-        elif c == key_mapping[Config['key_delete']]:
+        elif c == key_mapping[Config["key_delete"]]:
             if self._active_window == 0 and self._feed_menu.item:
                 self._display.delete_episodes(feed=self._feed_menu.item)
             elif self._active_window == 1 and self._episode_menu.item:
                 self._display.delete_episodes(episode=self._episode_menu.item)
-        elif c == key_mapping[Config['key_execute']]:
+        elif c == key_mapping[Config["key_execute"]]:
             if self._active_window == 1 and self._episode_menu.item:
                 self._display.execute_command(self._episode_menu.item)
-        elif c == key_mapping[Config['key_invert']]:
+        elif c == key_mapping[Config["key_invert"]]:
             self._invert_selected_menu()
-        elif c == key_mapping[Config['key_filter']]:
+        elif c == key_mapping[Config["key_filter"]]:
             menu = self._get_active_menu()
             if menu.filter_text:
                 menu.filter_text = ""
@@ -207,7 +204,7 @@ class Perspective(ABC):
             self.update_menus()
             menu.move(-1)
             menu.move(1)
-        elif c == key_mapping[Config['key_mark_played']]:
+        elif c == key_mapping[Config["key_mark_played"]]:
             if self._active_window == 0:
                 feed = self._feed_menu.item
                 if feed is not None:
@@ -263,14 +260,13 @@ class Perspective(ABC):
             window.addstr(y, 0, " " * max_line_width)
 
         metadata = self._get_active_menu().metadata
-        temp_lines = metadata.split('\n')
+        temp_lines = metadata.split("\n")
 
         lines = []
         for line in temp_lines:
-            parts = cjkwrap.wrap(line, window.getmaxyx()[1] - 1,
-                                 replace_whitespace=True)
+            parts = cjkwrap.wrap(line, window.getmaxyx()[1] - 1, replace_whitespace=True)
             if len(parts) == 0:
-                lines.append('')
+                lines.append("")
             else:
                 for part in parts:
                     lines.append(part.strip())
@@ -278,7 +274,7 @@ class Perspective(ABC):
         y = 2
         for line in lines[:max_lines]:
             attr = curses.color_pair(1)
-            if line.startswith('!cb'):
+            if line.startswith("!cb"):
                 attr |= curses.A_BOLD
                 line = line[3:]
 
@@ -286,8 +282,7 @@ class Perspective(ABC):
             y += 1
 
     def update_current_episode_progress(self) -> None:
-        """Update progress of the first player in queue
-        """
+        """Update progress of the first player in queue"""
         (episode, progress) = self._display.queue.get_episode_progress()
         if episode is not None and progress is not None:
             episode.progress = progress

@@ -46,17 +46,17 @@ def test_perspective_chrono_input_keys(display):
 
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    ret_val = perspective.handle_input(ord('h'))
+    ret_val = perspective.handle_input(ord("h"))
     assert ret_val
     display._stdscr.reset_mock()
 
     movement_keys = [
-        display.KEY_MAPPING[Config['key_up']],
-        display.KEY_MAPPING[Config['key_right']],
-        display.KEY_MAPPING[Config['key_down']],
-        display.KEY_MAPPING[Config['key_left']],
-        display.KEY_MAPPING[Config['key_scroll_up']],
-        display.KEY_MAPPING[Config['key_scroll_down']],
+        display.KEY_MAPPING[Config["key_up"]],
+        display.KEY_MAPPING[Config["key_right"]],
+        display.KEY_MAPPING[Config["key_down"]],
+        display.KEY_MAPPING[Config["key_left"]],
+        display.KEY_MAPPING[Config["key_scroll_up"]],
+        display.KEY_MAPPING[Config["key_scroll_down"]],
     ]
     for key in movement_keys:
         perspective._metadata_updated = True
@@ -65,33 +65,33 @@ def test_perspective_chrono_input_keys(display):
         assert not perspective._metadata_updated
 
     operation_keys = [
-        display.KEY_MAPPING[Config['key_delete']],
-        display.KEY_MAPPING[Config['key_remove']],
-        display.KEY_MAPPING[Config['key_reload']],
-        display.KEY_MAPPING[Config['key_reload_selected']],
-        display.KEY_MAPPING[Config['key_save']],
-        display.KEY_MAPPING[Config['key_play_selected']],
-        display.KEY_MAPPING[Config['key_add_selected']],
-        display.KEY_MAPPING[Config['key_clear']],
-        display.KEY_MAPPING[Config['key_next']],
-        display.KEY_MAPPING[Config['key_invert']],
-        display.KEY_MAPPING[Config['key_pause_play']],
-        display.KEY_MAPPING[Config['key_pause_play_alt']],
-        display.KEY_MAPPING[Config['key_seek_forward']],
-        display.KEY_MAPPING[Config['key_seek_forward_alt']],
-        display.KEY_MAPPING[Config['key_seek_backward']],
-        display.KEY_MAPPING[Config['key_seek_backward_alt']],
-        display.KEY_MAPPING[Config['key_mark_played']],
-        display.KEY_MAPPING[Config['key_rate_increase']],
-        display.KEY_MAPPING[Config['key_rate_decrease']],
-        display.KEY_MAPPING[Config['key_show_url']],
-        display.KEY_MAPPING[Config['key_execute']]
+        display.KEY_MAPPING[Config["key_delete"]],
+        display.KEY_MAPPING[Config["key_remove"]],
+        display.KEY_MAPPING[Config["key_reload"]],
+        display.KEY_MAPPING[Config["key_reload_selected"]],
+        display.KEY_MAPPING[Config["key_save"]],
+        display.KEY_MAPPING[Config["key_play_selected"]],
+        display.KEY_MAPPING[Config["key_add_selected"]],
+        display.KEY_MAPPING[Config["key_clear"]],
+        display.KEY_MAPPING[Config["key_next"]],
+        display.KEY_MAPPING[Config["key_invert"]],
+        display.KEY_MAPPING[Config["key_pause_play"]],
+        display.KEY_MAPPING[Config["key_pause_play_alt"]],
+        display.KEY_MAPPING[Config["key_seek_forward"]],
+        display.KEY_MAPPING[Config["key_seek_forward_alt"]],
+        display.KEY_MAPPING[Config["key_seek_backward"]],
+        display.KEY_MAPPING[Config["key_seek_backward_alt"]],
+        display.KEY_MAPPING[Config["key_mark_played"]],
+        display.KEY_MAPPING[Config["key_rate_increase"]],
+        display.KEY_MAPPING[Config["key_rate_decrease"]],
+        display.KEY_MAPPING[Config["key_show_url"]],
+        display.KEY_MAPPING[Config["key_execute"]],
     ]
     for key in operation_keys:
         display._active_window = 0
         assert perspective.handle_input(key)
 
-    ret_val = perspective.handle_input(ord('q'))
+    ret_val = perspective.handle_input(ord("q"))
     assert not ret_val
     display._stdscr.reset_mock()
 
@@ -99,20 +99,24 @@ def test_perspective_chrono_input_keys(display):
 def test_perspective_chrono_draw_metadata(display):
     perspective = get_chrono_perspective(display)
 
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
-    episode = Episode(feed,
-                      title="episode title",
-                      description="episode description",
-                      link="episode link",
-                      pubdate="episode pubdate",
-                      copyright="episode copyright",
-                      enclosure="episode enclosure")
+    feed = Feed(
+        url="feed url",
+        title="feed title",
+        description="feed description",
+        link="feed link",
+        last_build_date="feed last_build_date",
+        copyright="feed copyright",
+        episodes=[],
+    )
+    episode = Episode(
+        feed,
+        title="episode title",
+        description="episode description",
+        link="episode link",
+        pubdate="episode pubdate",
+        copyright="episode copyright",
+        enclosure="episode enclosure",
+    )
     display.database.replace_feed(feed)
     display.database.replace_episode(feed, episode)
     perspective._draw_metadata(perspective._metadata_window)

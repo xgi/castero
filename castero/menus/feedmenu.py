@@ -6,8 +6,7 @@ from castero.menus.episodemenu import EpisodeMenu
 
 
 class FeedMenu(Menu):
-    """The menu for a podcast feed.
-    """
+    """The menu for a podcast feed."""
 
     def __init__(self, window, source, child=None, active=False) -> None:
         assert child is not None and isinstance(child, EpisodeMenu)
@@ -21,27 +20,17 @@ class FeedMenu(Menu):
 
     @property
     def _items(self):
-        """A list of items in the menu represented as dictionaries.
-        """
-        return [
-            {
-                'attr': curses.A_NORMAL,
-                'tags': [],
-                'text': str(feed)
-            }
-            for feed in self._feeds
-        ]
+        """A list of items in the menu represented as dictionaries."""
+        return [{"attr": curses.A_NORMAL, "tags": [], "text": str(feed)} for feed in self._feeds]
 
     @property
     def title(self) -> str:
-        """The title of the menu to display in the window header.
-        """
+        """The title of the menu to display in the window header."""
         return "Feeds"
 
     @property
     def item(self) -> Feed:
-        """The selected feed.
-        """
+        """The selected feed."""
         if len(self._filtered_feeds) == 0:
             return None
 
@@ -49,8 +38,7 @@ class FeedMenu(Menu):
 
     @property
     def metadata(self) -> str:
-        """Metadata for the selected feed.
-        """
+        """Metadata for the selected feed."""
         feed = self.item
         if feed is None:
             return ""
@@ -58,8 +46,7 @@ class FeedMenu(Menu):
         return feed.metadata
 
     def update_items(self, obj):
-        """Called by the parent menu (if we have one) to update our items.
-        """
+        """Called by the parent menu (if we have one) to update our items."""
         super().update_items(obj)
 
         self._feeds = self._source.feeds()
@@ -70,8 +57,7 @@ class FeedMenu(Menu):
         self.display()
 
     def update_child(self):
-        """Update our child menu, the episode menu.
-        """
+        """Update our child menu, the episode menu."""
         if len(self._filtered_feeds) == 0:
             self.update_items(None)
             self._child.update_items(None)
@@ -79,15 +65,12 @@ class FeedMenu(Menu):
             self._child.update_items(self._filtered_feeds[self._selected])
 
     def invert(self):
-        """Invert the menu order.
-        """
+        """Invert the menu order."""
         super().invert()
 
         self.update_items(None)
 
     @property
     def _filtered_feeds(self):
-        """A list of feeds which match the menu filter.
-        """
-        return list(filter(
-            lambda feed: self._filter_text in str(feed).lower(), self._feeds))
+        """A list of feeds which match the menu filter."""
+        return list(filter(lambda feed: self._filter_text in str(feed).lower(), self._feeds))

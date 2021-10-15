@@ -9,11 +9,9 @@ class Net:
     This class provides helper methods for network requests. Generally just a
     wrapper around the requests library.
     """
-    USER_AGENT = "%s %s <%s>" % (
-        castero.__title__, castero.__version__, castero.__url__)
-    HEADERS = {
-        'User-Agent': USER_AGENT
-    }
+
+    USER_AGENT = "%s %s <%s>" % (castero.__title__, castero.__version__, castero.__url__)
+    HEADERS = {"User-Agent": USER_AGENT}
 
     @staticmethod
     def Get(*args, **kwargs) -> requests.models.Response:
@@ -26,10 +24,10 @@ class Net:
         return requests.get(
             *args,
             headers=Net.HEADERS,
-            timeout=float(castero.config.Config['request_timeout']),
+            timeout=float(castero.config.Config["request_timeout"]),
             proxies={
-                'http': castero.config.Config['proxy_http'],
-                'https': castero.config.Config['proxy_https'],
+                "http": castero.config.Config["proxy_http"],
+                "https": castero.config.Config["proxy_https"],
             },
             **kwargs
         )
@@ -39,10 +37,10 @@ class Net:
         return grequests.get(
             *args,
             headers=Net.HEADERS,
-            timeout=float(castero.config.Config['request_timeout']),
+            timeout=float(castero.config.Config["request_timeout"]),
             proxies={
-                'http': castero.config.Config['proxy_http'],
-                'https': castero.config.Config['proxy_https'],
+                "http": castero.config.Config["proxy_http"],
+                "https": castero.config.Config["proxy_https"],
             },
             **kwargs
         )

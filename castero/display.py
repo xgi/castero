@@ -11,8 +11,14 @@ from castero import helpers
 from castero.config import Config
 from castero.database import Database
 from castero.downloadqueue import DownloadQueue
-from castero.feed import Feed, FeedError, FeedLoadError, FeedDownloadError, \
-    FeedParseError, FeedStructureError
+from castero.feed import (
+    Feed,
+    FeedError,
+    FeedLoadError,
+    FeedDownloadError,
+    FeedParseError,
+    FeedStructureError,
+)
 from castero.episode import Episode
 from castero.menu import Menu
 from castero.perspective import Perspective
@@ -21,13 +27,11 @@ from castero.player import Player
 
 
 class DisplayError(Exception):
-    """An ambiguous error while handling the display.
-    """
+    """An ambiguous error while handling the display."""
 
 
 class DisplaySizeError(DisplayError):
-    """The display does not have acceptable dimensions.
-    """
+    """The display does not have acceptable dimensions."""
 
 
 class Display:
@@ -37,33 +41,26 @@ class Display:
     all aspects of the application's interface, including windows and menus. It
     retrieves input from the user and performs corresponding actions.
     """
+
     MIN_WIDTH = 20
     MIN_HEIGHT = 8
     INPUT_TIMEOUT = int(Config["refresh_delay"])
     UPDATE_TIMEOUT = 2000 / INPUT_TIMEOUT  # multiple of INPUT_TIMEOUT
     STATUS_TIMEOUT = 3  # multiple of UPDATE_TIMEOUT
     COLOR_NAMES = {
-        'black': curses.COLOR_BLACK,
-        'blue': curses.COLOR_BLUE,
-        'cyan': curses.COLOR_CYAN,
-        'green': curses.COLOR_GREEN,
-        'magenta': curses.COLOR_MAGENTA,
-        'red': curses.COLOR_RED,
-        'white': curses.COLOR_WHITE,
-        'yellow': curses.COLOR_YELLOW,
-        'transparent': -1
+        "black": curses.COLOR_BLACK,
+        "blue": curses.COLOR_BLUE,
+        "cyan": curses.COLOR_CYAN,
+        "green": curses.COLOR_GREEN,
+        "magenta": curses.COLOR_MAGENTA,
+        "red": curses.COLOR_RED,
+        "white": curses.COLOR_WHITE,
+        "yellow": curses.COLOR_YELLOW,
+        "transparent": -1,
     }
     KEY_MAPPING = {chr(i): i for i in range(256)}
-    KEY_MAPPING.update(
-        (name[4:], value) for name, value in vars(curses).items()
-        if name.startswith('KEY_')
-    )
-    KEY_MAPPING.update(
-        {
-            'ENTER': 10,
-            'SPACE': 32
-        }
-    )
+    KEY_MAPPING.update((name[4:], value) for name, value in vars(curses).items() if name.startswith("KEY_"))
+    KEY_MAPPING.update({"ENTER": 10, "SPACE": 32})
     AVAILABLE_PLAYERS = {}
 
     def __init__(self, stdscr, database) -> None:
@@ -167,43 +164,34 @@ class Display:
         )
 
     def _load_perspectives(self) -> None:
-        """Load instances of perspectives from the `perspectives` package.
-        """
+        """Load instances of perspectives from the `perspectives` package."""
         # load a list of modules names by manually detecting .py files
         module_files = glob.glob(dirname(__file__) + "/perspectives/*.py")
         module_names = [basename(f)[:-3] for f in module_files if isfile(f)]
 
         for name in module_names:
             p_mod = importlib.import_module("castero.perspectives.%s" % name)
-            p_cls = getattr(
-                p_mod,
-                dir(p_mod)[[cls.lower() == name
-                            for cls in dir(p_mod)].index(True)])
+            p_cls = getattr(p_mod, dir(p_mod)[[cls.lower() == name for cls in dir(p_mod)].index(True)])
             inst = p_cls(self)
             self._perspectives[inst.ID] = inst
 
     def _load_players(self) -> None:
-        """Load player classes from the `players` package.
-        """
+        """Load player classes from the `players` package."""
         # load a list of modules names by manually detecting .py files
         module_files = glob.glob(dirname(__file__) + "/players/*.py")
         module_names = [basename(f)[:-3] for f in module_files if isfile(f)]
 
         for name in module_names:
             p_mod = importlib.import_module("castero.players.%s" % name)
-            p_cls = getattr(
-                p_mod,
-                dir(p_mod)[[cls.lower() == name
-                            for cls in dir(p_mod)].index(True)])
+            p_cls = getattr(p_mod, dir(p_mod)[[cls.lower() == name for cls in dir(p_mod)].index(True)])
             self.AVAILABLE_PLAYERS[p_cls.NAME] = p_cls
 
     def _restore_queue(self) -> None:
-        """Recreate players in queue from the database.
-        """
+        """Recreate players in queue from the database."""
         for episode in self.database.queue():
             player = Player.create_instance(
-                self.AVAILABLE_PLAYERS, str(episode),
-                episode.get_playable(), episode)
+                self.AVAILABLE_PLAYERS, str(episode), episode.get_playable(), episode
+            )
             self.queue.add(player)
 
     def _create_windows(self) -> None:
@@ -221,10 +209,8 @@ class Display:
             self._footer_window = None
 
         # create windows
-        self._header_window = curses.newwin(2, self._parent_x,
-                                            0, 0)
-        self._footer_window = curses.newwin(2, self._parent_x,
-                                            self._parent_y - 2, 0)
+        self._header_window = curses.newwin(2, self._parent_x, 0, 0)
+        self._footer_window = curses.newwin(2, self._parent_x, self._parent_y - 2, 0)
 
         # create windows for all perspectives
         for perspective_id in self._perspectives:
@@ -246,7 +232,7 @@ class Display:
         is pressed. This means that typical loop actions, including checking
         the state of the current player, will not run while this screen is up.
         """
-        help_lines = castero.__help__.split('\n')
+        help_lines = castero.__help__.split("\n")
 
         # the first and last lines that content can be displayed, excluding
         # the final line on the screen which is reserved for the "press any
@@ -291,16 +277,17 @@ class Display:
                 # add text from help_lines based on offset
                 max_lineno = min(len(help_lines), cur_offset + y_bounds[1] + 1)
                 for i in range(cur_offset, max_lineno):
-                    help_window.addstr(
-                        i - cur_offset, 2, help_lines[i][:self._parent_x - 2])
+                    help_window.addstr(i - cur_offset, 2, help_lines[i][: self._parent_x - 2])
 
-                bottom_line = "[%d/%d] Press arrow keys to scroll, or any"\
-                    " other key to exit this screen." % (
+                bottom_line = (
+                    "[%d/%d] Press arrow keys to scroll, or any"
+                    " other key to exit this screen."
+                    % (
                         min(len(help_lines), cur_offset + y_bounds[1] + 2),
-                        len(help_lines)
+                        len(help_lines),
                     )
-                help_window.addstr(
-                    y_bounds[1] + 1, 2, bottom_line[:self._parent_x - 3])
+                )
+                help_window.addstr(y_bounds[1] + 1, 2, bottom_line[: self._parent_x - 3])
                 help_window.refresh()
                 update_text = False
 
@@ -308,8 +295,7 @@ class Display:
         self.display_all()
 
     def display(self) -> None:
-        """Draws all windows and sub-features, including titles and borders.
-        """
+        """Draws all windows and sub-features, including titles and borders."""
         # check if the screen size has changed
         self.update_parent_dimensions()
 
@@ -322,18 +308,16 @@ class Display:
         # display the header and footer
         width = self._header_window.getmaxyx()[1]
         self._header_window.addstr(0, 0, " " * width)
-        self._header_window.addstr(0, 0, self._header_str,
-                                   curses.color_pair(6) | curses.A_BOLD)
-        self._footer_window.addstr(1, 0, self._footer_str[:width - 1],
-                                   curses.color_pair(6) | curses.A_BOLD)
+        self._header_window.addstr(0, 0, self._header_str, curses.color_pair(6) | curses.A_BOLD)
+        self._footer_window.addstr(1, 0, self._footer_str[: width - 1], curses.color_pair(6) | curses.A_BOLD)
 
         # add window borders
-        self._header_window.hline(1, 0,
-                                  0, self._header_window.getmaxyx()[1],
-                                  curses.ACS_HLINE | curses.color_pair(8))
-        self._footer_window.hline(0, 0,
-                                  0, self._footer_window.getmaxyx()[1],
-                                  curses.ACS_HLINE | curses.color_pair(8))
+        self._header_window.hline(
+            1, 0, 0, self._header_window.getmaxyx()[1], curses.ACS_HLINE | curses.color_pair(8)
+        )
+        self._footer_window.hline(
+            0, 0, 0, self._footer_window.getmaxyx()[1], curses.ACS_HLINE | curses.color_pair(8)
+        )
 
         # refresh updated windows
         self._footer_window.refresh()
@@ -352,8 +336,7 @@ class Display:
         self.refresh()
 
     def _get_active_perspective(self) -> Perspective:
-        """Retrieve the active/visible Perspective.
-        """
+        """Retrieve the active/visible Perspective."""
         return self._perspectives[self._active_perspective]
 
     def _change_active_perspective(self, perspective_id) -> None:
@@ -384,9 +367,7 @@ class Display:
         self._stdscr.timeout(-1)  # disable timeouts while waiting for entry
 
         # display input prompt
-        self._footer_window.addstr(
-            1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
-        )
+        self._footer_window.addstr(1, 0, " " * (self._footer_window.getmaxyx()[1] - 1))
         self._footer_window.addstr(1, 0, prompt)
 
         entry_pad = curses.newpad(1, 999)
@@ -404,8 +385,7 @@ class Display:
                             scroll_x -= 1
                 else:
                     # scroll the input pad if necessary
-                    if current_x + len(prompt) > \
-                            self._footer_window.getmaxyx()[1] - 1:
+                    if current_x + len(prompt) > self._footer_window.getmaxyx()[1] - 1:
                         scroll_x += 1
 
                     # add the entered character to the pad
@@ -413,10 +393,14 @@ class Display:
                     current_x += 1
 
                 # display current portion of pad
-                entry_pad.refresh(0, scroll_x,
-                                  self._parent_y - 1, len(prompt),
-                                  self._parent_y - 1,
-                                  self._footer_window.getmaxyx()[1] - 1)
+                entry_pad.refresh(
+                    0,
+                    scroll_x,
+                    self._parent_y - 1,
+                    len(prompt),
+                    self._parent_y - 1,
+                    self._footer_window.getmaxyx()[1] - 1,
+                )
 
             # get the next input character
             input_char = self._footer_window.getch()
@@ -425,8 +409,7 @@ class Display:
         self._footer_window.clear()
         self._curs_set(0)
 
-        return entry_pad.instr(0, 0, entry_pad.getmaxyx()[1]) \
-            .decode('utf-8').strip()
+        return entry_pad.instr(0, 0, entry_pad.getmaxyx()[1]).decode("utf-8").strip()
 
     def _get_y_n(self, prompt) -> bool:
         """Prompts the user for a yes or no (y/n) input.
@@ -440,9 +423,7 @@ class Display:
         curses.echo()
         self._curs_set(1)
 
-        self._footer_window.addstr(
-            1, 0, " " * (self._footer_window.getmaxyx()[1] - 1)
-        )
+        self._footer_window.addstr(1, 0, " " * (self._footer_window.getmaxyx()[1] - 1))
         self._footer_window.addstr(1, 0, prompt)
         char = self._footer_window.getch()
 
@@ -450,14 +431,14 @@ class Display:
         self._curs_set(0)
         curses.noecho()
 
-        return char == ord('y')
+        return char == ord("y")
 
     def _curs_set(self, visibility: int) -> None:
         """Safely set the appearance of the cursor.
 
         :param visibility 0 (invisible), 1 (normal mode) or 2 (high visibility)
         """
-        if hasattr(curses, 'curs_set'):
+        if hasattr(curses, "curs_set"):
             try:
                 curses.curs_set(visibility)
             except curses.error:
@@ -476,8 +457,7 @@ class Display:
         return self._get_active_perspective().handle_input(c)
 
     def add_feed(self) -> None:
-        """Prompt the user for a feed and add it, if possible.
-        """
+        """Prompt the user for a feed and add it, if possible."""
         path = self._get_input_str("Enter the URL or path of the feed: ")
         try:
             # assume urls have http in them
@@ -489,28 +469,18 @@ class Display:
                 self.database.replace_feed(feed)
                 self.database.replace_episodes(feed, feed.parse_episodes())
             self.menus_valid = False
-            self.change_status("Feed '%s\' successfully added" % str(feed))
+            self.change_status("Feed '%s' successfully added" % str(feed))
         except FeedError as e:
             if isinstance(e, FeedLoadError):
-                self.change_status(
-                    "FeedLoadError: %s" % str(e)
-                )
+                self.change_status("FeedLoadError: %s" % str(e))
             elif isinstance(e, FeedDownloadError):
-                self.change_status(
-                    "FeedDownloadError: %s" % str(e)
-                )
+                self.change_status("FeedDownloadError: %s" % str(e))
             elif isinstance(e, FeedParseError):
-                self.change_status(
-                    "FeedParseError: %s" % str(e)
-                )
+                self.change_status("FeedParseError: %s" % str(e))
             elif isinstance(e, FeedStructureError):
-                self.change_status(
-                    "FeedStructureError: %s" % str(e)
-                )
+                self.change_status("FeedStructureError: %s" % str(e))
             else:
-                self.change_status(
-                    "FeedError [ambiguous]: %s" % str(e)
-                )
+                self.change_status("FeedError [ambiguous]: %s" % str(e))
 
     def delete_feed(self, feed: Feed) -> None:
         """Deletes the given feed from the database.
@@ -525,9 +495,7 @@ class Display:
         if feed is not None:
             should_delete = True
             if helpers.is_true(Config["delete_feed_confirmation"]):
-                should_delete = self._get_y_n(
-                    "Are you sure you want to delete this feed? (y/n): "
-                )
+                should_delete = self._get_y_n("Are you sure you want to delete this feed? (y/n): ")
             if should_delete:
                 self.database.delete_feed(feed)
                 self.menus_valid = False
@@ -543,10 +511,7 @@ class Display:
         """
         should_reload = True
         if len(self.database.feeds()) >= int(Config["reload_feeds_threshold"]):
-            should_reload = self._get_y_n(
-                "Are you sure you want to reload all of your feeds?"
-                " (y/n): "
-            )
+            should_reload = self._get_y_n("Are you sure you want to reload all of your feeds?" " (y/n): ")
         if should_reload:
             t = threading.Thread(target=self.database.reload, args=[self])
             t.start()
@@ -579,8 +544,8 @@ class Display:
                 return
 
             should_delete = self._get_y_n(
-                "Are you sure you want to download %d"
-                " episodes from this feed? (y/n): " % num_to_save)
+                "Are you sure you want to download %d" " episodes from this feed? (y/n): " % num_to_save
+            )
             if should_delete:
                 for episode in self.database.episodes(feed):
                     if not episode.downloaded:
@@ -611,20 +576,20 @@ class Display:
 
             should_delete = self._get_y_n(
                 "Are you sure you want to delete %d downloaded"
-                " episodes from this feed? (y/n): " % num_to_delete)
+                " episodes from this feed? (y/n): " % num_to_delete
+            )
             if should_delete:
                 for episode in self.database.episodes(feed):
                     if episode.downloaded:
                         episode.delete(self)
                         num_deleted += 1
                 self.menus_valid = False
-                self.change_status(
-                    "Successfully deleted %d episodes" % num_deleted)
+                self.change_status("Successfully deleted %d episodes" % num_deleted)
         else:
             if episode.downloaded:
                 should_delete = self._get_y_n(
-                    "Are you sure you want to delete the downloaded"
-                    " episode? (y/n): ")
+                    "Are you sure you want to delete the downloaded" " episode? (y/n): "
+                )
                 if should_delete:
                     episode.delete(self)
 
@@ -641,13 +606,15 @@ class Display:
 
         :param episode episode to execute the command on
         """
-        command = Config["execute_command"]\
-            .replace("{file}", episode.enclosure)\
-            .replace("{title}", episode.title)\
-            .replace("{description}", episode.description)\
-            .replace("{link}", episode.link)\
-            .replace("{pubdate}", episode.pubdate)\
+        command = (
+            Config["execute_command"]
+            .replace("{file}", episode.enclosure)
+            .replace("{title}", episode.title)
+            .replace("{description}", episode.description)
+            .replace("{link}", episode.link)
+            .replace("{pubdate}", episode.pubdate)
             .replace("{copyright}", episode.copyright)
+        )
         subprocess.Popen(command, shell=True)
 
     def show_episode_url(self, episode: Episode) -> None:
@@ -657,19 +624,15 @@ class Display:
         """
         if episode is not None:
             max_width = self._footer_window.getmaxyx()[1] - 1
-            self._footer_window.addstr(
-                1, 0, " " * max_width
-            )
+            self._footer_window.addstr(1, 0, " " * max_width)
             self.change_status(episode.enclosure)
 
     def clear(self) -> None:
-        """Clear the screen.
-        """
+        """Clear the screen."""
         self._stdscr.clear()
 
     def refresh(self) -> None:
-        """Refresh the screen and all windows in all perspectives.
-        """
+        """Refresh the screen and all windows in all perspectives."""
         self._stdscr.refresh()
 
         for perspective_id in self._perspectives:
@@ -697,8 +660,7 @@ class Display:
         curses.endwin()
 
     def update_parent_dimensions(self) -> None:
-        """Update _parent_x and _parent_y to the size of the console.
-        """
+        """Update _parent_x and _parent_y to the size of the console."""
         current_y, current_x = self._stdscr.getmaxyx()
 
         if current_y != self._parent_y or current_x != self._parent_x:
@@ -759,8 +721,7 @@ class Display:
         stats_str = "[%d%%]" % self._queue.volume
         if self._queue.first is not None:
             state = self._queue.first.state
-            header_str += ["Stopped", "Playing", "Paused"][state] + \
-                ": %s" % self._queue.first.title
+            header_str += ["Stopped", "Playing", "Paused"][state] + ": %s" % self._queue.first.title
             if self._queue.length > 1:
                 header_str += " (+%d in queue)" % (self._queue.length - 1)
 
@@ -770,14 +731,15 @@ class Display:
 
         # truncate the header string to ensure there is always space for
         # the stats to be displayed
-        header_str = header_str[:max_width - len(stats_str)]
+        header_str = header_str[: max_width - len(stats_str)]
         header_str += stats_str.rjust(max_width - len(header_str))
         self._header_str = header_str[:max_width]
 
         # update the footer text
         footer_str = "%sPress %s for help" % (
             self._status + " -- " if len(self._status) > 0 else "",
-            Config["key_help"])
+            Config["key_help"],
+        )
         max_width = self._footer_window.getmaxyx()[1] - 1
         footer_str = footer_str[:max_width]
         self._footer_str = footer_str.ljust(max_width)[:max_width]

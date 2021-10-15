@@ -9,6 +9,7 @@ class Queue:
     This class is also the display class' main interface for accessing
     information about the current player.
     """
+
     MIN_VOLUME = 0
     MAX_VOLUME = 100
     MIN_SPEED = 0.5
@@ -54,21 +55,18 @@ class Queue:
                 self._players = self._players[index:]
 
     def next(self) -> None:
-        """Proceed to the next player in the queue.
-        """
+        """Proceed to the next player in the queue."""
         if len(self._players) > 0:
             self._players.pop(0)
 
     def add(self, player) -> None:
-        """Adds a player to the end of the queue.
-        """
+        """Adds a player to the end of the queue."""
         assert isinstance(player, Player)
 
         self._players.append(player)
 
     def play(self) -> None:
-        """Plays the first player in the queue.
-        """
+        """Plays the first player in the queue."""
         if self.first is not None:
             self._display.modified_episodes.append(self.first.episode)
             progress = self.first.episode.progress
@@ -80,8 +78,7 @@ class Queue:
             self.first.set_rate(self.speed)
 
     def _play_from_progress(self):
-        """Seek forward to progress from start of episode
-        """
+        """Seek forward to progress from start of episode"""
         progress = self.first.episode.progress
         if progress is not None and progress != 0:
             resume_point = self.first.episode.progress / constants.MILLISECONDS_IN_SECOND
@@ -93,8 +90,7 @@ class Queue:
             self.first.play_from(resume_point)
 
     def pause(self) -> None:
-        """Pauses the first player in the queue.
-        """
+        """Pauses the first player in the queue."""
         if self.first is not None:
             self.first.pause()
 
@@ -104,8 +100,7 @@ class Queue:
             self.first.stop()
 
     def toggle(self) -> None:
-        """Plays or pauses the first player.
-        """
+        """Plays or pauses the first player."""
         if self.first is not None:
             if self.first.state == 1:  # playing
                 self.pause()
@@ -120,12 +115,7 @@ class Queue:
         assert direction == 1 or direction == -1
 
         if self.first is not None:
-            distance = int(
-                Config[
-                    "seek_distance_forward" if direction == 1 else
-                    "seek_distance_backward"
-                ]
-            )
+            distance = int(Config["seek_distance_forward" if direction == 1 else "seek_distance_backward"])
             self.first.seek(direction, distance)
 
     def change_rate(self, direction, display=None) -> None:
@@ -145,8 +135,7 @@ class Queue:
         if self.first is not None:
             self.first.set_rate(self.speed)
             # Update the display status
-            self._display.change_status(
-                "Playback speed set to {:0.2f}".format(self.speed))
+            self._display.change_status("Playback speed set to {:0.2f}".format(self.speed))
 
     def change_volume(self, direction) -> None:
         """Increase or decrease volume of the current player.
@@ -177,13 +166,13 @@ class Queue:
         return result
 
     def update(self) -> None:
-        """Checks the status of the current player.
-        """
+        """Checks the status of the current player."""
         if self.first is not None and self.first.duration is not None:
             # sanity check the player's current time
             if self.first.duration > 0:
-                if (self.first.time / constants.MILLISECONDS_IN_SECOND) + 1 >= \
-                        (self.first.duration / constants.MILLISECONDS_IN_SECOND):
+                if (self.first.time / constants.MILLISECONDS_IN_SECOND) + 1 >= (
+                    self.first.duration / constants.MILLISECONDS_IN_SECOND
+                ):
                     self.first.episode.played = True
                     self.first.episode.progress = None
                     self._display.modified_episodes.append(self.first.episode)
@@ -191,7 +180,7 @@ class Queue:
                     self.play()
 
     def get_episode_progress(self):
-        """ Get progress of the current playing episode
+        """Get progress of the current playing episode
         :returns Tuple: episode and its progress if currently playing, else
           None is returned
         """
@@ -200,17 +189,15 @@ class Queue:
         return (None, None)
 
     def _sanitize_volume(self) -> None:
-        """Ensure the volume is an acceptable value (0-100 inclusive).
-        """
+        """Ensure the volume is an acceptable value (0-100 inclusive)."""
         if self._volume > self.MAX_VOLUME:
             self._volume = self.MAX_VOLUME
         elif self._volume < self.MIN_VOLUME:
             self._volume = self.MIN_VOLUME
 
     def _sanitize_speed(self) -> None:
-        """Ensure the speed is an acceptable value (0.5-2.0 inclusive)
-        """
-        if (self._speed < self.MIN_SPEED):
+        """Ensure the speed is an acceptable value (0.5-2.0 inclusive)"""
+        if self._speed < self.MIN_SPEED:
             self._speed = self.MIN_SPEED
         elif self._speed > self.MAX_SPEED:
             self._speed = self.MAX_SPEED

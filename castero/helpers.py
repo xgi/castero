@@ -45,7 +45,7 @@ def sanitize_path(path) -> str:
     :returns str: the given path with potentially unsafe characters replaced
     """
     # adapted from https://stackoverflow.com/a/13593932
-    path = re.sub('[^\\w\\-]', '_', path)
+    path = re.sub("[^\\w\\-]", "_", path)
     return path
 
 
@@ -59,7 +59,7 @@ def is_true(string) -> bool:
     """
     assert isinstance(string, str)
 
-    return string in ['True', 'true', '1']
+    return string in ["True", "true", "1"]
 
 
 def html_to_plain(html) -> str:
@@ -68,7 +68,7 @@ def html_to_plain(html) -> str:
     :param html the text to convert with potential html tags
     :returns str: the given text with html tags removed
     """
-    soup = BeautifulSoup(html, 'html.parser')
+    soup = BeautifulSoup(html, "html.parser")
     return soup.get_text()
 
 
@@ -89,4 +89,4 @@ def datetime_from_rfc822(date) -> datetime:
 
 def seconds_to_time(seconds: int) -> str:
     seconds = max(0, seconds)
-    return time.strftime('%H:%M:%S', time.gmtime(seconds))
+    return time.strftime("%H:%M:%S", time.gmtime(seconds))

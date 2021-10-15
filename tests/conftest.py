@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 
 from gevent import monkey
+
 monkey.patch_all(thread=False, select=False)
 
 import castero.config
@@ -14,17 +15,11 @@ from castero.database import Database
 
 
 class Helpers:
-    """The Helpers class.
-
-    Provides functions that are useful to multiple test units.
-
-    This class should not be instantiated.
-    """
+    """Provides functions that are useful to multiple test units."""
 
     @staticmethod
     def hide_user_database():
-        """Moves the user's database files to make them unreachable.
-        """
+        """Moves the user's database files to make them unreachable."""
         DataFile.ensure_path(Database.PATH)
         DataFile.ensure_path(Database.OLD_PATH)
         if os.path.exists(Database.PATH):
@@ -44,13 +39,10 @@ class Helpers:
 
 
 class MockStdscr(mock.MagicMock):
-    """The MockStdscr class.
-
-    Provides functions to mock typical stdscr behavior.
-    """
+    """Provides functions to mock typical stdscr behavior."""
 
     def getstr(self, start, end):
-        return self.test_input.encode('utf-8')
+        return self.test_input.encode("utf-8")
 
     def setmaxyx(self, nlines, ncols):
         self.nlines, self.ncols = nlines, ncols
@@ -59,9 +51,7 @@ class MockStdscr(mock.MagicMock):
         return self.nlines, self.ncols
 
     def derwin(self, nlines, ncols, x, y):
-        return MockStdscr(nlines=nlines, ncols=ncols,
-                          x=x, y=y,
-                          test_input='unspecified test input')
+        return MockStdscr(nlines=nlines, ncols=ncols, x=x, y=y, test_input="unspecified test input")
 
     def set_test_input(self, str):
         self.test_input = str
@@ -69,22 +59,27 @@ class MockStdscr(mock.MagicMock):
 
 @pytest.yield_fixture()
 def stdscr():
-    with mock.patch('curses.initscr'), \
-            mock.patch('curses.echo'), \
-            mock.patch('curses.flash'), \
-            mock.patch('curses.endwin'), \
-            mock.patch('curses.newwin'), \
-            mock.patch('curses.newpad'), \
-            mock.patch('curses.noecho'), \
-            mock.patch('curses.cbreak'), \
-            mock.patch('curses.doupdate'), \
-            mock.patch('curses.nocbreak'), \
-            mock.patch('curses.curs_set'), \
-            mock.patch('curses.init_pair'), \
-            mock.patch('curses.color_pair'), \
-            mock.patch('curses.has_colors'), \
-            mock.patch('curses.start_color'), \
-            mock.patch('curses.use_default_colors'):
+    with mock.patch("curses.initscr"), mock.patch("curses.echo"), mock.patch("curses.flash"), mock.patch(
+        "curses.endwin"
+    ), mock.patch("curses.newwin"), mock.patch("curses.newpad"), mock.patch("curses.noecho"), mock.patch(
+        "curses.cbreak"
+    ), mock.patch(
+        "curses.doupdate"
+    ), mock.patch(
+        "curses.nocbreak"
+    ), mock.patch(
+        "curses.curs_set"
+    ), mock.patch(
+        "curses.init_pair"
+    ), mock.patch(
+        "curses.color_pair"
+    ), mock.patch(
+        "curses.has_colors"
+    ), mock.patch(
+        "curses.start_color"
+    ), mock.patch(
+        "curses.use_default_colors"
+    ):
         result = MockStdscr(nlines=24, ncols=100, x=0, y=0)
         curses.initscr.return_value = result
         curses.newwin.side_effect = lambda *args: result.derwin(*args)

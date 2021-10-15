@@ -61,17 +61,17 @@ def test_perspective_primary_input_keys(display):
     display._get_input_str = mock.Mock(return_value="")
     display._footer_window.getch = mock.MagicMock(return_value=10)
 
-    ret_val = perspective.handle_input(ord('h'))
+    ret_val = perspective.handle_input(ord("h"))
     assert ret_val
     display._stdscr.reset_mock()
 
     movement_keys = [
-        display.KEY_MAPPING[Config['key_up']],
-        display.KEY_MAPPING[Config['key_right']],
-        display.KEY_MAPPING[Config['key_down']],
-        display.KEY_MAPPING[Config['key_left']],
-        display.KEY_MAPPING[Config['key_scroll_up']],
-        display.KEY_MAPPING[Config['key_scroll_down']],
+        display.KEY_MAPPING[Config["key_up"]],
+        display.KEY_MAPPING[Config["key_right"]],
+        display.KEY_MAPPING[Config["key_down"]],
+        display.KEY_MAPPING[Config["key_left"]],
+        display.KEY_MAPPING[Config["key_scroll_up"]],
+        display.KEY_MAPPING[Config["key_scroll_down"]],
     ]
     for key in movement_keys:
         perspective._metadata_updated = True
@@ -80,25 +80,25 @@ def test_perspective_primary_input_keys(display):
         assert not perspective._metadata_updated
 
     operation_keys = [
-        display.KEY_MAPPING[Config['key_add_feed']],
-        display.KEY_MAPPING[Config['key_delete']],
-        display.KEY_MAPPING[Config['key_remove']],
-        display.KEY_MAPPING[Config['key_reload']],
-        display.KEY_MAPPING[Config['key_reload_selected']],
-        display.KEY_MAPPING[Config['key_save']],
-        display.KEY_MAPPING[Config['key_play_selected']],
-        display.KEY_MAPPING[Config['key_add_selected']],
-        display.KEY_MAPPING[Config['key_clear']],
-        display.KEY_MAPPING[Config['key_next']],
-        display.KEY_MAPPING[Config['key_invert']],
-        display.KEY_MAPPING[Config['key_pause_play']],
-        display.KEY_MAPPING[Config['key_pause_play_alt']],
-        display.KEY_MAPPING[Config['key_seek_forward']],
-        display.KEY_MAPPING[Config['key_seek_forward_alt']],
-        display.KEY_MAPPING[Config['key_seek_backward']],
-        display.KEY_MAPPING[Config['key_seek_backward_alt']],
-        display.KEY_MAPPING[Config['key_mark_played']],
-        display.KEY_MAPPING[Config['key_execute']]
+        display.KEY_MAPPING[Config["key_add_feed"]],
+        display.KEY_MAPPING[Config["key_delete"]],
+        display.KEY_MAPPING[Config["key_remove"]],
+        display.KEY_MAPPING[Config["key_reload"]],
+        display.KEY_MAPPING[Config["key_reload_selected"]],
+        display.KEY_MAPPING[Config["key_save"]],
+        display.KEY_MAPPING[Config["key_play_selected"]],
+        display.KEY_MAPPING[Config["key_add_selected"]],
+        display.KEY_MAPPING[Config["key_clear"]],
+        display.KEY_MAPPING[Config["key_next"]],
+        display.KEY_MAPPING[Config["key_invert"]],
+        display.KEY_MAPPING[Config["key_pause_play"]],
+        display.KEY_MAPPING[Config["key_pause_play_alt"]],
+        display.KEY_MAPPING[Config["key_seek_forward"]],
+        display.KEY_MAPPING[Config["key_seek_forward_alt"]],
+        display.KEY_MAPPING[Config["key_seek_backward"]],
+        display.KEY_MAPPING[Config["key_seek_backward_alt"]],
+        display.KEY_MAPPING[Config["key_mark_played"]],
+        display.KEY_MAPPING[Config["key_execute"]],
     ]
     for key in operation_keys:
         display._active_window = 0
@@ -106,7 +106,7 @@ def test_perspective_primary_input_keys(display):
         display._active_window = 1
         assert perspective.handle_input(key)
 
-    ret_val = perspective.handle_input(ord('q'))
+    ret_val = perspective.handle_input(ord("q"))
     assert not ret_val
     display._stdscr.reset_mock()
 
@@ -114,20 +114,24 @@ def test_perspective_primary_input_keys(display):
 def test_perspective_primary_draw_metadata(display):
     perspective = get_primary_perspective(display)
 
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
-    episode = Episode(feed,
-                      title="episode title",
-                      description="episode description",
-                      link="episode link",
-                      pubdate="episode pubdate",
-                      copyright="episode copyright",
-                      enclosure="episode enclosure")
+    feed = Feed(
+        url="feed url",
+        title="feed title",
+        description="feed description",
+        link="feed link",
+        last_build_date="feed last_build_date",
+        copyright="feed copyright",
+        episodes=[],
+    )
+    episode = Episode(
+        feed,
+        title="episode title",
+        description="episode description",
+        link="episode link",
+        pubdate="episode pubdate",
+        copyright="episode copyright",
+        enclosure="episode enclosure",
+    )
     display.database.replace_feed(feed)
     display.database.replace_episode(feed, episode)
     perspective._draw_metadata(perspective._metadata_window)
@@ -146,27 +150,33 @@ def test_perspective_primary_get_active_menu(display):
 def test_perspective_primary_create_player(display):
     perspective = get_primary_perspective(display)
 
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
-    episode1 = Episode(feed,
-                       title="episode1 title",
-                       description="episode1 description",
-                       link="episode1 link",
-                       pubdate="episode1 pubdate",
-                       copyright="episode1 copyright",
-                       enclosure="episode1 enclosure")
-    episode2 = Episode(feed,
-                       title="episode2 title",
-                       description="episode2 description",
-                       link="episode2 link",
-                       pubdate="episode2 pubdate",
-                       copyright="episode2 copyright",
-                       enclosure="episode2 enclosure")
+    feed = Feed(
+        url="feed url",
+        title="feed title",
+        description="feed description",
+        link="feed link",
+        last_build_date="feed last_build_date",
+        copyright="feed copyright",
+        episodes=[],
+    )
+    episode1 = Episode(
+        feed,
+        title="episode1 title",
+        description="episode1 description",
+        link="episode1 link",
+        pubdate="episode1 pubdate",
+        copyright="episode1 copyright",
+        enclosure="episode1 enclosure",
+    )
+    episode2 = Episode(
+        feed,
+        title="episode2 title",
+        description="episode2 description",
+        link="episode2 link",
+        pubdate="episode2 pubdate",
+        copyright="episode2 copyright",
+        enclosure="episode2 enclosure",
+    )
     display.display()
     display.database.replace_feed(feed)
     display.database.replace_episodes(feed, [episode1, episode2])
@@ -185,28 +195,34 @@ def test_perspective_primary_create_player(display):
 def test_perspective_primary_queue_unplayed(display):
     perspective = get_primary_perspective(display)
 
-    feed = Feed(url="feed url",
-                title="feed title",
-                description="feed description",
-                link="feed link",
-                last_build_date="feed last_build_date",
-                copyright="feed copyright",
-                episodes=[])
-    episode1 = Episode(feed,
-                       title="episode1 title",
-                       description="episode1 description",
-                       link="episode1 link",
-                       pubdate="episode1 pubdate",
-                       copyright="episode1 copyright",
-                       enclosure="episode1 enclosure",
-                       played=True)
-    episode2 = Episode(feed,
-                       title="episode2 title",
-                       description="episode2 description",
-                       link="episode2 link",
-                       pubdate="episode2 pubdate",
-                       copyright="episode2 copyright",
-                       enclosure="episode2 enclosure")
+    feed = Feed(
+        url="feed url",
+        title="feed title",
+        description="feed description",
+        link="feed link",
+        last_build_date="feed last_build_date",
+        copyright="feed copyright",
+        episodes=[],
+    )
+    episode1 = Episode(
+        feed,
+        title="episode1 title",
+        description="episode1 description",
+        link="episode1 link",
+        pubdate="episode1 pubdate",
+        copyright="episode1 copyright",
+        enclosure="episode1 enclosure",
+        played=True,
+    )
+    episode2 = Episode(
+        feed,
+        title="episode2 title",
+        description="episode2 description",
+        link="episode2 link",
+        pubdate="episode2 pubdate",
+        copyright="episode2 copyright",
+        enclosure="episode2 enclosure",
+    )
     display.display()
     display.database.replace_feed(feed)
     display.database.replace_episodes(feed, [episode1, episode2])

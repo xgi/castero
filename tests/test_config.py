@@ -83,4 +83,4 @@ def test_migrate_stability():
 
     with patch("builtins.open", mock_open(read_data="test")) as mock_file:
         config.Config.migrate(conf, default_conf)
-        mock_file.assert_called_with(config.Config.DEFAULT_PATH, 'w')
+        mock_file.assert_called_with(config.Config.DEFAULT_PATH, "w")

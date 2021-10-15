@@ -5,8 +5,13 @@ from lxml import etree
 import pytest
 
 from castero.feed import Feed, FeedDownloadError, FeedStructureError, FeedParseError
-from castero.subscriptions import Subscriptions, SubscriptionsLoadError, \
-    SubscriptionsParseError, SubscriptionsStructureError, SubscriptionsError
+from castero.subscriptions import (
+    Subscriptions,
+    SubscriptionsLoadError,
+    SubscriptionsParseError,
+    SubscriptionsStructureError,
+    SubscriptionsError,
+)
 
 my_dir = os.path.dirname(os.path.realpath(__file__))
 

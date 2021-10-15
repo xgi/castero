@@ -10,8 +10,7 @@ from castero.net import Net
 
 
 class FeedError(Exception):
-    """An ambiguous error while handling the feed.
-    """
+    """An ambiguous error while handling the feed."""
 
 
 class FeedLoadError(FeedError):
@@ -27,13 +26,11 @@ class FeedDownloadError(FeedError):
 
 
 class FeedParseError(FeedError):
-    """The document at the provided URL could not be parsed as an XML document.
-    """
+    """The document at the provided URL could not be parsed as an XML document."""
 
 
 class FeedStructureError(FeedError):
-    """The feed at the provided URL is not a properly structured RSS document.
-    """
+    """The feed at the provided URL is not a properly structured RSS document."""
 
 
 class Feed:
@@ -71,11 +68,11 @@ class Feed:
         self._tree = None
         self._validated = False
 
-        self._title = kwargs.get('title', None)
-        self._description = kwargs.get('description', None)
-        self._link = kwargs.get('link', None)
-        self._last_build_date = kwargs.get('last_build_date', None)
-        self._copyright = kwargs.get('copyright', None)
+        self._title = kwargs.get("title", None)
+        self._description = kwargs.get("description", None)
+        self._link = kwargs.get("link", None)
+        self._last_build_date = kwargs.get("last_build_date", None)
+        self._copyright = kwargs.get("copyright", None)
 
         # assume that if we have been passed the title then we have also been
         # passed everything else and that the feed is valid
@@ -86,8 +83,7 @@ class Feed:
                 try:
                     self._tree = etree.fromstring(text)
                 except etree.ParseError:
-                    raise FeedParseError(
-                        "Unable to parse text as an XML document")
+                    raise FeedParseError("Unable to parse text as an XML document")
             else:
                 # retrieve the feed and parse to XML document
                 self._download_feed()
@@ -130,28 +126,23 @@ class Feed:
                     try:
                         self._tree = etree.fromstring(response.content)
                     except etree.ParseError:
-                        raise FeedParseError(
-                            "Unable to parse text as an XML document")
+                        raise FeedParseError("Unable to parse text as an XML document")
                 else:
                     raise FeedDownloadError(
                         "Did not receive an acceptable status code while"
-                        " downloading the page. Expected 200, got: "
-                        + str(response.status_code))
+                        " downloading the page. Expected 200, got: " + str(response.status_code)
+                    )
             except requests.exceptions.RequestException:
-                raise FeedDownloadError(
-                    "An exception occurred when attempting to download the"
-                    " page")
+                raise FeedDownloadError("An exception occurred when attempting to download the" " page")
         elif self._file is not None:
             # handle feed from file
             try:
                 tree = etree.parse(self._file)
                 self._tree = tree.getroot()
             except etree.ParseError:
-                raise FeedParseError(
-                    "Unable to parse text as an XML document")
+                raise FeedParseError("Unable to parse text as an XML document")
             except IOError:
-                raise FeedLoadError(
-                    "An exception occurred when attempting to load the file")
+                raise FeedLoadError("An exception occurred when attempting to load the file")
 
     def _validate_feed(self):
         """Checks that the provided XML document is a valid RSS feed.
@@ -183,22 +174,20 @@ class Feed:
         This method does not set this object's metadata. That is done in
         _process_feed().
 
-        Raises:
-            FeedStructureError: the XML document violates one of the conditions
+        :raises FeedStructureError: the XML document violates one of the conditions
         """
         assert self._tree is not None
 
         # root should be an rss tag
-        if self._tree.tag != 'rss':
+        if self._tree.tag != "rss":
             raise FeedStructureError("XML document is not an RSS feed")
 
         # root should have version attribute which equals 2.0
-        if 'version' in self._tree.attrib:
-            if self._tree.attrib['version'] != '2.0':
+        if "version" in self._tree.attrib:
+            if self._tree.attrib["version"] != "2.0":
                 raise FeedStructureError("RSS version is not 2.0")
         else:
-            raise FeedStructureError(
-                "RSS feed does not have a version attribute")
+            raise FeedStructureError("RSS feed does not have a version attribute")
 
         # root should a channel tag as its child
         # theoretically the root should have only one child, but see the
@@ -207,40 +196,38 @@ class Feed:
         if len(root_children) > 0:
             channel = None
             for root_child in root_children:
-                if root_child.tag == 'channel':
+                if root_child.tag == "channel":
                     channel = root_child
                     break
             if channel is None:
-                raise FeedStructureError(
-                    "RSS feed does not have a channel tag as its child")
+                raise FeedStructureError("RSS feed does not have a channel tag as its child")
 
             # Channel should have at least 3 children, including a
             # title and description tag. There should be a "link" tag, but we
             # allow an "atom:link" tag as a substitute
             channel_children = list(channel)
             if len(channel_children) >= 3:
-                chan_title_tags = channel.findall('title')
-                chan_link_tags = channel.findall('link')
-                chan_atomlink_tags = channel.findall(
-                    '{http://www.w3.org/2005/Atom}link')
-                chan_description_tags = channel.findall('description')
+                chan_title_tags = channel.findall("title")
+                chan_link_tags = channel.findall("link")
+                chan_atomlink_tags = channel.findall("{http://www.w3.org/2005/Atom}link")
+                chan_description_tags = channel.findall("description")
 
                 if len(chan_title_tags) != 1:
                     raise FeedStructureError(
                         "RSS feed's channel has too many or too few"
-                        " title tags; expected 1, was: "
-                        + str(len(chan_title_tags)))
+                        " title tags; expected 1, was: " + str(len(chan_title_tags))
+                    )
                 else:
                     if channel.find("title").text is None:
-                        raise FeedStructureError(
-                            "RSS feed's channel has no title text")
+                        raise FeedStructureError("RSS feed's channel has no title text")
                 if len(chan_link_tags) > 1:
                     raise FeedStructureError(
                         "RSS feed's channel has too many"
                         " link tags; expected 1, was: "
                         + str(len(chan_link_tags))
                         + ". The corresponding title is: "
-                        + str(chan_title_tags[0].text))
+                        + str(chan_title_tags[0].text)
+                    )
                 if len(chan_link_tags) == 0:
                     if len(chan_atomlink_tags) == 0:
                         raise FeedStructureError(
@@ -248,34 +235,34 @@ class Feed:
                             + " There were also no atom:link tags available to"
                             + " use as a substitute"
                             + ". The corresponding title is: "
-                            + str(chan_title_tags[0].text))
+                            + str(chan_title_tags[0].text)
+                        )
                 if len(chan_description_tags) != 1:
                     raise FeedStructureError(
                         "RSS feed's channel has too many or too few"
                         " description tags; expected 1, was: "
                         + str(len(chan_description_tags))
                         + ". The corresponding title is: "
-                        + str(chan_title_tags[0].text))
+                        + str(chan_title_tags[0].text)
+                    )
 
                 # if the channel has any items, each item should have
                 # at least a title or description tag
-                channel_item_tags = channel.findall('item')
+                channel_item_tags = channel.findall("item")
                 for item in channel_item_tags:
-                    if len(item.findall('title')
-                            + item.findall('description')) < 1:
+                    if len(item.findall("title") + item.findall("description")) < 1:
                         raise FeedStructureError(
                             "An item in the RSS feed's channel did not"
                             " have at least one of a title or a"
-                            " description tag")
+                            " description tag"
+                        )
             else:
                 raise FeedStructureError(
                     "RSS feed's channel does not have enough required"
-                    " children; expected >=3, was: "
-                    + str(len(channel_children)))
+                    " children; expected >=3, was: " + str(len(channel_children))
+                )
         else:
-            raise FeedStructureError(
-                "RSS feed does not have any children; expected 1 (a channel"
-                " tag)")
+            raise FeedStructureError("RSS feed does not have any children; expected 1 (a channel" " tag)")
 
         self._validated = True
 
@@ -288,24 +275,22 @@ class Feed:
 
         channel = None
         for root_child in list(self._tree):
-            if root_child.tag == 'channel':
+            if root_child.tag == "channel":
                 channel = root_child
                 break
 
-        self._title = channel.find('title').text.strip()
-        self._description = channel.find('description').text.strip()
+        self._title = channel.find("title").text.strip()
+        self._description = channel.find("description").text.strip()
 
-        link_tags = channel.findall('link')
+        link_tags = channel.findall("link")
         if len(link_tags) > 0:
-            self._link = "" if link_tags[0].text is None else link_tags[0].text.strip(
-            )
+            self._link = "" if link_tags[0].text is None else link_tags[0].text.strip()
         else:
-            atomlink_tags = channel.findall(
-                '{http://www.w3.org/2005/Atom}link')
-            self._link = atomlink_tags[0].attrib['href']
+            atomlink_tags = channel.findall("{http://www.w3.org/2005/Atom}link")
+            self._link = atomlink_tags[0].attrib["href"]
 
-        last_build_date_tag = channel.find('lastBuildDate')
-        copyright_tag = channel.find('copyright')
+        last_build_date_tag = channel.find("lastBuildDate")
+        copyright_tag = channel.find("copyright")
 
         if last_build_date_tag is not None and last_build_date_tag.text is not None:
             self._last_build_date = last_build_date_tag.text.strip()
@@ -317,24 +302,23 @@ class Feed:
 
         It is required that _validate_feed be run prior to running this method.
 
-        Returns:
-            List[Episode]: the episodes in this feed, which need to be added to
+        :returns List[Episode]: the episodes in this feed, which need to be added to
             the database
         """
         channel = None
         for root_child in list(self._tree):
-            if root_child.tag == 'channel':
+            if root_child.tag == "channel":
                 channel = root_child
                 break
 
         episodes = []
-        for item in channel.findall('item'):
-            item_title = item.find('title')
-            item_description = item.find('description')
-            item_link = item.find('link')
-            item_pubdate = item.find('pubDate')
-            item_copyright = item.find('copyright')
-            item_enclosure = item.find('enclosure')
+        for item in channel.findall("item"):
+            item_title = item.find("title")
+            item_description = item.find("description")
+            item_link = item.find("link")
+            item_pubdate = item.find("pubDate")
+            item_copyright = item.find("copyright")
+            item_enclosure = item.find("enclosure")
 
             item_title_str = None
             item_description_str = None
@@ -354,8 +338,8 @@ class Feed:
             if item_copyright is not None and item_copyright.text is not None:
                 item_copyright_str = item_copyright.text.strip()
             if item_enclosure is not None:
-                if 'url' in item_enclosure.attrib.keys():
-                    item_enclosure_str = item_enclosure.attrib['url']
+                if "url" in item_enclosure.attrib.keys():
+                    item_enclosure_str = item_enclosure.attrib["url"]
 
             # if we were unable to find an enclosure for this episode,
             # don't add it
@@ -363,14 +347,15 @@ class Feed:
                 continue
 
             episodes.append(
-                Episode(self,
-                        title=item_title_str,
-                        description=item_description_str,
-                        link=item_link_str,
-                        pubdate=item_pubdate_str,
-                        copyright=item_copyright_str,
-                        enclosure=item_enclosure_str
-                        )
+                Episode(
+                    self,
+                    title=item_title_str,
+                    description=item_description_str,
+                    link=item_link_str,
+                    pubdate=item_pubdate_str,
+                    copyright=item_copyright_str,
+                    enclosure=item_enclosure_str,
+                )
             )
         return episodes
 
@@ -421,21 +406,25 @@ class Feed:
     @property
     def metadata(self) -> str:
         """str: the user-displayed metadata of the feed"""
-        description = helpers.html_to_plain(self.description) if \
-            helpers.is_true(Config["clean_html_descriptions"]) else \
-            self.description
-        description = description.replace('\n', '')
+        description = (
+            helpers.html_to_plain(self.description)
+            if helpers.is_true(Config["clean_html_descriptions"])
+            else self.description
+        )
+        description = description.replace("\n", "")
 
-        return \
-            "!cb{title}\n" \
-            "{last_build_date}\n\n" \
-            "{link}\n\n" \
-            "!cbCopyright:\n" \
-            "{copyright}\n\n" \
-            "!cbDescription:\n" \
+        return (
+            "!cb{title}\n"
+            "{last_build_date}\n\n"
+            "{link}\n\n"
+            "!cbCopyright:\n"
+            "{copyright}\n\n"
+            "!cbDescription:\n"
             "{description}\n".format(
                 title=self.title,
                 last_build_date=self.last_build_date,
                 link=self.link,
                 copyright=self.copyright,
-                description=description)
+                description=description,
+            )
+        )

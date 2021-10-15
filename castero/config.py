@@ -6,18 +6,15 @@ from castero.datafile import DataFile
 
 
 class ConfigError(Exception):
-    """An ambiguous error while handling the configuration.
-    """
+    """An ambiguous error while handling the configuration."""
 
 
 class ConfigParseError(ConfigError):
-    """An error occurred while parsing the config file.
-    """
+    """An error occurred while parsing the config file."""
 
 
 class ConfigDuplicateError(ConfigError):
-    """The config file contained a duplicate variable.
-    """
+    """The config file contained a duplicate variable."""
 
 
 class _Config(DataFile):
@@ -29,8 +26,9 @@ class _Config(DataFile):
     Modifying config variables inside the application is not supported; config
     changes must be made to the config file itself.
     """
-    PATH = os.path.join(DataFile.CONFIG_DIR, 'castero.conf')
-    DEFAULT_PATH = os.path.join(DataFile.PACKAGE, 'templates/castero.conf')
+
+    PATH = os.path.join(DataFile.CONFIG_DIR, "castero.conf")
+    DEFAULT_PATH = os.path.join(DataFile.PACKAGE, "templates/castero.conf")
 
     def __init__(self) -> None:
         """
@@ -50,8 +48,7 @@ class _Config(DataFile):
     def load(self) -> None:
         """Loads the config file.
 
-        Raises:
-            ConfigParseError: an error occurred while parsing the config file
+        :raises ConfigParseError: an error occurred while parsing the config file
         """
         assert os.path.exists(self._path)
         assert os.path.exists(self._default_path)
@@ -60,9 +57,7 @@ class _Config(DataFile):
         try:
             conf.read(self._path)
         except configparser.ParsingError:
-            raise ConfigParseError(
-                "An error occurred while parsing the config file"
-            )
+            raise ConfigParseError("An error occurred while parsing the config file")
 
         # we also read from the the default_conf to make sure conf contains
         # all of the necessary parameters
@@ -71,8 +66,7 @@ class _Config(DataFile):
             default_conf.read(self._default_path)
         except configparser.ParsingError:
             raise ConfigParseError(
-                "An error occurred while parsing the default config file"
-                " (don't modify that one!)"
+                "An error occurred while parsing the default config file" " (don't modify that one!)"
             )
 
         # ensure that all variables in the default_conf are present
@@ -93,9 +87,7 @@ class _Config(DataFile):
                         # purposes - this config object only stores variables
                         # at a single depth
                         if key in self.data:
-                            raise ConfigDuplicateError(
-                                "Variable defined multiple times, key: " + key
-                            )
+                            raise ConfigDuplicateError("Variable defined multiple times, key: " + key)
 
                         self.data[key] = conf[section][key]
                     else:
@@ -132,9 +124,9 @@ class _Config(DataFile):
         # In an update, we renamed key_delete to key_remove and added a
         # different key_delete value. If the user has key_delete but not
         # key_removed, we swap these values manually.
-        if 'key_delete' in conf_dict and 'key_remove' not in conf_dict:
-            conf_dict['key_remove'] = conf_dict['key_delete']
-            conf_dict['key_delete'] = default_conf_dict['key_delete']
+        if "key_delete" in conf_dict and "key_remove" not in conf_dict:
+            conf_dict["key_remove"] = conf_dict["key_delete"]
+            conf_dict["key_delete"] = default_conf_dict["key_delete"]
 
         with open(self._default_path, "r") as default_conf_file:
             lines = default_conf_file.readlines()
@@ -142,10 +134,7 @@ class _Config(DataFile):
                 for key in default_conf_dict:
                     if line.startswith(key + " "):
                         if key in conf_dict:
-                            lines[lines.index(line)] = "%s = %s\n" % (
-                                line.split(" =")[0],
-                                conf_dict[key]
-                            )
+                            lines[lines.index(line)] = "%s = %s\n" % (line.split(" =")[0], conf_dict[key])
 
         with open(self._path, "w") as conf_file:
             for line in lines:

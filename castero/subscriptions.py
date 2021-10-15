@@ -5,8 +5,7 @@ from castero.feed import Feed, FeedDownloadError, FeedStructureError, FeedParseE
 
 
 class SubscriptionsError(Exception):
-    """An ambiguous error while handling the document.
-    """
+    """An ambiguous error while handling the document."""
 
 
 class SubscriptionsLoadError(SubscriptionsError):
@@ -16,16 +15,14 @@ class SubscriptionsLoadError(SubscriptionsError):
 
 
 class SubscriptionsParseError(SubscriptionsError):
-    """The document could not be parsed as an XML document.
-    """
+    """The document could not be parsed as an XML document."""
 
 
 class SubscriptionsStructureError(SubscriptionsError):
-    """The file data is not a properly structured OPML document.
-    """
+    """The file data is not a properly structured OPML document."""
 
 
-class Subscriptions():
+class Subscriptions:
     """The user's podcast subscriptions.
 
     Instances of this class represent a list of podcast subscriptions, which
@@ -51,11 +48,9 @@ class Subscriptions():
         try:
             self._tree = etree.parse(path)
         except IOError:
-            raise SubscriptionsLoadError(
-                "An I/O exception occurred when attempting to load the file")
+            raise SubscriptionsLoadError("An I/O exception occurred when attempting to load the file")
         except etree.ParseError:
-            raise SubscriptionsParseError(
-                "Unable to parse text as an XML document")
+            raise SubscriptionsParseError("Unable to parse text as an XML document")
 
     def save(self, path: str) -> None:
         """Save an OPML file of subscriptions.
@@ -72,13 +67,11 @@ class Subscriptions():
             try:
                 self._tree.write(path, xml_declaration=True)
             except IOError:
-                raise SubscriptionsLoadError(
-                    "An I/O exception occurred when attempting to save the"
-                    " file")
+                raise SubscriptionsLoadError("An I/O exception occurred when attempting to save the" " file")
         else:
             raise SubscriptionsError(
-                "Attempted to save an XML document that has not been loaded or"
-                " created")
+                "Attempted to save an XML document that has not been loaded or" " created"
+            )
 
     def generate(self, feeds: List[Feed]) -> None:
         """Create subscriptions document from list of feeds.
@@ -87,7 +80,7 @@ class Subscriptions():
         """
         builder = etree.TreeBuilder()
 
-        builder.start("opml", {'version': '2.0'})
+        builder.start("opml", {"version": "2.0"})
         builder.start("head", {})
         builder.start("title", {})
         builder.data("castero feeds")
@@ -95,11 +88,7 @@ class Subscriptions():
         builder.end("head")
         builder.start("body", {})
         for feed in feeds:
-            builder.start("outline", {
-                'type': 'rss',
-                'text': str(feed),
-                'xmlUrl': feed.key
-            })
+            builder.start("outline", {"type": "rss", "text": str(feed), "xmlUrl": feed.key})
             builder.end("outline")
         builder.end("body")
         builder.end("opml")
@@ -117,24 +106,24 @@ class Subscriptions():
 
         if self._tree is None:
             raise SubscriptionsStructureError(error_msg)
-        body = self._tree.find('body')
+        body = self._tree.find("body")
         if body is None:
             raise SubscriptionsStructureError(error_msg)
 
         feeds_container = self._find_rss_container(body)
         if feeds_container is not None:
             self._feeds = []
-            for entry in feeds_container.findall('outline'):
+            for entry in feeds_container.findall("outline"):
                 try:
-                    feed = Feed(url=entry.attrib['xmlUrl'])
+                    feed = Feed(url=entry.attrib["xmlUrl"])
                     self._feeds.append(feed)
                     yield feed
                 except FeedDownloadError as e:
-                    yield (entry.attrib['xmlUrl'], e)
+                    yield (entry.attrib["xmlUrl"], e)
                 except FeedStructureError as e:
-                    yield (entry.attrib['xmlUrl'], e)
+                    yield (entry.attrib["xmlUrl"], e)
                 except FeedParseError as e:
-                    yield (entry.attrib['xmlUrl'], e)
+                    yield (entry.attrib["xmlUrl"], e)
 
     def _find_rss_container(self, container):
         """Find potentially-nested container for RSS feeds.
@@ -142,12 +131,11 @@ class Subscriptions():
         :param container the Element to search
         :returns Element: the first 'outline' Element containing an RSS feed
         """
-        outline = container.find('outline')
+        outline = container.find("outline")
         if outline is None:
             return None
 
-        if 'type' in outline.attrib and \
-                outline.attrib['type'].lower() in ['rss', 'link']:
+        if "type" in outline.attrib and outline.attrib["type"].lower() in ["rss", "link"]:
             return container
         else:
             return self._find_rss_container(outline)

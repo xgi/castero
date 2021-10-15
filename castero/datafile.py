@@ -15,12 +15,11 @@ class DataFile:
 
     Extended by classes which are based on a data file.
     """
+
     PACKAGE = os.path.dirname(__file__)
-    HOME = os.path.expanduser('~')
-    XDG_CONFIG_HOME = os.getenv('XDG_CONFIG_HOME',
-                                os.path.join(HOME, '.config'))
-    XDG_DATA_HOME = os.getenv('XDG_DATA_HOME',
-                              os.path.join(HOME, '.local', 'share'))
+    HOME = os.path.expanduser("~")
+    XDG_CONFIG_HOME = os.getenv("XDG_CONFIG_HOME", os.path.join(HOME, ".config"))
+    XDG_DATA_HOME = os.getenv("XDG_DATA_HOME", os.path.join(HOME, ".local", "share"))
     CONFIG_DIR = os.path.join(XDG_CONFIG_HOME, castero.__title__)
     DATA_DIR = os.path.join(XDG_DATA_HOME, castero.__title__)
     DEFAULT_DOWNLOADED_DIR = os.path.join(DATA_DIR, "downloaded")
@@ -65,8 +64,7 @@ class DataFile:
 
     @staticmethod
     def ensure_path(filename):
-        """Ensure that the path to the filename exists, creating it if needed.
-        """
+        """Ensure that the path to the filename exists, creating it if needed."""
         path = os.path.dirname(filename)
         if not os.path.exists(path):
             os.makedirs(path)
@@ -96,12 +94,9 @@ class DataFile:
             downloaded = 0
             for chunk in response.iter_content(chunk_size=chunk_size):
                 if display is not None:
-                    status_str = "Downloading \"%s\": %d%s" % (
-                        name, downloaded / chunk_size, chuck_size_label
-                    )
+                    status_str = 'Downloading "%s": %d%s' % (name, downloaded / chunk_size, chuck_size_label)
                     if download_queue.length > 1:
-                        status_str += " (+%d downloads in queue)" % \
-                            (download_queue.length - 1)
+                        status_str += " (+%d downloads in queue)" % (download_queue.length - 1)
 
                     display.change_status(status_str)
                 if chunk:
@@ -114,15 +109,9 @@ class DataFile:
         download_queue.next()
 
     def load(self) -> None:
-        """Loads the data file.
-
-        Should be implemented by classes which extend this class.
-        """
+        """Loads the data file."""
         pass
 
     def write(self) -> None:
-        """Writes to the data file.
-
-        Should be implemented by classes which extend this class.
-        """
+        """Writes to the data file."""
         pass

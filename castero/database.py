@@ -15,7 +15,7 @@ from castero.queue import Queue
 from castero.net import Net
 
 
-class Database():
+class Database:
     """The user's database.
 
     This class provides an API for storing and retrieving data from an sqlite
@@ -27,9 +27,10 @@ class Database():
 
     For schema details, see $PACKAGE/templates/migrations.
     """
-    PATH = os.path.join(DataFile.DATA_DIR, 'castero.db')
-    OLD_PATH = os.path.join(DataFile.DATA_DIR, 'feeds')
-    MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, 'templates/migrations')
+
+    PATH = os.path.join(DataFile.DATA_DIR, "castero.db")
+    OLD_PATH = os.path.join(DataFile.DATA_DIR, "feeds")
+    MIGRATIONS_DIR = os.path.join(DataFile.PACKAGE, "templates/migrations")
 
     SQL_EPISODES_BY_FEED_WITH_PROGRESS = "select episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where feed_key=? order by episode.id"
     SQL_EPISODES_WITH_PROGRESS = "select episode.feed_key, episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id order by episode.id"
@@ -37,9 +38,15 @@ class Database():
     SQL_UNPLAYED_EPISODES_BY_FEED = "select episode.id, episode.title, episode.description, episode.link, episode.pubdate, episode.copyright, episode.enclosure, episode.played, progress.time from episode left join progress on episode.id=progress.ep_id where feed_key=? and played=0 order by episode.id"
     SQL_EPISODE_REPLACE = "replace into episode (id, title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?,?)"
     SQL_EPISODE_REPLACE_NOID = "replace into episode (title, feed_key, description, link, pubdate, copyright, enclosure, played)\nvalues (?,?,?,?,?,?,?,?)"
-    SQL_FEEDS_ALL = "select key, title, description, link, last_build_date, copyright from feed order by lower(title)"
-    SQL_FEED_BY_KEY = "select key, title, description, link, last_build_date, copyright from feed where key=?"
-    SQL_FEED_REPLACE = "replace into feed (key, title, description, link, last_build_date, copyright)\nvalues (?,?,?,?,?,?)"
+    SQL_FEEDS_ALL = (
+        "select key, title, description, link, last_build_date, copyright from feed order by lower(title)"
+    )
+    SQL_FEED_BY_KEY = (
+        "select key, title, description, link, last_build_date, copyright from feed where key=?"
+    )
+    SQL_FEED_REPLACE = (
+        "replace into feed (key, title, description, link, last_build_date, copyright)\nvalues (?,?,?,?,?,?)"
+    )
     SQL_FEED_DELETE = "delete from feed where key=?"
     SQL_QUEUE_ALL = "select id, ep_id from queue"
     SQL_QUEUE_REPLACE = "replace into queue (id, ep_id)\nvalues (?,?)"
@@ -55,8 +62,7 @@ class Database():
         existed = os.path.exists(self.PATH)
         DataFile.ensure_path(self.PATH)
 
-        self._using_memory = not helpers.is_true(
-            Config["restrict_memory_usage"])
+        self._using_memory = not helpers.is_true(Config["restrict_memory_usage"])
 
         file_conn = sqlite3.connect(self.PATH, check_same_thread=False)
 
@@ -93,28 +99,27 @@ class Database():
         Migrations are defined in $PACKAGE/templtaes/migrations.
         """
         cursor = self._conn.cursor()
-        cur_version = cursor.execute('pragma user_version').fetchone()[0]
+        cur_version = cursor.execute("pragma user_version").fetchone()[0]
 
         migration_files = list(os.listdir(self.MIGRATIONS_DIR))
         for migration in sorted(migration_files):
             version = int(migration.split("-")[0])
             if version > cur_version:
                 path = os.path.join(self.MIGRATIONS_DIR, migration)
-                with open(path, 'rt') as f:
+                with open(path, "rt") as f:
                     cursor.executescript(f.read())
 
     def _copy_database(self, from_connection, to_connection):
-        """Copy database contents from one connection to another.
-        """
+        """Copy database contents from one connection to another."""
         if sys.version_info.major == 3 and sys.version_info.minor >= 7:
             from_connection.backup(to_connection)
             return
 
         cursor = from_connection.cursor()
-        cur_version = cursor.execute('pragma user_version').fetchone()[0]
+        cur_version = cursor.execute("pragma user_version").fetchone()[0]
         tempfile = StringIO()
         for line in from_connection.iterdump():
-            tempfile.write('%s\n' % line)
+            tempfile.write("%s\n" % line)
         from_connection.close()
         tempfile.seek(0)
 
@@ -132,32 +137,38 @@ class Database():
         self.migrate()
         cursor = self._conn.cursor()
 
-        with open(self.OLD_PATH, 'r') as f:
+        with open(self.OLD_PATH, "r") as f:
             content = json.loads(f.read())
 
         for key in content:
             feed_dict = content[key]
 
-            cursor.execute(self.SQL_FEED_REPLACE, (
-                key,
-                feed_dict["title"],
-                feed_dict["description"],
-                feed_dict["link"],
-                feed_dict["last_build_date"],
-                feed_dict["copyright"]
-            ))
+            cursor.execute(
+                self.SQL_FEED_REPLACE,
+                (
+                    key,
+                    feed_dict["title"],
+                    feed_dict["description"],
+                    feed_dict["link"],
+                    feed_dict["last_build_date"],
+                    feed_dict["copyright"],
+                ),
+            )
 
             for episode_dict in feed_dict["episodes"]:
-                cursor.execute(self.SQL_EPISODE_REPLACE_NOID, (
-                    episode_dict["title"],
-                    key,
-                    episode_dict["description"],
-                    episode_dict["link"],
-                    episode_dict["pubdate"],
-                    episode_dict["copyright"],
-                    episode_dict["enclosure"],
-                    False
-                ))
+                cursor.execute(
+                    self.SQL_EPISODE_REPLACE_NOID,
+                    (
+                        episode_dict["title"],
+                        key,
+                        episode_dict["description"],
+                        episode_dict["link"],
+                        episode_dict["pubdate"],
+                        episode_dict["copyright"],
+                        episode_dict["enclosure"],
+                        False,
+                    ),
+                )
 
         self._conn.commit()
 
@@ -180,14 +191,10 @@ class Database():
         :param feed the Feed to replace
         """
         cursor = self._conn.cursor()
-        cursor.execute(self.SQL_FEED_REPLACE, (
-            feed.key,
-            feed.title,
-            feed.description,
-            feed.link,
-            feed.last_build_date,
-            feed.copyright
-        ))
+        cursor.execute(
+            self.SQL_FEED_REPLACE,
+            (feed.key, feed.title, feed.description, feed.link, feed.last_build_date, feed.copyright),
+        )
         self._conn.commit()
 
     def replace_episode(self, feed: Feed, episode: Episode) -> None:
@@ -205,29 +212,35 @@ class Database():
         """
         cursor = self._conn.cursor()
         if episode.ep_id is None:
-            cursor.execute(self.SQL_EPISODE_REPLACE_NOID, (
-                episode.title,
-                feed.key,
-                episode.description,
-                episode.link,
-                episode.pubdate,
-                episode.copyright,
-                episode.enclosure,
-                episode.played
-            ))
+            cursor.execute(
+                self.SQL_EPISODE_REPLACE_NOID,
+                (
+                    episode.title,
+                    feed.key,
+                    episode.description,
+                    episode.link,
+                    episode.pubdate,
+                    episode.copyright,
+                    episode.enclosure,
+                    episode.played,
+                ),
+            )
             episode.ep_id = cursor.lastrowid
         else:
-            cursor.execute(self.SQL_EPISODE_REPLACE, (
-                episode.ep_id,
-                episode.title,
-                feed.key,
-                episode.description,
-                episode.link,
-                episode.pubdate,
-                episode.copyright,
-                episode.enclosure,
-                episode.played
-            ))
+            cursor.execute(
+                self.SQL_EPISODE_REPLACE,
+                (
+                    episode.ep_id,
+                    episode.title,
+                    feed.key,
+                    episode.description,
+                    episode.link,
+                    episode.pubdate,
+                    episode.copyright,
+                    episode.enclosure,
+                    episode.played,
+                ),
+            )
         self._conn.commit()
 
     def replace_episodes(self, feed: Feed, episodes: List[Episode]) -> None:
@@ -252,37 +265,44 @@ class Database():
                 episodes_with_id.append(episode)
 
         if len(episodes_without_id) > 0:
-            cursor.executemany(self.SQL_EPISODE_REPLACE_NOID,
-                               ((
-                                   episode.title,
-                                   feed.key,
-                                   episode.description,
-                                   episode.link,
-                                   episode.pubdate,
-                                   episode.copyright,
-                                   episode.enclosure,
-                                   episode.played
-                               ) for episode in episodes_without_id)
-                               )
+            cursor.executemany(
+                self.SQL_EPISODE_REPLACE_NOID,
+                (
+                    (
+                        episode.title,
+                        feed.key,
+                        episode.description,
+                        episode.link,
+                        episode.pubdate,
+                        episode.copyright,
+                        episode.enclosure,
+                        episode.played,
+                    )
+                    for episode in episodes_without_id
+                ),
+            )
         if len(episodes_with_id) > 0:
-            cursor.executemany(self.SQL_EPISODE_REPLACE,
-                               ((
-                                   episode.ep_id,
-                                   episode.title,
-                                   feed.key,
-                                   episode.description,
-                                   episode.link,
-                                   episode.pubdate,
-                                   episode.copyright,
-                                   episode.enclosure,
-                                   episode.played
-                               ) for episode in episodes_with_id)
-                               )
+            cursor.executemany(
+                self.SQL_EPISODE_REPLACE,
+                (
+                    (
+                        episode.ep_id,
+                        episode.title,
+                        feed.key,
+                        episode.description,
+                        episode.link,
+                        episode.pubdate,
+                        episode.copyright,
+                        episode.enclosure,
+                        episode.played,
+                    )
+                    for episode in episodes_with_id
+                ),
+            )
         self._conn.commit()
 
     def delete_queue(self) -> None:
-        """Clear the queue table.
-        """
+        """Clear the queue table."""
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_QUEUE_DELETE)
         self._conn.commit()
@@ -302,10 +322,7 @@ class Database():
         for player in queue:
             episode = player.episode
             if self.episode(episode.ep_id) is not None:
-                cursor.execute(self.SQL_QUEUE_REPLACE, (
-                    i,
-                    player.episode.ep_id
-                ))
+                cursor.execute(self.SQL_QUEUE_REPLACE, (i, player.episode.ep_id))
                 i += 1
         self._conn.commit()
 
@@ -320,13 +337,13 @@ class Database():
         feeds = []
         for row in cursor.fetchall():
             feed = Feed(
-                url=row[0] if row[0].startswith('http') else None,
-                file=row[0] if not row[0].startswith('http') else None,
+                url=row[0] if row[0].startswith("http") else None,
+                file=row[0] if not row[0].startswith("http") else None,
                 title=row[1],
                 description=row[2],
                 link=row[3],
                 last_build_date=row[4],
-                copyright=row[5]
+                copyright=row[5],
             )
 
             if feed.title:
@@ -353,22 +370,23 @@ class Database():
                 if feed_key not in feed_entries:
                     feed_entries[feed_key] = self.feed(feed_key)
 
-            return [Episode(
-                feed_entries[row[0]],
-                ep_id=row[1],
-                title=row[2],
-                description=row[3],
-                link=row[4],
-                pubdate=row[5],
-                copyright=row[6],
-                enclosure=row[7],
-                played=row[8],
-                progress=row[9]
-            )
-                for row in rows]
+            return [
+                Episode(
+                    feed_entries[row[0]],
+                    ep_id=row[1],
+                    title=row[2],
+                    description=row[3],
+                    link=row[4],
+                    pubdate=row[5],
+                    copyright=row[6],
+                    enclosure=row[7],
+                    played=row[8],
+                    progress=row[9],
+                )
+                for row in rows
+            ]
         else:
-            cursor.execute(
-                self.SQL_EPISODES_BY_FEED_WITH_PROGRESS, (feed.key,))
+            cursor.execute(self.SQL_EPISODES_BY_FEED_WITH_PROGRESS, (feed.key,))
             rows = cursor.fetchall()
             return self._create_feed_episode_list(feed, rows)
 
@@ -389,7 +407,8 @@ class Database():
         :param episode_rows Query result rows
         :returns List[Episode]: List of the episodes
         """
-        return [Episode(
+        return [
+            Episode(
                 feed,
                 ep_id=row[0],
                 title=row[1],
@@ -399,9 +418,10 @@ class Database():
                 copyright=row[5],
                 enclosure=row[6],
                 played=row[7],
-                progress=row[8]
-                )
-                for row in episode_rows]
+                progress=row[8],
+            )
+            for row in episode_rows
+        ]
 
     def feed(self, key) -> Feed:
         """Retrieve a feed by key.
@@ -418,8 +438,8 @@ class Database():
             return None
         else:
             return Feed(
-                url=result[0] if result[0].startswith('http') else None,
-                file=result[0] if not result[0].startswith('http') else None,
+                url=result[0] if result[0].startswith("http") else None,
+                file=result[0] if not result[0].startswith("http") else None,
                 title=result[1],
                 description=result[2],
                 link=result[3],
@@ -482,8 +502,7 @@ class Database():
             ep_id = result[1]
             if ep_id not in episodes_cache:
                 feed_key = result[0]
-                feed = feeds_cache[feed_key] if feed_key in feeds_cache \
-                    else self.feed(feed_key)
+                feed = feeds_cache[feed_key] if feed_key in feeds_cache else self.feed(feed_key)
                 episodes_cache[ep_id] = Episode(
                     feed,
                     ep_id=ep_id,
@@ -494,7 +513,7 @@ class Database():
                     copyright=result[6],
                     enclosure=result[7],
                     played=result[8],
-                    progress=result[9]
+                    progress=result[9],
                 )
 
         # queue may contain repeated ep_id's, so we need to go back to the
@@ -553,13 +572,14 @@ class Database():
             if display is not None:
                 error_str = "(%s errors)" % errors if errors > 0 else ""
                 display.change_status(
-                    "Reloading feeds (%d/%d) %s" % (completed_feeds, total_feeds, error_str))
+                    "Reloading feeds (%d/%d) %s" % (completed_feeds, total_feeds, error_str)
+                )
 
             old_feed = None
             response_url = response.request.url
             if response_url in url_pairs:
                 old_feed = url_pairs[response.request.url]
-            elif hasattr(response, 'history') and len(response.history) > 0:
+            elif hasattr(response, "history") and len(response.history) > 0:
                 response_url = response.history[0].url
                 old_feed = url_pairs[response_url]
             else:
@@ -578,7 +598,8 @@ class Database():
             if display is not None:
                 error_str = "(%s errors)" % errors if errors > 0 else ""
                 display.change_status(
-                    "Reloading feeds (%d/%d) %s" % (completed_feeds, total_feeds, error_str))
+                    "Reloading feeds (%d/%d) %s" % (completed_feeds, total_feeds, error_str)
+                )
 
             try:
                 new_feed = Feed(file=old_feed.key)
@@ -588,14 +609,12 @@ class Database():
                 errors += 1
 
         if display is not None:
-            display.change_status(
-                "Successfully reloaded %d feeds" % total_feeds)
+            display.change_status("Successfully reloaded %d feeds" % total_feeds)
             display.menus_valid = False
 
     def replace_progress(self, episode: Episode, progress: int):
         cursor = self._conn.cursor()
-        cursor.execute(self.SQL_EPISODE_PROGRESS_REPLACE,
-                       (episode.ep_id, progress))
+        cursor.execute(self.SQL_EPISODE_PROGRESS_REPLACE, (episode.ep_id, progress))
         episode.progress = progress
         self._conn.commit()
 
@@ -616,13 +635,10 @@ class Database():
         old_episodes = self.episodes(new_feed)
         episode_progresses = {}
         for new_ep in new_episodes:
-            matching_olds = [
-                old_ep for old_ep in old_episodes if
-                str(old_ep) == str(new_ep)
-            ]
+            matching_olds = [old_ep for old_ep in old_episodes if str(old_ep) == str(new_ep)]
             if len(matching_olds) == 1:
                 new_ep.replace_from(matching_olds[0])
-                if (matching_olds[0].progress != 0):
+                if matching_olds[0].progress != 0:
                     episode_progresses[str(new_ep)] = new_ep.progress
 
         # limit number of episodes, if necessary

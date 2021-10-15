@@ -8,14 +8,23 @@ from castero.datafile import DataFile
 
 
 class Episode:
-    """A single episode from a podcast feed.
-    """
+    """A single episode from a podcast feed."""
 
     PROGRESS_INDICATOR = "*"
 
-    def __init__(self, feed, ep_id=None, title=None, description=None,
-                 link=None, pubdate=None, copyright=None, enclosure=None,
-                 played=False, progress=None) -> None:
+    def __init__(
+        self,
+        feed,
+        ep_id=None,
+        title=None,
+        description=None,
+        link=None,
+        pubdate=None,
+        copyright=None,
+        enclosure=None,
+        played=False,
+        progress=None,
+    ) -> None:
         """
         At least one of a title or description must be specified.
 
@@ -52,7 +61,7 @@ class Episode:
         else:
             representation = str(self._description)
 
-        representation = representation.split('\n')[0]
+        representation = representation.split("\n")[0]
 
         return representation
 
@@ -68,11 +77,8 @@ class Episode:
         if Config is None or Config["custom_download_dir"] == "":
             path = DataFile.DEFAULT_DOWNLOADED_DIR
         else:
-            path = \
-                os.path.expandvars(
-                    os.path.expanduser(
-                        Config["custom_download_dir"]))
-            if not path.startswith('/'):
+            path = os.path.expandvars(os.path.expanduser(Config["custom_download_dir"]))
+            if not path.startswith("/"):
                 path = "/%s" % path
         return os.path.join(path, feed_dirname)
 
@@ -90,7 +96,7 @@ class Episode:
         feed_directory = self._feed_directory()
         if os.path.exists(feed_directory):
             for File in os.listdir(feed_directory):
-                if File.startswith(str(self.ep_id) + '-'):
+                if File.startswith(str(self.ep_id) + "-"):
                     playable = os.path.join(feed_directory, File)
 
         return playable
@@ -107,15 +113,14 @@ class Episode:
         """
         if self._enclosure is None:
             if display is not None:
-                display.change_status("Download failed: episode does not have"
-                                      " a valid media source")
+                display.change_status("Download failed: episode does not have" " a valid media source")
             return
 
         feed_directory = self._feed_directory()
         filename = "%s-%s%s" % (
             self.ep_id,
             helpers.sanitize_path(str(self)),
-            str(os.path.splitext(self._enclosure)[1].split('?')[0])
+            str(os.path.splitext(self._enclosure)[1].split("?")[0]),
         )
         output_path = os.path.join(feed_directory, filename)
         DataFile.ensure_path(output_path)
@@ -125,11 +130,8 @@ class Episode:
 
         t = threading.Thread(
             target=DataFile.download_to_file,
-            args=[
-                self._enclosure, output_path, str(self),
-                download_queue, display
-            ],
-            name="download_%s" % str(self)
+            args=[self._enclosure, output_path, str(self), download_queue, display],
+            name="download_%s" % str(self),
         )
         t.start()
 
@@ -142,13 +144,11 @@ class Episode:
             feed_directory = self._feed_directory()
             if os.path.exists(feed_directory):
                 for File in os.listdir(feed_directory):
-                    if File.startswith(str(self.ep_id) + '-'):
+                    if File.startswith(str(self.ep_id) + "-"):
                         os.remove(os.path.join(feed_directory, File))
                         self._downloaded = False
                         if display is not None:
-                            display.change_status(
-                                "Successfully deleted the downloaded episode"
-                            )
+                            display.change_status("Successfully deleted the downloaded episode")
 
                 # if there are no more files in the feed directory, delete it
                 if len(os.listdir(feed_directory)) == 0:
@@ -166,7 +166,7 @@ class Episode:
 
         if os.path.exists(feed_directory):
             for File in os.listdir(feed_directory):
-                if File.startswith(str(self.ep_id) + '-'):
+                if File.startswith(str(self.ep_id) + "-"):
                     self._downloaded = True
         return self._downloaded
 
@@ -282,24 +282,29 @@ class Episode:
     @property
     def metadata(self) -> str:
         """str: the user-displayed metadata of the episode"""
-        description = helpers.html_to_plain(self.description) if \
-            helpers.is_true(Config["clean_html_descriptions"]) else \
-            self.description
-        description = description.replace('\n', '')
+        description = (
+            helpers.html_to_plain(self.description)
+            if helpers.is_true(Config["clean_html_descriptions"])
+            else self.description
+        )
+        description = description.replace("\n", "")
         progress = helpers.seconds_to_time(self.progress / constants.MILLISECONDS_IN_SECOND)
-        downloaded = "Episode downloaded and available for offline playback." \
-            if self.downloaded else "Episode not downloaded."
-        metadata = \
-            "!cb{title}\n" \
-            "{pubdate}\n\n" \
-            "{link}\n\n" \
-            "!cbCopyright:\n" \
-            "{copyright}\n\n" \
-            "!cbDownloaded:\n" \
-            "{downloaded}\n\n" \
-            "!cbDescription:\n" \
-            "{description}\n\n" \
-            "!cbTime Played:\n" \
+        downloaded = (
+            "Episode downloaded and available for offline playback."
+            if self.downloaded
+            else "Episode not downloaded."
+        )
+        metadata = (
+            "!cb{title}\n"
+            "{pubdate}\n\n"
+            "{link}\n\n"
+            "!cbCopyright:\n"
+            "{copyright}\n\n"
+            "!cbDownloaded:\n"
+            "{downloaded}\n\n"
+            "!cbDescription:\n"
+            "{description}\n\n"
+            "!cbTime Played:\n"
             "{progress}\n".format(
                 title=self.title,
                 pubdate=self.pubdate,
@@ -307,6 +312,8 @@ class Episode:
                 copyright=self.copyright,
                 downloaded=downloaded,
                 description=description,
-                progress=progress)
+                progress=progress,
+            )
+        )
 
         return metadata

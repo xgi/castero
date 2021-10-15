@@ -6,8 +6,7 @@ from castero.episode import Episode
 
 
 class PlayerError(Exception):
-    """An ambiguous error while handling the player.
-    """
+    """An ambiguous error while handling the player."""
 
 
 class PlayerDependencyError(PlayerError):
@@ -15,8 +14,7 @@ class PlayerDependencyError(PlayerError):
 
 
 class PlayerCreateError(PlayerError):
-    """An error occurred while creating the player.
-    """
+    """An error occurred while creating the player."""
 
 
 class Player:
@@ -75,8 +73,7 @@ class Player:
         if Config["player"] in available_players:
             try:
                 available_players[Config["player"]].check_dependencies()
-                inst = available_players[Config["player"]](title, path,
-                                                           episode)
+                inst = available_players[Config["player"]](title, path, episode)
                 return inst
             except PlayerDependencyError:
                 pass
@@ -91,10 +88,11 @@ class Player:
             except PlayerDependencyError:
                 pass
 
-        raise PlayerDependencyError("Sufficient dependencies were not met for"
-                                    " any players. If you recently downloaded"
-                                    " a player, you may need to reinstall %s"
-                                    % castero.__title__)
+        raise PlayerDependencyError(
+            "Sufficient dependencies were not met for"
+            " any players. If you recently downloaded"
+            " a player, you may need to reinstall %s" % castero.__title__
+        )
 
     @staticmethod
     @abstractmethod
@@ -118,18 +116,15 @@ class Player:
 
     @abstractmethod
     def play(self) -> None:
-        """Plays the media.
-        """
+        """Plays the media."""
 
     @abstractmethod
     def stop(self) -> None:
-        """Stops the media.
-        """
+        """Stops the media."""
 
     @abstractmethod
     def pause(self) -> None:
-        """Pauses the media.
-        """
+        """Pauses the media."""
 
     @abstractmethod
     def seek(self, direction, amount) -> None:

@@ -28,16 +28,12 @@ def test_menu_queue_update_items(display):
     assert len(mymenu._items) == 2
 
 
-@mock.patch('curses.A_NORMAL')
+@mock.patch("curses.A_NORMAL")
 def test_menu_queue_items(mock_A_NORMAL, display):
     mymenu = QueueMenu(window, source)
     mymenu.update_items(feed)
     items = mymenu._items
-    assert {
-        'attr': mock_A_NORMAL,
-        'tags': [],
-        'text': str(player1)
-    } in items
+    assert {"attr": mock_A_NORMAL, "tags": [], "text": str(player1)} in items
 
 
 def test_menu_queue_item_none():

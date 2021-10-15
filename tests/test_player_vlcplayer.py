@@ -8,13 +8,15 @@ from castero.players.vlcplayer import VLCPlayer
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
 feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-episode = Episode(feed,
-                  title="episode title",
-                  description="episode description",
-                  link="episode link",
-                  pubdate="episode pubdate",
-                  copyright="episode copyright",
-                  enclosure="episode enclosure")
+episode = Episode(
+    feed,
+    title="episode title",
+    description="episode description",
+    link="episode link",
+    pubdate="episode pubdate",
+    copyright="episode copyright",
+    enclosure="episode enclosure",
+)
 
 
 def test_player_vlc_check_dependencies():
@@ -65,8 +67,7 @@ def test_player_vlc_seek():
     myplayer._player = mock.MagicMock()
 
     myplayer.seek(1, 10)
-    myplayer._player.set_time.assert_called_with(
-        myplayer._player.get_time() + 10 * 1000)
+    myplayer._player.set_time.assert_called_with(myplayer._player.get_time() + 10 * 1000)
 
 
 def test_player_vlc_play_from():
@@ -85,6 +86,7 @@ def test_player_vlc_change_rate_increase():
 
     myplayer.set_rate(1.6)
     assert myplayer._player.set_rate.call_count == 1
+
 
 def test_player_vlc_str():
     myplayer = VLCPlayer("player1 title", "player1 path", episode)

@@ -10,11 +10,7 @@ def test_datafile_download(display):
     mydownloadqueue = DownloadQueue()
     url = "https://travis-ci.org/"
     DataFile.download_to_file(
-        url,
-        "datafile_download_temp",
-        "datafile download name",
-        mydownloadqueue,
-        display=display
+        url, "datafile_download_temp", "datafile download name", mydownloadqueue, display=display
     )
     while mydownloadqueue.length > 0:
         pass
@@ -28,11 +24,7 @@ def test_datafile_download_bad_url(display):
     mydownloadqueue = DownloadQueue()
     url = "https://bad"
     DataFile.download_to_file(
-        url,
-        "datafile_download_temp",
-        "datafile download name",
-        mydownloadqueue,
-        display=display
+        url, "datafile_download_temp", "datafile download name", mydownloadqueue, display=display
     )
     while mydownloadqueue.length > 0:
         pass

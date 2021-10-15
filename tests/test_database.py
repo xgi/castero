@@ -276,6 +276,7 @@ def test_database_replace_queue_with_deleted_episode(display):
     mydatabase.replace_queue(myqueue)
     assert len(mydatabase.queue()) == 0
 
+
 def test_database_from_json(prevent_modification):
     copyfile(my_dir + "/datafiles/feeds_working", Database.OLD_PATH)
     mydatabase = Database()

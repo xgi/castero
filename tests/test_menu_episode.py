@@ -25,8 +25,8 @@ def test_menu_episode_init():
     assert isinstance(mymenu, EpisodeMenu)
 
 
-@mock.patch('curses.color_pair')
-@mock.patch('curses.A_NORMAL')
+@mock.patch("curses.color_pair")
+@mock.patch("curses.A_NORMAL")
 def test_menu_episode_update_items(mock_color_pair, mock_A_NORMAL):
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
@@ -36,17 +36,13 @@ def test_menu_episode_update_items(mock_color_pair, mock_A_NORMAL):
     assert len(mymenu) == 2
 
 
-@mock.patch('curses.color_pair')
-@mock.patch('curses.A_NORMAL')
+@mock.patch("curses.color_pair")
+@mock.patch("curses.A_NORMAL")
 def test_menu_episode_items(mock_A_NORMAL, mock_color_pair):
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)
     items = mymenu._items
-    assert {
-        'attr': mock_color_pair(5),
-        'tags': ['D'],
-        'text': str(episode1)
-    } in items
+    assert {"attr": mock_color_pair(5), "tags": ["D"], "text": str(episode1)} in items
 
 
 def test_menu_episode_item_none():
@@ -75,8 +71,8 @@ def test_menu_episode_metadata():
     assert mymenu.metadata == episode1.metadata
 
 
-@mock.patch('curses.color_pair')
-@mock.patch('curses.A_NORMAL')
+@mock.patch("curses.color_pair")
+@mock.patch("curses.A_NORMAL")
 def test_menu_episode_update_child(mock_A_NORMAL, mock_color_pair):
     mymenu = EpisodeMenu(window, source)
     mymenu.update_items(feed)

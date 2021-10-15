@@ -8,13 +8,15 @@ from castero.players.mpvplayer import MPVPlayer
 my_dir = os.path.dirname(os.path.realpath(__file__))
 
 feed = Feed(file=my_dir + "/feeds/valid_basic.xml")
-episode = Episode(feed,
-                  title="episode title",
-                  description="episode description",
-                  link="episode link",
-                  pubdate="episode pubdate",
-                  copyright="episode copyright",
-                  enclosure="episode enclosure")
+episode = Episode(
+    feed,
+    title="episode title",
+    description="episode description",
+    link="episode link",
+    pubdate="episode pubdate",
+    copyright="episode copyright",
+    enclosure="episode enclosure",
+)
 
 
 def test_player_mpv_check_dependencies():
