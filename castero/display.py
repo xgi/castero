@@ -300,7 +300,8 @@ class Display:
                         min(len(help_lines), cur_offset + y_bounds[1] + 2),
                         len(help_lines)
                     )
-                help_window.addstr(y_bounds[1] + 1, 2, bottom_line)
+                help_window.addstr(
+                    y_bounds[1] + 1, 2, bottom_line[:self._parent_x - 3])
                 help_window.refresh()
                 update_text = False
 
@@ -592,8 +593,8 @@ class Display:
                 return
 
             should_delete = self._get_y_n(
-                    "Are you sure you want to download %d"
-                    " episodes from this feed? (y/n): " % num_to_save)
+                "Are you sure you want to download %d"
+                " episodes from this feed? (y/n): " % num_to_save)
             if should_delete:
                 for episode in self.database.episodes(feed):
                     if not episode.downloaded:
@@ -624,8 +625,8 @@ class Display:
                 return
 
             should_delete = self._get_y_n(
-                    "Are you sure you want to delete %d downloaded"
-                    " episodes from this feed? (y/n): " % num_to_delete)
+                "Are you sure you want to delete %d downloaded"
+                " episodes from this feed? (y/n): " % num_to_delete)
             if should_delete:
                 for episode in self.database.episodes(feed):
                     if episode.downloaded:
