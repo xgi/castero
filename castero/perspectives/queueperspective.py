@@ -17,9 +17,6 @@ class QueuePerspective(Perspective):
     ID = 2
 
     def __init__(self, display) -> None:
-        """
-        Overrides method from Perspective; see documentation in that class.
-        """
         super().__init__(display)
         self._active_window = 0
         self._queue_window = None
@@ -29,8 +26,6 @@ class QueuePerspective(Perspective):
 
     def create_windows(self) -> None:
         """Create and set basic parameters for the windows.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         # delete old windows if they exist
         if self._queue_window is not None:
@@ -55,8 +50,6 @@ class QueuePerspective(Perspective):
 
     def create_menus(self) -> None:
         """Create the menus used in each window.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         assert self._queue_window is not None
 
@@ -65,8 +58,6 @@ class QueuePerspective(Perspective):
 
     def display(self) -> None:
         """Draws all windows and sub-features, including titles and borders.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         # clear dynamic menu headers
         self._queue_window.addstr(0, 0, " " * self._queue_window.getmaxyx()[1])
@@ -99,8 +90,6 @@ class QueuePerspective(Perspective):
 
     def display_all(self) -> None:
         """Force all windows to completely redraw their content.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         self._metadata_updated = False
         self._queue_menu.display()
@@ -108,8 +97,6 @@ class QueuePerspective(Perspective):
 
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         queue = self._display.queue
         key_mapping = self._display.KEY_MAPPING
@@ -159,8 +146,6 @@ class QueuePerspective(Perspective):
 
     def refresh(self) -> None:
         """Refresh the screen and all windows.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         self._queue_window.refresh()
         self._metadata_window.refresh()
@@ -168,23 +153,17 @@ class QueuePerspective(Perspective):
 
     def made_active(self) -> None:
         """Called each time the perspective is made active (switched to).
-
-        Overrides method from Perspective; see documentation in that class.
         """
         pass
 
     def update_menus(self) -> None:
         """Update/refresh the contents of all menus.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         self._queue_menu.update_items(None)
         self._metadata_updated = False
 
     def _get_active_menu(self) -> Menu:
         """Retrieve the active Menu, if there is one.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         assert 0 <= self._active_window < 2
 
@@ -192,8 +171,6 @@ class QueuePerspective(Perspective):
 
     def _invert_selected_menu(self) -> None:
         """Inverts the contents of the selected menu.
-
-        Overrides method from Perspective; see documentation in that class.
         """
         pass
 

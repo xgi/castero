@@ -8,9 +8,6 @@ class MPVPlayer(Player):
     NAME = "mpv"
 
     def __init__(self, title, path, episode) -> None:
-        """
-        Overrides method from Player; see documentation in that class.
-        """
         super().__init__(title, path, episode)
 
         import mpv
@@ -19,8 +16,6 @@ class MPVPlayer(Player):
     @staticmethod
     def check_dependencies():
         """Checks whether dependencies are met for playing a player.
-
-        Overrides method from Player; see documentation in that class.
         """
         try:
             import mpv
@@ -33,8 +28,6 @@ class MPVPlayer(Player):
 
     def _create_player(self) -> None:
         """Creates the player object while making sure it is a valid file.
-
-        Overrides method from Player; see documentation in that class.
         """
         self._player = self.mpv.MPV()
         self._player.vid = False
@@ -44,8 +37,6 @@ class MPVPlayer(Player):
 
     def play(self) -> None:
         """Plays the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is None:
             self._create_player()
@@ -57,8 +48,6 @@ class MPVPlayer(Player):
 
     def play_from(self, seconds) -> None:
         """play media from point.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is None:
             self._create_player()
@@ -70,8 +59,6 @@ class MPVPlayer(Player):
 
     def stop(self) -> None:
         """Stops the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             self._player.terminate()
@@ -79,8 +66,6 @@ class MPVPlayer(Player):
 
     def pause(self) -> None:
         """Pauses the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             self._player.pause = True
@@ -88,8 +73,6 @@ class MPVPlayer(Player):
 
     def seek(self, direction, amount) -> None:
         """Seek forward or backward in the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         assert direction == 1 or direction == -1
         if self._player is not None:
@@ -97,16 +80,12 @@ class MPVPlayer(Player):
 
     def set_rate(self, rate) -> None:
         """Set the playback speed.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             self._player.speed = rate
 
     def set_volume(self, volume) -> None:
         """Set the player volume.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             self._player.volume = volume

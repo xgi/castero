@@ -10,9 +10,6 @@ class VLCPlayer(Player):
     NAME = "vlc"
 
     def __init__(self, title, path, episode) -> None:
-        """
-        Overrides method from Player; see documentation in that class.
-        """
         super().__init__(title, path, episode)
 
         import vlc
@@ -21,8 +18,6 @@ class VLCPlayer(Player):
     @staticmethod
     def check_dependencies():
         """Checks whether dependencies are met for playing a player.
-
-        Overrides method from Player; see documentation in that class.
         """
         try:
             import vlc
@@ -36,8 +31,6 @@ class VLCPlayer(Player):
 
     def _create_player(self) -> None:
         """Creates the player object while making sure it is a valid file.
-
-        Overrides method from Player; see documentation in that class.
         """
         vlc_instance = self.vlc.Instance("--no-video --quiet")
 
@@ -50,8 +43,6 @@ class VLCPlayer(Player):
 
     def play(self) -> None:
         """Plays the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is None:
             self._create_player()
@@ -61,8 +52,6 @@ class VLCPlayer(Player):
 
     def stop(self) -> None:
         """Stops the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             if self._player.get_state() == self.vlc.State.Opening:
@@ -73,8 +62,6 @@ class VLCPlayer(Player):
 
     def pause(self) -> None:
         """Pauses the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             if self._player.get_state() != self.vlc.State.Opening:
@@ -83,8 +70,6 @@ class VLCPlayer(Player):
 
     def seek(self, direction, amount) -> None:
         """Seek forward or backward in the media.
-
-        Overrides method from Player; see documentation in that class.
         """
         assert direction == 1 or direction == -1
         if self._player is not None:
@@ -95,16 +80,12 @@ class VLCPlayer(Player):
 
     def play_from(self, seconds) -> None:
         """start media from point.
-
-        Overrides method from Player; see documentation in that class.
         """
         self.play()
         self._player.set_time((int)(seconds * constants.MILLISECONDS_IN_SECOND))
 
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.
-
-        Overrides method from Player; see documentation in that class.
         """
         assert direction == 1 or direction == -1
         if self._player is not None:
@@ -116,16 +97,12 @@ class VLCPlayer(Player):
 
     def set_rate(self, rate) -> None:
         """Set the playback speed.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             self._player.set_rate(rate)
 
     def set_volume(self, volume) -> int:
         """Set the player volume.
-
-        Overrides method from Player; see documentation in that class.
         """
         if self._player is not None:
             self._player.audio_set_volume(volume)

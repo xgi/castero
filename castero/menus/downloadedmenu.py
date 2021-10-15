@@ -23,8 +23,6 @@ class DownloadedMenu(Menu):
     @property
     def _items(self):
         """A list of items in the menu represented as dictionaries.
-
-        Overrides method from Menu; see documentation in that class.
         """
         result = []
         for episode in self._filtered_episodes:
@@ -39,8 +37,7 @@ class DownloadedMenu(Menu):
     @property
     def title(self) -> str:
         """The title of the menu to display in the window header.
-
-        Overrides method from Menu; see documentation in that class."""
+        """
         base = "Downloaded Episodes"
         if len(self._filtered_episodes) > 0:
             unplayed_episodes = 0
@@ -55,8 +52,6 @@ class DownloadedMenu(Menu):
     @property
     def item(self) -> Episode:
         """The selected episode.
-
-        Overrides method from Menu; see documentation in that class.
         """
         if len(self._filtered_episodes) == 0:
             return None
@@ -66,8 +61,6 @@ class DownloadedMenu(Menu):
     @property
     def metadata(self) -> str:
         """Metadata for the selected episode.
-
-        Overrides method from Menu; see documentation in that class.
         """
         if len(self._filtered_episodes) == 0:
             return ""
@@ -76,8 +69,6 @@ class DownloadedMenu(Menu):
 
     def update_items(self, obj):
         """Called by the parent menu (if we have one) to update our items.
-
-        Overrides method from Menu; see documentation in that class.
         """
         super().update_items(obj)
 
@@ -114,15 +105,11 @@ class DownloadedMenu(Menu):
 
     def update_child(self):
         """Not necessary for this menu -- does nothing.
-
-        Overrides method from Menu; see documentation in that class.
         """
         pass
 
     def invert(self):
         """Invert the menu order.
-
-        Overrides method from Menu; see documentation in that class.
         """
         super().invert()
 

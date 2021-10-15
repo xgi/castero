@@ -22,8 +22,6 @@ class FeedMenu(Menu):
     @property
     def _items(self):
         """A list of items in the menu represented as dictionaries.
-
-        Overrides method from Menu; see documentation in that class.
         """
         return [
             {
@@ -37,15 +35,12 @@ class FeedMenu(Menu):
     @property
     def title(self) -> str:
         """The title of the menu to display in the window header.
-
-        Overrides method from Menu; see documentation in that class."""
+        """
         return "Feeds"
 
     @property
     def item(self) -> Feed:
         """The selected feed.
-
-        Overrides method from Menu; see documentation in that class.
         """
         if len(self._filtered_feeds) == 0:
             return None
@@ -55,8 +50,6 @@ class FeedMenu(Menu):
     @property
     def metadata(self) -> str:
         """Metadata for the selected feed.
-
-        Overrides method from Menu; see documentation in that class.
         """
         feed = self.item
         if feed is None:
@@ -66,8 +59,6 @@ class FeedMenu(Menu):
 
     def update_items(self, obj):
         """Called by the parent menu (if we have one) to update our items.
-
-        Overrides method from Menu; see documentation in that class.
         """
         super().update_items(obj)
 
@@ -80,8 +71,6 @@ class FeedMenu(Menu):
 
     def update_child(self):
         """Update our child menu, the episode menu.
-
-        Overrides method from Menu; see documentation in that class.
         """
         if len(self._filtered_feeds) == 0:
             self.update_items(None)
@@ -91,8 +80,6 @@ class FeedMenu(Menu):
 
     def invert(self):
         """Invert the menu order.
-
-        Overrides method from Menu; see documentation in that class.
         """
         super().invert()
 
