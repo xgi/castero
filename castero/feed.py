@@ -53,13 +53,12 @@ class Feed:
         retrieve feeds from. However, having support for handling files makes
         testing easier.
 
-        Args:
-            url: (optional) the url where the feed is located
-            file: (optional) the file where the feed is located
-            text: (optional) pre-retrieved text for the feed. Can be useful if
-                multiple feeds were downloaded previously; a URL or file is
-                still required, providing this field will only skip the
-                download step
+        :param url (optional) the url where the feed is located
+        :param file (optional) the file where the feed is located
+        :param text (optional) pre-retrieved text for the feed. Can be useful if
+          multiple feeds were downloaded previously; a URL or file is
+          still required, providing this field will only skip the
+          download step
         """
         # * Don't allow providing both a url and a file, but must provide one.
         # Check that one of them is None, and that they are not both the same.
@@ -102,8 +101,7 @@ class Feed:
     def __str__(self) -> str:
         """Represent this object as a string.
 
-        Returns:
-            string: this feed's title
+        :returns string: this feed's title
         """
         assert self._title is not None
 
@@ -116,14 +114,13 @@ class Feed:
         parse-able XML document at the url, but it does not check that the
         document is an RSS feed, nor whether the feed has all necessary tags.
 
-        Raises:
-            FeedParseError: unable to parse text as an XML document
-            FeedDownloadError: (only when retrieving feed using url) did not
-                receive an acceptable status code, or an exception occurred
-                when attempting to download the page
-            FeedLoadError: (only when retrieving feed using file) a feed could
-                not be found at the file, or an exception occurred when
-                attempting to load the file
+        :raises FeedParseError: unable to parse text as an XML document
+        :raises FeedDownloadError: (only when retrieving feed using url) did not
+          receive an acceptable status code, or an exception occurred
+          when attempting to download the page
+        :raises FeedLoadError: (only when retrieving feed using file) a feed could
+            not be found at the file, or an exception occurred when
+            attempting to load the file
         """
         if self._url is not None:
             # handle feed from url

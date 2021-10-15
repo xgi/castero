@@ -11,11 +11,8 @@ my_dir = os.path.dirname(os.path.realpath(__file__))
 def get_downloaded_perspective(display):
     """Retrieve the Downloaded perspective.
 
-    Args:
-        display: the display containing the loaded perspective
-
-    Returns:
-        Downloaded: the loaded Downloaded perspective
+    :param display the display containing the loaded perspective
+    :returns Downloaded: the loaded Downloaded perspective
     """
     display._active_perspective = 4
     return display.perspectives[4]

@@ -11,11 +11,8 @@ my_dir = os.path.dirname(os.path.realpath(__file__))
 def get_simple_perspective(display):
     """Retrieve the Simple perspective.
 
-    Args:
-        display: the display containing the loaded perspective
-
-    Returns:
-        Simple: the loaded Simple perspective
+    :param display the display containing the loaded perspective
+    :returns Simple: the loaded Simple perspective
     """
     display._active_perspective = 3
     return display.perspectives[3]

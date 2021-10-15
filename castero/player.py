@@ -28,10 +28,9 @@ class Player:
 
     def __init__(self, title, path, episode) -> None:
         """
-        Args:
-            title: the title of the media (usually an episode title)
-            path: a URL or file-path of a media file (usually an audio file)
-            episode: the Episode which this is a player for
+        :param title the title of the media (usually an episode title)
+        :param path a URL or file-path of a media file (usually an audio file)
+        :param episode the Episode which this is a player for
         """
         assert isinstance(title, str) and title != ""
         assert isinstance(path, str) and path != ""
@@ -52,8 +51,7 @@ class Player:
     def __str__(self) -> str:
         """Represent this object as a string.
 
-        Returns:
-            string: the name of the feed and the title of the player
+        :returns string: the name of the feed and the title of the player
         """
         return "[%s] %s" % (self._episode.feed_str, self._title)
 
@@ -67,15 +65,12 @@ class Player:
         initialize the first working player using the order defined in
         available_players.
 
-        Args:
-            available_players: a list of implemented Player subclasses
-            title: the title of the media (usually an episode title)
-            path: a URL or file-path of a media file (usually an audio file)
-            episode: the Episode which this is a player for
-
-        Raises:
-            PlayerDependencyError: at least one dependency per player for all
-            players was not met
+        :param available_players a list of implemented Player subclasses
+        :param title the title of the media (usually an episode title)
+        :param path a URL or file-path of a media file (usually an audio file)
+        :param episode the Episode which this is a player for
+        :raises PlayerDependencyError: at least one dependency per player for all
+          players was not met
         """
         if Config["player"] in available_players:
             try:
@@ -106,8 +101,7 @@ class Player:
     def check_dependencies():
         """Checks whether dependencies are met for playing a player.
 
-        Raises:
-            PlayerDependencyError: a dependency was not met
+        :raises PlayerDependencyError: a dependency was not met
         """
 
     @abstractmethod
@@ -119,8 +113,7 @@ class Player:
             - the media object could be parsed
             - it has a duration > 0
 
-        Raises:
-            PlayerCreateError: the player object could not be created
+        :raises PlayerCreateError: the player object could not be created
         """
 
     @abstractmethod
@@ -142,42 +135,37 @@ class Player:
     def seek(self, direction, amount) -> None:
         """Seek forward or backward in the media.
 
-        Args:
-            direction: 1 to seek forward, -1 to seek backward
-            amount: the amount of seconds to seek
+        :param direction 1 to seek forward, -1 to seek backward
+        :param amount the amount of seconds to seek
         """
 
     @abstractmethod
     def play_from(self, seconds) -> None:
         """play media from point.
 
-        Args:
-            amount: the seconds to start from
+        :param amount the seconds to start from
         """
 
     @abstractmethod
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed.
 
-        Args:
-            direction: 1 to increase, -1 to decrease
-            display: (optional) the display to write status updates to
+        :param direction 1 to increase, -1 to decrease
+        :param display (optional) the display to write status updates to
         """
 
     @abstractmethod
     def set_rate(self, rate) -> None:
         """Set the playback speed.
 
-        Args:
-            rate: the desired playback speed
+        :param rate the desired playback speed
         """
 
     @abstractmethod
     def set_volume(self, volume) -> int:
         """Set the player volume.
 
-        Args:
-            volume: the desired volume
+        :param volume the desired volume
         """
 
     @property

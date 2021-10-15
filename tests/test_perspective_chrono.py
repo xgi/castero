@@ -11,11 +11,8 @@ my_dir = os.path.dirname(os.path.realpath(__file__))
 def get_chrono_perspective(display):
     """Retrieve the Chrono perspective.
 
-    Args:
-        display: the display containing the loaded perspective
-
-    Returns:
-        ChronoPerspective: the loaded chrono perspective
+    :param display the display containing the loaded perspective
+    :returns ChronoPerspective: the loaded chrono perspective
     """
     display._active_perspective = 5
     return display.perspectives[5]

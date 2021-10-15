@@ -68,9 +68,8 @@ class Display:
 
     def __init__(self, stdscr, database) -> None:
         """
-        Args:
-            stdscr: a stdscr from curses.initscr()
-            database: a connected castero.Database
+        :param stdscr a stdscr from curses.initscr()
+        :param databse a connected castero.Database
         """
         self._stdscr = stdscr
         self._database = database
@@ -359,8 +358,7 @@ class Display:
     def _change_active_perspective(self, perspective_id) -> None:
         """Changes _active_perspective to the given perspective.
 
-        Args:
-            perspective_id: the ID of the perspective to change to
+        :param perspective_id the ID of the perspective to change to
         """
         assert perspective_id in self._perspectives
 
@@ -375,11 +373,8 @@ class Display:
         This method assumes that all input strings will be obtained in the
         footer window.
 
-        Args:
-            prompt: a string to inform the user of what they need to enter
-
-        Returns:
-            str: the user's input
+        :param prompt a string to inform the user of what they need to enter
+        :returns str: the user's input
         """
         assert self._footer_window is not None
         assert isinstance(prompt, str)
@@ -435,11 +430,8 @@ class Display:
     def _get_y_n(self, prompt) -> bool:
         """Prompts the user for a yes or no (y/n) input.
 
-        Args:
-            prompt: a string to inform the user of what they need to enter
-
-        Returns:
-            bool: true if the user presses y, false otherwise
+        :param prompt a string to inform the user of what they need to enter
+        :returns bool: true if the user presses y, false otherwise
         """
         assert self._footer_window is not None
         assert isinstance(prompt, str)
@@ -462,8 +454,7 @@ class Display:
     def _curs_set(self, visibility: int) -> None:
         """Safely set the appearance of the cursor.
 
-        Args:
-            visibility: 0 (invisible), 1 (normal mode) or 2 (high visibility)
+        :param visibility 0 (invisible), 1 (normal mode) or 2 (high visibility)
         """
         if hasattr(curses, 'curs_set'):
             try:
@@ -474,11 +465,8 @@ class Display:
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
 
-        Args:
-            c: the input character
-
-        Returns:
-            bool: whether or not the application should continue running
+        :param c the input character
+        :returns bool: whether or not the application should continue running
         """
         for perspective_id in self._perspectives:
             if c == self.KEY_MAPPING[str(perspective_id)]:
@@ -531,8 +519,7 @@ class Display:
 
         Deleting a feed also deletes all downloaded/saved episodes.
 
-        Args:
-            feed: the Feed to delete, which can be None
+        :param feed the Feed to delete, which can be None
         """
         if feed is not None:
             should_delete = True
@@ -576,9 +563,8 @@ class Display:
 
         Exactly one of either feed or episode must be given.
 
-        Args:
-            feed: (optional) a feed to download all episodes of
-            episode: (optional) an episode to download
+        :param feed (optional) a feed to download all episodes of
+        :param episode (optional) an episode to download
         """
         assert (feed is None or episode is None) and (feed is not episode)
 
@@ -592,8 +578,8 @@ class Display:
                 return
 
             should_delete = self._get_y_n(
-                    "Are you sure you want to download %d"
-                    " episodes from this feed? (y/n): " % num_to_save)
+                "Are you sure you want to download %d"
+                " episodes from this feed? (y/n): " % num_to_save)
             if should_delete:
                 for episode in self.database.episodes(feed):
                     if not episode.downloaded:
@@ -607,9 +593,8 @@ class Display:
 
         Exactly one of either feed or episode must be given.
 
-        Args:
-            feed: (optional) a feed to delete all episodes of
-            episode: (optional) an episode or delete
+        :param feed (optional) a feed to delete all episodes of
+        :param episode (optional) an episode or delete
         """
         assert (feed is None or episode is None) and (feed is not episode)
 
@@ -624,8 +609,8 @@ class Display:
                 return
 
             should_delete = self._get_y_n(
-                    "Are you sure you want to delete %d downloaded"
-                    " episodes from this feed? (y/n): " % num_to_delete)
+                "Are you sure you want to delete %d downloaded"
+                " episodes from this feed? (y/n): " % num_to_delete)
             if should_delete:
                 for episode in self.database.episodes(feed):
                     if episode.downloaded:
@@ -653,8 +638,7 @@ class Display:
         setting. See the description in the config file above that setting for
         details about how it may be formatted.
 
-        Args:
-            episode: episode to execute the command on
+        :param episode episode to execute the command on
         """
         command = Config["execute_command"]\
             .replace("{file}", episode.enclosure)\
@@ -668,8 +652,7 @@ class Display:
     def show_episode_url(self, episode: Episode) -> None:
         """Show episode URL in status line.
 
-        Args:
-            episode: episode to show URL for
+        :param episode episode to show URL for
         """
         if episode is not None:
             max_width = self._footer_window.getmaxyx()[1] - 1
@@ -733,8 +716,7 @@ class Display:
 
         This method returns after at most INPUT_TIMEOUT ms.
 
-        Returns:
-            int: the character entered by the user, or -1
+        :returns int: the character entered by the user, or -1
         """
         char = self._stdscr.getch()
         return char
@@ -742,8 +724,7 @@ class Display:
     def change_status(self, status) -> None:
         """Changes the status message displayed in the footer.
 
-        Args:
-            status: the status message to display
+        :param status the status message to display
         """
         assert isinstance(status, str)
 

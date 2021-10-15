@@ -28,11 +28,8 @@ queue.add(player2)
 def get_queue_perspective(display):
     """Retrieve the Queue perspective.
 
-    Args:
-        display: the display containing the loaded perspective
-
-    Returns:
-        Queue: the loaded Queue perspective
+    :param display the display containing the loaded perspective
+    :returns Queue: the loaded Queue perspective
     """
     display._active_perspective = 2
     return display.perspectives[2]

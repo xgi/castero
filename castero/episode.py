@@ -19,15 +19,14 @@ class Episode:
         """
         At least one of a title or description must be specified.
 
-        Args:
-            feed: the feed that this episode is a part of
-            title: (optional) the title of the episode
-            description: (optional) the description of the episode
-            link: (optional) a link to the episode
-            pubdate: (optional) the date the episode was published, as a string
-            copyright: (optional) the copyright notice of the episode
-            enclosure: (optional) a url to a media file
-            played: (optional) whether the episode has been played
+        :param feed the feed that this episode is a part of
+        :param title (optional) the title of the episode
+        :param description (optional) the description of the episode
+        :param link (optional) a link to the episode
+        :param pubdate (optional) the date the episode was published, as a string
+        :param copyright (optional) the copyright notice of the episode
+        :param enclosure (optional) a url to a media file
+        :param played (optional) whether the episode has been played
         """
         assert title is not None or description is not None
 
@@ -46,8 +45,7 @@ class Episode:
     def __str__(self) -> str:
         """Represent this object as a single-line string.
 
-        Returns:
-            string: this episode's title, if it exists, else its description
+        :returns string: this episode's title, if it exists, else its description
         """
         if self._title is not None:
             representation = str(self._title)
@@ -64,8 +62,7 @@ class Episode:
         This method does not ensure whether the directory exists -- it simply
         acts as a single definition of where it _should_ be.
 
-        Returns:
-            str: a path to the feed directory
+        :returns str: a path to the feed directory
         """
         feed_dirname = helpers.sanitize_path(str(self._feed))
         if Config is None or Config["custom_download_dir"] == "":
@@ -86,8 +83,7 @@ class Episode:
         the path to that file if so. Otherwise, simply return the episode's
         enclosure, which is probably a URL.
 
-        Returns:
-            str: a path to a playable file for this episode
+        :returns str: a path to a playable file for this episode
         """
         playable = self.enclosure
 
@@ -106,9 +102,8 @@ class Episode:
         In the future, it may be worthwhile to determine whether the episode's
         source is a local file and simply copy it instead.
 
-        Args:
-            download_queue: the download_queue overseeing this download
-            display: (optional) the display to write status updates to
+        :param download_queue the download_queue overseeing this download
+        :param display (optional) the display to write status updates to
         """
         if self._enclosure is None:
             if display is not None:
@@ -141,8 +136,7 @@ class Episode:
     def delete(self, display=None):
         """Deletes the episode file from the file system.
 
-        Args:
-            display: (optional) the display to write status updates to
+        :param display (optional) the display to write status updates to
         """
         if self.downloaded:
             feed_directory = self._feed_directory()
@@ -165,8 +159,7 @@ class Episode:
 
         This method updates the downloaded property.
 
-        Returns:
-            bool: whether or not the episode is downloaded
+        :returns bool: whether or not the episode is downloaded
         """
         self._downloaded = False
         feed_directory = self._feed_directory()
@@ -180,8 +173,7 @@ class Episode:
     def replace_from(self, episode) -> None:
         """Replace metadata from the given episode.
 
-        Args:
-            episode: the source Episode
+        :param episode the source Episode
         """
         self._ep_id = episode._ep_id
         self._played = episode._played
@@ -198,8 +190,7 @@ class Episode:
         removed externally while the client is still running, the status may
         not be properly updated.
 
-        Returns:
-            bool: whether or not the episode is downloaded
+        :returns bool: whether or not the episode is downloaded
         """
         if self._downloaded is None:
             self.check_downloaded()

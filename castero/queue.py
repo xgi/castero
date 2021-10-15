@@ -45,8 +45,7 @@ class Queue:
         Players skipped are removed from the queue. If the given player is not
         actually in the queue, this method safely does nothing.
 
-        Args:
-            player: the Player to jump to
+        :param player the Player to jump to
         """
         if player in self._players:
             index = self._players.index(player)
@@ -116,8 +115,7 @@ class Queue:
     def seek(self, direction) -> None:
         """Seeks the first player in the specified direction.
 
-        Args:
-            direction: 1 to move forward, -1 to move backward
+        :param direction 1 to move forward, -1 to move backward
         """
         assert direction == 1 or direction == -1
 
@@ -133,12 +131,11 @@ class Queue:
     def change_rate(self, direction, display=None) -> None:
         """Increase or decrease the playback speed of the first player.
 
-        Args:
-            direction: 1 to increase, -1 to decrease
-            display: (optional) the display to write status updates to
+        :param direction 1 to increase, -1 to decrease
+        :param display (optional) the display to write status updates to
         """
         assert direction == 1 or direction == -1
-        
+
         # First we change our speed value, then we set the player speed
         # to that amount. This ensures the player speed is always derived
         # from our value.
@@ -147,15 +144,14 @@ class Queue:
 
         if self.first is not None:
             self.first.set_rate(self.speed)
-            #Update the display status
-            self._display.change_status (
+            # Update the display status
+            self._display.change_status(
                 "Playback speed set to {:0.2f}".format(self.speed))
 
     def change_volume(self, direction) -> None:
         """Increase or decrease volume of the current player.
 
-        Args:
-            direction: 1 to increase, -1 to decrease
+        :param direction 1 to increase, -1 to decrease
         """
         assert direction == 1 or direction == -1
 
@@ -171,11 +167,8 @@ class Queue:
     def remove(self, player) -> int:
         """Remove a player from the queue, if it is currently in it.
 
-        Args:
-            player: the Player to remove
-
-        Returns:
-            int: the index of the player in the queue, or -1
+        :param player the Player to remove
+        :returns int: the index of the player in the queue, or -1
         """
         result = -1
         if player in self._players:
@@ -199,9 +192,8 @@ class Queue:
 
     def get_episode_progress(self):
         """ Get progress of the current playing episode
-        Returns:
-            Tuple: episode and its progress if currently playing, else
-            None is returned
+        :returns Tuple: episode and its progress if currently playing, else
+          None is returned
         """
         if self.first is not None:
             return (self.first.episode, self.first.time)

@@ -19,12 +19,9 @@ class Net:
     def Get(*args, **kwargs) -> requests.models.Response:
         """Send a GET request.
 
-        Args:
-            *args: arguments for requests.get(); particularly the URL
-            **kwargs: optional arguments for requests.get()
-
-        Returns:
-            requests.models.Response: response
+        :param *args arguments for requests.get(); particularly the URL
+        :param **kwargs optional arguments for requests.get()
+        :returns requests.models.Response: response
         """
         return requests.get(
             *args,

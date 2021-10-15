@@ -115,9 +115,8 @@ class _Config(DataFile):
         and then using basic parsing replaces any variables already defined
         by the user with their definition.
 
-        Args:
-            conf: ConfigParser of the user's config file
-            default_conf: ConfigParser of the default config file
+        :param conf ConfigParser of the user's config file
+        :param default_conf ConfigParser of the default config file
         """
         # convert conf and default_conf to 1-dim dictionaries since they may
         # not have the same sections

@@ -11,11 +11,8 @@ my_dir = os.path.dirname(os.path.realpath(__file__))
 def get_primary_perspective(display):
     """Retrieve the Primary perspective.
 
-    Args:
-        display: the display containing the loaded perspective
-
-    Returns:
-        Primary: the loaded Primary perspective
+    :param display the display containing the loaded perspective
+    :returns Primary: the loaded Primary perspective
     """
     return display.perspectives[1]
 

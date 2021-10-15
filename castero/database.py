@@ -166,8 +166,7 @@ class Database():
 
         Note: episodes have a cascade delete relation with their feed.
 
-        Args:
-            feed: the Feed to delete, which is in the database
+        :param feed the Feed to delete, which is in the database
         """
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_FEED_DELETE, (feed.key,))
@@ -178,8 +177,7 @@ class Database():
 
         This method is used for both updating a feed and for adding a new one.
 
-        Args:
-            feed: the Feed to replace
+        :param feed the Feed to replace
         """
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_FEED_REPLACE, (
@@ -202,9 +200,8 @@ class Database():
         in the database, if set. If it was not set when this method is called,
         we update it after the episode has been added to the database.
 
-        Args:
-            feed: the Feed the episode is a part of
-            episode: the Episode to replace
+        :param feed the Feed the episode is a part of
+        :param episode the Episode to replace
         """
         cursor = self._conn.cursor()
         if episode.ep_id is None:
@@ -238,9 +235,8 @@ class Database():
 
         This method is used for both updating episodes and for adding new ones.
 
-        Args:
-            feed: the Feed all episode are a part of
-            episodes: a list of Episode's to replace
+        :param feed the Feed all episode are a part of
+        :param episodes a list of Episode's to replace
         """
         cursor = self._conn.cursor()
 
@@ -296,8 +292,7 @@ class Database():
 
         This method overwrites the existing queue.
 
-        Args:
-            queue: the Queue to replace from
+        :param queue the Queue to replace from
         """
         cursor = self._conn.cursor()
 
@@ -317,8 +312,7 @@ class Database():
     def feeds(self) -> List[Feed]:
         """Retrieve the list of Feeds.
 
-        Returns:
-            List[Feed]: all Feed's in the database
+        :returns List[Feed]: all Feed's in the database
         """
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_FEEDS_ALL)
@@ -344,11 +338,8 @@ class Database():
     def episodes(self, feed: Feed = None) -> List[Episode]:
         """Retrieve all episodes for a feed.
 
-        Args:
-            feed: the Feed to retrieve episodes of
-
-        Returns:
-            List[Episode]: all Episode's of the given Feed in the database
+        :param feed the Feed to retrieve episodes of
+        :returns List[Episode]: all Episode's of the given Feed in the database
         """
         cursor = self._conn.cursor()
 
@@ -384,11 +375,8 @@ class Database():
     def unplayed_episodes(self, feed: Feed) -> List[Episode]:
         """Retrieve all unplayed episodes for a feed.
 
-        Args:
-            feed: the Feed to retrieve episodes of
-
-        Returns:
-            List[Episode]: all Episode's of the given Feed in the database
+        :param feed the Feed to retrieve episodes of
+        :returns List[Episode]: all Episode's of the given Feed in the database
         """
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_UNPLAYED_EPISODES_BY_FEED, (feed.key,))
@@ -397,11 +385,9 @@ class Database():
 
     def _create_feed_episode_list(self, feed: Feed, episode_rows) -> List[Episode]:
         """Create a list of episode from feed episode query rows
-        Args:
-            feed: The feed the episodes are from,
-            episode_rows: Query result rows
-        Returns:
-            List[Episode]: List of the episodes
+        :param feed The feed the episodes are from,
+        :param episode_rows Query result rows
+        :returns List[Episode]: List of the episodes
         """
         return [Episode(
                 feed,
@@ -420,12 +406,9 @@ class Database():
     def feed(self, key) -> Feed:
         """Retrieve a feed by key.
 
-        Args:
-            key: the key of the Feed to retrieve, which is the feed's primary
-            key in the database
-
-        Returns:
-            Feed: the matching Feed, if it exists, or None
+        :param key the key of the Feed to retrieve, which is the feed's primary
+          key in the database
+        :returns Feed: the matching Feed, if it exists, or None
         """
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_FEED_BY_KEY, (key,))
@@ -448,12 +431,9 @@ class Database():
     def episode(self, ep_id: int) -> Episode:
         """Retrieve an episode by ep_id.
 
-        Args:
-            ep_id: the id of the Episode to retrieve, which is the episode's
-            primary key in the database
-
-        Returns:
-            Episode: the matching Episode, if it exists, or None
+        :param ep_id: the id of the Episode to retrieve, which is the episode's
+          primary key in the database
+        :returns Episode: the matching Episode, if it exists, or None
         """
         cursor = self._conn.cursor()
         cursor.execute(self.SQL_EPISODES_BY_ID, (ep_id,))
@@ -479,8 +459,7 @@ class Database():
     def queue(self) -> List[Episode]:
         """Retrieve all episodes in the queue.
 
-        Returns:
-            List[Episode]: all Episode's in the queue
+        :returns List[Episode]: all Episode's in the queue
         """
         cursor = self._conn.cursor()
 
@@ -544,10 +523,9 @@ class Database():
         This method adheres to the max_episodes config parameter to limit the
         number of episodes saved per feed.
 
-        Args:
-            display: (optional) the display to write status updates to
-            feeds: (optional) a list of feeds to reload. If not specified,
-                all feeds in the database will be reloaded
+        :param display (optional) the display to write status updates to
+        :param feeds (optional) a list of feeds to reload. If not specified,
+          all feeds in the database will be reloaded
         """
         if feeds is None:
             feeds = self.feeds()
@@ -630,9 +608,8 @@ class Database():
     def _reload_feed_data(self, old_feed: Feed, new_feed: Feed):
         """Helper method to update a feed and its episodes in the database.
 
-        Args:
-            old_feed: the original Feed to be replaced
-            new_feed: a Feed with new/updated data
+        :param old_feed the original Feed to be replaced
+        :param new_feed a Feed with new/updated data
         """
         # keep user metadata for episodes intact
         new_episodes = new_feed.parse_episodes()

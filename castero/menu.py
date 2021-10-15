@@ -16,11 +16,10 @@ class Menu(ABC):
     @abstractmethod
     def __init__(self, window, source, child=None, active=False) -> None:
         """
-        Args:
-            window: the curses.window which this menu is placed on
-            items: a 2D array where rows represent indices of the parent menu
-            child: (optional, default None) the submenu of this menu
-            active: (optional, default False) whether this menu is active
+        :param window the curses.window which this menu is placed on
+        :param items a 2D array where rows represent indices of the parent menu
+        :param child (optional, default None) the submenu of this menu
+        :param active (optional, default False) whether this menu is active
         """
         assert window.getmaxyx()[0] >= 3
         assert child is None or isinstance(child, Menu)
@@ -67,9 +66,8 @@ class Menu(ABC):
     def update_items(self, obj) -> None:
         """Called by the parent menu (if we have one) to update our items.
 
-        Args:
-            obj: an object of some type understood by the specific
-            implementation of this menu
+        :param obj an object of some type understood by the specific
+          implementation of this menu
         """
 
     @abstractmethod
@@ -96,11 +94,8 @@ class Menu(ABC):
         window, it only makes it as large as the menu. Since the window has a
         border, the string will be 1 column shorter than the window.
 
-        Args:
-            item: the item text as a string
-
-        Returns:
-            str: a string the length of the menu, with the left justified item
+        :param item the item text as a string
+        :returns str: a string the length of the menu, with the left justified item
         """
         max_width = self._window.getmaxyx()[1] - 1
         return text.ljust(max_width)[:max_width]
@@ -112,12 +107,11 @@ class Menu(ABC):
         item is selected and the window is active, 3 if the item is selected
         but the window is not active, and 1 otherwise.
 
-        Args:
-            item: the item to draw, which should be a dict including the fields
-                'attr', 'tags', and 'text' -- see EpisodeMenu for an example
-            position: the y-position to draw the item, without accounting
-                for _display_start_y
-            selected: whether the item is selected
+        :param item the item to draw, which should be a dict including the fields
+          'attr', 'tags', and 'text' -- see EpisodeMenu for an example
+        :param position the y-position to draw the item, without accounting
+          for _display_start_y
+        :param selected whether the item is selected
         """
         tag_str = ""
         if len(item['tags']) > 0:
@@ -198,8 +192,7 @@ class Menu(ABC):
         operations could still be run, but doing so would confuse the user
         assuming _active has been properly set.
 
-        Args:
-            active: whether this menu is active or not
+        :param active whether this menu is active or not
         """
         assert isinstance(active, bool)
 
@@ -209,8 +202,7 @@ class Menu(ABC):
     def move(self, direction) -> None:
         """Change the selected item to an adjacent item.
 
-        Args:
-            direction: 1 to move up, -1 to move down
+        :param direction 1 to move up, -1 to move down
         """
         assert direction == 1 or direction == -1
 
@@ -239,8 +231,7 @@ class Menu(ABC):
         assume that if there are enough items in the menu to fill the screen,
         the menu will *always* fill the screen.
 
-        Args:
-            direction: 1 to move up, -1 to move down
+        :param direction 1 to move up, -1 to move down
         """
         assert direction == 1 or direction == -1
 

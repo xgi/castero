@@ -35,8 +35,7 @@ class Perspective(ABC):
         For example, the Display class has a _create_windows method, which
         should call this class's create_windows method.
 
-        Args:
-            display: the parent Display instance
+        :param display the parent Display instance
         """
         self._display = display
 
@@ -80,11 +79,8 @@ class Perspective(ABC):
     def handle_input(self, c) -> bool:
         """Performs action corresponding to the user's input.
 
-        Args:
-            c: the input character
-
-        Returns:
-            bool: whether or not the application should continue running
+        :param c the input character
+        :returns bool: whether or not the application should continue running
         """
 
     @abstractmethod
@@ -106,18 +102,14 @@ class Perspective(ABC):
     def _get_active_menu(self) -> Menu:
         """Retrieve the active Menu, if there is one.
 
-        Returns:
-            Menu: the active Menu, or None
+        :returns Menu: the active Menu, or None
         """
 
     def _generic_handle_input(self, c) -> bool:
         """Generic handler for performing actions corresponding to input.
 
-        Args:
-            c: the input character
-
-        Returns:
-            bool: whether or not the application should continue running
+        :param c the input character
+        :returns bool: whether or not the application should continue running
         """
         queue = self._display.queue
         key_mapping = self._display.KEY_MAPPING
@@ -237,9 +229,8 @@ class Perspective(ABC):
     def _change_active_window(self, direction) -> None:
         """Changes _active_window to the next or previous window, if available.
 
-        Args:
-            direction: 1 to change to the next window, -1 to change to the
-                previous (if it exists)
+        :param direction 1 to change to the next window, -1 to change to the
+          previous (if it exists)
         """
         assert direction == 1 or direction == -1
 
@@ -260,8 +251,7 @@ class Perspective(ABC):
     def _draw_metadata(self, window) -> None:
         """Draws the metadata of the selected feed/episode onto the window.
 
-        Args:
-            window: the curses window which will display the metadata
+        :param window the curses window which will display the metadata
         """
         assert window is not None
 
@@ -306,7 +296,6 @@ class Perspective(ABC):
     def _clear_episode_progress(self, episode) -> None:
         """remove progress of the episode
 
-        Args:
-            episode: the episode to clear progress from
+        :param episode the episode to clear progress from
         """
         self._display.database.delete_progress(episode)

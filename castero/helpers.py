@@ -9,11 +9,8 @@ import pytz
 def third(n) -> int:
     """Calculates one-third of a given value.
 
-    Args:
-        n: the integer to calculate one-third of
-
-    Returns:
-        int: one-third of n, rounded down
+    :param n the integer to calculate one-third of
+    :returns int: one-third of n, rounded down
     """
     return int(n / 3)
 
@@ -21,11 +18,8 @@ def third(n) -> int:
 def median(arr):
     """Determines the median of a list of numbers.
 
-    Args:
-        arr: a list of ints and/or floats of which to determine the median
-
-    Returns:
-        int or float: the median value in arr
+    :param arr a list of ints and/or floats of which to determine the median
+    :returns int or float: the median value in arr
     """
     if len(arr) == 0:
         return None
@@ -47,11 +41,8 @@ def sanitize_path(path) -> str:
     This method replaces any non-alphanumeric characters with an underscore,
     with the exception of hyphens.
 
-    Args:
-        path: the original path
-
-    Returns:
-        str: the given path with potentially unsafe characters replaced
+    :param path the original path
+    :returns str: the given path with potentially unsafe characters replaced
     """
     # adapted from https://stackoverflow.com/a/13593932
     path = re.sub('[^\\w\\-]', '_', path)
@@ -64,8 +55,7 @@ def is_true(string) -> bool:
     As the name suggests, any input which is not explicitly evaluated to True
     will cause this method to return False.
 
-    Args:
-        string: the string to evaluate
+    :param string the string to evaluate
     """
     assert isinstance(string, str)
 
@@ -75,11 +65,8 @@ def is_true(string) -> bool:
 def html_to_plain(html) -> str:
     """Converts a potentially HTML-formatted string to user-friendly plaintext.
 
-    Args:
-        html: the text to convert with potential html tags
-
-    Returns:
-        str: the given text with html tags removed
+    :param html the text to convert with potential html tags
+    :returns str: the given text with html tags removed
     """
     soup = BeautifulSoup(html, 'html.parser')
     return soup.get_text()
@@ -91,11 +78,8 @@ def datetime_from_rfc822(date) -> datetime:
     https://www.w3.org/Protocols/rfc822/
     https://validator.w3.org/feed/docs/error/InvalidRFC2822Date.html
 
-    Args:
-        date: string for the date/time in RFC822 format
-
-    Returns:
-        datetime: a matching datetime object, or -1
+    :param date string for the date/time in RFC822 format
+    :returns datetime: a matching datetime object, or -1
     """
     try:
         return parsedate_to_datetime(date).replace(tzinfo=pytz.UTC)

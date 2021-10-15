@@ -27,9 +27,8 @@ class DataFile:
 
     def __init__(self, path, default_path) -> None:
         """
-        Args:
-            path: the path to the data file
-            default_path: the path to the default data file
+        :param path the path to the data file
+        :param default_path the path to the default data file
         """
         assert os.path.exists(default_path)
 
@@ -76,12 +75,11 @@ class DataFile:
     def download_to_file(url, file, name, download_queue, display=None):
         """Downloads a URL to a local file.
 
-        Args:
-            url: the source url
-            file: the destination path
-            name: the user-friendly name of the content
-            download_queue: the download_queue overseeing this download
-            display: (optional) the display to write status updates to
+        :param url: the source url
+        :param file the destination path
+        :param name the user-friendly name of the content
+        :param download_queue the download_queue overseeing this download
+        :param display (optional) the display to write status updates to
         """
         chunk_size = 1024
         chuck_size_label = "KB"

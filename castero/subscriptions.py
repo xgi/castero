@@ -39,15 +39,13 @@ class Subscriptions():
     def load(self, path: str) -> None:
         """Load an OPML file of subscriptions.
 
-        Args:
-            path: the location of the OPML file to load
+        :param path the location of the OPML file to load
 
-        Raises:
-            SubscriptionsParseError: unable to parse text as an XML document
-            SubscriptionsLoadError: an exception occurred when attempting to
-                load the file
-            SubscriptionsStructureError: the file data is not a properly
-                structured OPML document
+        :raises SubscriptionsParseError: unable to parse text as an XML document
+        :raises SubscriptionsLoadError: an exception occurred when attempting to
+          load the file
+        :raises SubscriptionsStructureError: the file data is not a properly
+          structured OPML document
         """
         self._tree = None
         try:
@@ -65,13 +63,10 @@ class Subscriptions():
         A subscriptions document must have been loaded (with .load) or created
         (with .generate) before running this method.
 
-        Args:
-            path: the location of the OPML file to create
-
-        Raises:
-            SubscriptionsError: attempted to save before creating document
-            SubscriptionsLoadError: an exception occurred when attempting to
-                write the file
+        :param path the location of the OPML file to create
+        :raises SubscriptionsError: attempted to save before creating document
+        :raises SubscriptionsLoadError: an exception occurred when attempting to
+          write the file
         """
         if self._tree is not None:
             try:
@@ -88,8 +83,7 @@ class Subscriptions():
     def generate(self, feeds: List[Feed]) -> None:
         """Create subscriptions document from list of feeds.
 
-        Args:
-            feeds: the list of feeds to include in the document
+        :param feeds the list of feeds to include in the document
         """
         builder = etree.TreeBuilder()
 
@@ -116,9 +110,8 @@ class Subscriptions():
     def parse(self) -> None:
         """Parse the XML tree into a list of feeds.
 
-        Raises:
-            SubscriptionsStructureError: the file data is not a properly
-                structured OPML document
+        :raises SubscriptionsStructureError: the file data is not a properly
+          structured OPML document
         """
         error_msg = "The file data is not a properly structured OPML document"
 
@@ -146,11 +139,8 @@ class Subscriptions():
     def _find_rss_container(self, container):
         """Find potentially-nested container for RSS feeds.
 
-        Args:
-            container: the Element to search
-
-        Return:
-            Element: the first 'outline' Element containing an RSS feed
+        :param container the Element to search
+        :returns Element: the first 'outline' Element containing an RSS feed
         """
         outline = container.find('outline')
         if outline is None:
