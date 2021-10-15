@@ -1,11 +1,11 @@
-python-vlc==3.0.7110
+python-vlc==3.0.12118
 python-mpv==0.5.2
 requests[socks]==2.24.0
 grequests==0.6.0
-pytest==5.3.5
+pytest==6.2.5
 CJKwrap==2.2
 lxml==4.6.3
-beautifulsoup4==4.7.1
-coverage==5.5
-flake8==3.7.9
-pytz==2021.1
+beautifulsoup4==4.10.0
+coverage==6.0.2
+flake8==4.0.1
+pytz==2021.3
