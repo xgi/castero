@@ -299,7 +299,8 @@ class Display:
                         min(len(help_lines), cur_offset + y_bounds[1] + 2),
                         len(help_lines)
                     )
-                help_window.addstr(y_bounds[1] + 1, 2, bottom_line)
+                help_window.addstr(
+                    y_bounds[1] + 1, 2, bottom_line[:self._parent_x - 3])
                 help_window.refresh()
                 update_text = False
 
