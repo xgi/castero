@@ -73,7 +73,7 @@ class Display:
         self._parent_x = -1
         self._parent_y = -1
         self._perspectives = {}
-        self._active_perspective = 1
+        self._active_perspective = int(Config["default_layout"])
         self._header_window = None
         self._footer_window = None
         self._queue = Queue(self)
