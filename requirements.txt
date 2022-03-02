@@ -4,7 +4,7 @@ requests[socks]==2.24.0
 grequests==0.6.0
 pytest==6.2.5
 CJKwrap==2.2
-lxml==4.6.3
+lxml==4.8.0
 beautifulsoup4==4.10.0
 coverage==6.0.2
 flake8==4.0.1
