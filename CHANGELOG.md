@@ -12,6 +12,14 @@ Version listings include the following sections, if applicable:
 
 See also <https://github.com/xgi/castero/releases>.
 
+## 0.9.5 - 2021-04-02
+**Added**
+* Added the `default_layout` config setting.
+
+**Fixed**
+* Fixed a crash when opening the help page with a very small window.
+* Various minor dependency updates.
+
 ## 0.9.4 - 2021-09-17
 **Fixed**
 * Fixed a crash when adding series with empty copyright or builddate tags.
