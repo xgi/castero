@@ -103,7 +103,7 @@ class Menu(ABC):
     def _draw_item(self, item, position, selected) -> None:
         """Draws an item on the window.
 
-        This method applies the appropriate color pair to the item: 2 if the
+        This method applies the appropriate color pair to the item: 4 if the
         item is selected and the window is active, 3 if the item is selected
         but the window is not active, and 1 otherwise.
 
@@ -122,9 +122,9 @@ class Menu(ABC):
         attr = curses.color_pair(1)
         if selected:
             if self._active:
-                attr = curses.color_pair(2)
-            else:
                 attr = curses.color_pair(4)
+            else:
+                attr = curses.color_pair(3)
         else:
             attr = attr | item["attr"]
 
