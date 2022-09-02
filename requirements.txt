@@ -2,7 +2,7 @@ python-vlc==3.0.12118
 python-mpv==0.5.2
 requests[socks]==2.24.0
 grequests==0.6.0
-pytest==6.2.5
+pytest==7.1.2
 CJKwrap==2.2
 lxml==4.8.0
 beautifulsoup4==4.10.0
