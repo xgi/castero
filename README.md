@@ -1,6 +1,6 @@
 # castero
 
-[![GitHub release](https://img.shields.io/github/release/xgi/castero.svg?style=flat-square)](https://github.com/xgi/castero/releases) [![PyPI](https://img.shields.io/pypi/v/castero.svg?style=flat-square)](https://pypi.org/project/castero) [![GitHub Build](https://img.shields.io/github/workflow/status/xgi/castero/CI?style=flat-square)](https://circleci.com/gh/xgi/castero/tree/master) [![Maintainability](https://api.codeclimate.com/v1/badges/babcaad5cb2cca266c92/maintainability)](https://codeclimate.com/github/xgi/castero/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/babcaad5cb2cca266c92/test_coverage)](https://codeclimate.com/github/xgi/castero/test_coverage)
+[![GitHub release](https://img.shields.io/github/release/xgi/castero.svg?style=flat-square)](https://github.com/xgi/castero/releases) [![PyPI](https://img.shields.io/pypi/v/castero.svg?style=flat-square)](https://pypi.org/project/castero) [![GitHub Build](https://img.shields.io/github/actions/workflow/status/xgi/castero/ci.yml?branch=master&style=flat-square)](https://circleci.com/gh/xgi/castero/tree/master) [![Maintainability](https://api.codeclimate.com/v1/badges/babcaad5cb2cca266c92/maintainability)](https://codeclimate.com/github/xgi/castero/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/babcaad5cb2cca266c92/test_coverage)](https://codeclimate.com/github/xgi/castero/test_coverage)
 
 castero is a TUI podcast client for the terminal.
 
