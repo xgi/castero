@@ -66,7 +66,7 @@ class Display:
     def __init__(self, stdscr, database) -> None:
         """
         :param stdscr a stdscr from curses.initscr()
-        :param databse a connected castero.Database
+        :param database a connected castero.Database
         """
         self._stdscr = stdscr
         self._database = database

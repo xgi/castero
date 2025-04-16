@@ -165,7 +165,7 @@ feeds between clients. To use this feature, run castero with the
 * Fixed a crash when queueing a large number of episodes with the VLC player.
 * Fixed delay when skipping ahead in queue.
 * Fixed a crash when running with Python 3.5.
-* Fixed crash when trying to create database file in nonexistant directory.
+* Fixed crash when trying to create database file in nonexistent directory.
 * Fixed episode menu not updating on feed delete.
 * Fixed menus not updating when terminal dimensions change.
 * Fixed user metadata (i.e. played status) being overwritten when reloading.
