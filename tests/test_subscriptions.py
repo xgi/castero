@@ -63,7 +63,7 @@ def test_subscriptions_valid_minimal():
     assert len(mysubscriptions.feeds) == 0
 
 
-def test_subscriptions_broken_nonexistant():
+def test_subscriptions_broken_nonexistent():
     mysubscriptions = Subscriptions()
     Feed.__init__ = mock.MagicMock(return_value=None)
     with pytest.raises(SubscriptionsLoadError):
