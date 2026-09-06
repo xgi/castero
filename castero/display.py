@@ -232,7 +232,7 @@ class Display:
         is pressed. This means that typical loop actions, including checking
         the state of the current player, will not run while this screen is up.
         """
-        help_lines = castero.__help__.split("\n")
+        help_lines = castero.format_help(Config).split("\n")
 
         # the first and last lines that content can be displayed, excluding
         # the final line on the screen which is reserved for the "press any
@@ -453,6 +453,7 @@ class Display:
         for perspective_id in self._perspectives:
             if c == self.KEY_MAPPING[str(perspective_id)]:
                 self._change_active_perspective(perspective_id)
+                return True
 
         return self._get_active_perspective().handle_input(c)
 
