@@ -5,6 +5,7 @@ from unittest import mock
 import pytest
 
 import castero
+from castero.config import Config
 from castero.display import Display, DisplaySizeError
 from castero.feed import Feed
 from castero.episode import Episode
@@ -31,6 +32,16 @@ def test_display_display_footer_empty(display):
     assert "Press h for help" in args[2]
 
 
+def test_display_footer_uses_custom_help_binding(display):
+    Config.data["key_help"] = "?"
+
+    display.update()
+    display.display()
+
+    args, kwargs = display._footer_window.addstr.call_args
+    assert "Press ? for help" in args[2]
+
+
 def test_display_display_borders(display):
     display.display()
     assert display._header_window.hline.call_count == 1
@@ -42,6 +53,24 @@ def test_display_help(display):
     display._stdscr.reset_mock()
     display.show_help()
     assert display._stdscr.refresh.call_count >= 2
+
+
+def test_help_text_uses_custom_bindings():
+    Config.data.update(
+        {
+            "key_help": "?",
+            "key_up": "HOME",
+            "key_down": "END",
+            "key_pause_play": "P",
+            "key_pause_play_alt": "SPACE",
+        }
+    )
+
+    help_text = castero.format_help(Config)
+
+    assert "?           - show this help screen" in help_text
+    assert "HOME/END    - navigate up/down in menus" in help_text
+    assert "P or SPACE  - pause/play the current episode" in help_text
 
 
 def test_display_refresh(display):
@@ -58,7 +87,6 @@ def test_display_get_input_str(display):
     assert display._footer_window.clear.call_count == 1
     assert display._footer_window.addstr.call_count == 2
     display._footer_window.addstr.assert_any_call(1, 0, "prompt")
-    assert display._footer_window.called_with(1, len("prompt"))
 
 
 def test_display_get_y_n(display):
@@ -66,15 +94,42 @@ def test_display_get_y_n(display):
     assert display._footer_window.clear.call_count == 1
     assert display._footer_window.addstr.call_count == 2
     display._footer_window.addstr.assert_any_call(1, 0, "prompt")
-    assert display._footer_window.called_with(1, len("prompt"))
 
 
 def test_display_input_keys(display):
     for perspective_id in display.perspectives:
         perspective = display.perspectives[perspective_id]
-        perspective.handle_input = mock.MagicMock()
-        display.handle_input(display.KEY_MAPPING[str(perspective_id)])
-        assert perspective.handle_input.call_count == 1
+        perspective.handle_input = mock.MagicMock(return_value=False)
+
+        assert display.handle_input(display.KEY_MAPPING[str(perspective_id)])
+        assert display._active_perspective == perspective_id
+        perspective.handle_input.assert_not_called()
+
+
+def test_display_layout_collision_performs_only_layout_change(display):
+    Config.data["key_help"] = "2"
+    target = display.perspectives[2]
+    target.handle_input = mock.MagicMock(return_value=True)
+    display.show_help = mock.MagicMock()
+
+    assert display.handle_input(ord("2"))
+
+    assert display._active_perspective == 2
+    target.handle_input.assert_not_called()
+    display.show_help.assert_not_called()
+
+
+@pytest.mark.parametrize(
+    "binding, expected",
+    [
+        ("?", ord("?")),
+        ("UP", curses.KEY_UP),
+        ("ENTER", 10),
+        ("SPACE", ord(" ")),
+    ],
+)
+def test_display_key_mapping(binding, expected):
+    assert Display.KEY_MAPPING[binding] == expected
 
 
 def test_display_getch(display):

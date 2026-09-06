@@ -63,6 +63,7 @@ def test_perspective_queue_input_keys(display):
 
     display._queue = queue
     display._footer_window.getch = mock.MagicMock(return_value=10)
+    display.reload_feeds = mock.MagicMock()
 
     ret_val = perspective.handle_input(ord("h"))
     assert ret_val
@@ -106,6 +107,18 @@ def test_perspective_queue_input_keys(display):
     ret_val = perspective.handle_input(ord("q"))
     assert not ret_val
     display._stdscr.reset_mock()
+
+
+def test_perspective_queue_uses_custom_specific_binding(display):
+    perspective = get_queue_perspective(display)
+    perspective._remove_selected_from_queue = mock.MagicMock()
+    Config.data["key_remove"] = "v"
+
+    assert perspective.handle_input(ord("d"))
+    perspective._remove_selected_from_queue.assert_not_called()
+
+    assert perspective.handle_input(ord("v"))
+    perspective._remove_selected_from_queue.assert_called_once_with()
 
 
 def test_perspective_queue_draw_metadata(display):

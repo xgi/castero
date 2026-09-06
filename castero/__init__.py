@@ -1,3 +1,6 @@
+import re
+
+
 __title__ = "castero"
 __description__ = "A TUI podcast client for the terminal"
 __keywords__ = "podcast commandline terminal tui curses"
@@ -9,7 +12,7 @@ __copyright__ = "Copyright (c) 2018 Jake Robertson"
 __license__ = "MIT License"
 __url__ = "https://github.com/xgi/castero"
 
-__help__ = """\
+__help_template__ = """\
 %s help
 ============
 
@@ -55,3 +58,29 @@ Commands
     __license__,
     __url__,
 )
+
+# Retain the public value for callers that display the unformatted template.
+__help__ = __help_template__
+
+
+def format_help(config) -> str:
+    """Render help using the configured key bindings."""
+    help_text = __help_template__
+    for placeholder in re.findall(r"\{(.*?)\}", help_text):
+        if "|" in placeholder:
+            fields = placeholder.split("|")
+            separator = " or "
+        elif "/" in placeholder:
+            fields = placeholder.split("/")
+            separator = "/"
+        else:
+            fields = [placeholder]
+            separator = ""
+
+        if all(field in config for field in fields):
+            value = separator.join(config[field] for field in fields)
+        else:
+            value = placeholder
+        help_text = help_text.replace("{%s}" % placeholder, value.ljust(11))
+
+    return help_text

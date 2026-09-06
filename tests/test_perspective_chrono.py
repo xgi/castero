@@ -45,6 +45,7 @@ def test_perspective_chrono_input_keys(display):
     perspective = get_chrono_perspective(display)
 
     display._footer_window.getch = mock.MagicMock(return_value=10)
+    display.reload_feeds = mock.MagicMock()
 
     ret_val = perspective.handle_input(ord("h"))
     assert ret_val
@@ -94,6 +95,20 @@ def test_perspective_chrono_input_keys(display):
     ret_val = perspective.handle_input(ord("q"))
     assert not ret_val
     display._stdscr.reset_mock()
+
+
+def test_perspective_chrono_uses_custom_specific_binding(display):
+    perspective = get_chrono_perspective(display)
+    perspective._create_player_from_selected = mock.MagicMock()
+    perspective._get_active_menu().move = mock.MagicMock()
+    Config.data["key_add_selected"] = "v"
+
+    assert perspective.handle_input(ord(" "))
+    perspective._create_player_from_selected.assert_not_called()
+
+    assert perspective.handle_input(ord("v"))
+    perspective._create_player_from_selected.assert_called_once_with()
+    perspective._get_active_menu().move.assert_called_once_with(-1)
 
 
 def test_perspective_chrono_draw_metadata(display):

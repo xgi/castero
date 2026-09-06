@@ -84,3 +84,30 @@ def test_migrate_stability():
     with patch("builtins.open", mock_open(read_data="test")) as mock_file:
         config.Config.migrate(conf, default_conf)
         mock_file.assert_called_with(config.Config.DEFAULT_PATH, "w")
+
+
+def test_migrate_adds_keys_and_preserves_user_settings(tmp_path):
+    user_path = tmp_path / "castero.conf"
+    user_path.write_text(
+        "[client]\n"
+        "refresh_delay = 77\n\n"
+        "[colors]\n"
+        "color_foreground = blue\n"
+    )
+
+    conf = configparser.ConfigParser()
+    conf.read(str(user_path))
+    default_conf = configparser.ConfigParser()
+    default_conf.read(config._Config.DEFAULT_PATH)
+
+    migrating_config = config._Config.__new__(config._Config)
+    migrating_config._path = str(user_path)
+    migrating_config._default_path = config._Config.DEFAULT_PATH
+    migrating_config.migrate(conf, default_conf)
+
+    migrated = configparser.ConfigParser()
+    migrated.read(str(user_path))
+    assert migrated["client"]["refresh_delay"] == "77"
+    assert migrated["colors"]["color_foreground"] == "blue"
+    assert migrated["keys"]["key_help"] == "h"
+    assert migrated["keys"]["key_play_selected"] == "ENTER"

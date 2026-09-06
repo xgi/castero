@@ -94,6 +94,25 @@ after the client has been run at least once.
 Please see the [default castero.conf](https://github.com/xgi/castero/blob/master/castero/templates/castero.conf)
 for a list of available settings.
 
+### Custom keybindings
+
+Controls can be changed in the configuration file's `[keys]` section. Use a
+single printable character, or a named `curses` key without the `KEY_` prefix.
+`ENTER` and `SPACE` are also supported. For example:
+
+```ini
+[keys]
+key_help = ?
+key_up = k
+key_down = j
+key_play_selected = ENTER
+key_add_selected = SPACE
+```
+
+See Python's [list of curses key constants](https://docs.python.org/3/library/curses.html#constants)
+for the available named keys. Restart castero after editing the file. Bindings
+may overlap, but a key press performs only the first matching operation.
+
 User data, including downloaded episodes and a database with your feed
 information, is located at `{HOME}/.local/share/castero/`. These files are not
 intended to be manually modified. Removing the database will simply cause

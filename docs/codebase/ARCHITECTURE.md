@@ -16,8 +16,8 @@ console entry -> Display event loop -> Perspective/Menu command -> domain or int
 
 1. The setuptools console script enters `castero.__main__:main`, creates `Database`, initializes curses, and creates `Display`.
 2. `Display` dynamically discovers perspective and player modules, restores the saved queue, and constructs windows/menus.
-3. The main loop calls `Display.display()`, reads a key, and forwards it to the active `Perspective`.
-4. Perspective handlers mutate `Queue`, call `Display` workflows, or read/write `Database`; some menu and reload work starts unmanaged threads.
+3. The main loop calls `Display.display()` and reads a key. `Display` consumes layout-selection digits; all other input is forwarded once to the active `Perspective`, where configured bindings are resolved.
+4. Perspective handlers mutate `Queue`, call `Display` workflows, or read/write `Database`; their ordered `if`/`elif` dispatch ensures overlapping bindings perform only the first matching operation. Some menu and reload work starts unmanaged threads.
 5. Feed operations use `Net`/grequests and `Feed` XML parsing; playback uses a `Player` adapter; downloads use `DataFile` and the filesystem.
 6. The display polls mutable state, persists modified episode state, and redraws curses windows.
 
