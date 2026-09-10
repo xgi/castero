@@ -57,25 +57,32 @@ def export_subscriptions(path: str, database: Database) -> None:
 def redirect_stderr() -> io.TextIOWrapper:
     temp_file = tempfile.TemporaryFile(prefix="%s-" % castero.__title__)
 
-    # get os-specific stderr descriptor
-    stderr = "stderr"
-    if sys.platform == "darwin":
-        stderr = "__stderrp"
+    # flush C-level stderr if available on this platform
+    if os.name != "nt":
+        stderr = "stderr"
+        if sys.platform == "darwin":
+            stderr = "__stderrp"
 
-    libc = ctypes.CDLL(None)
-    c_stderr = ctypes.c_void_p.in_dll(libc, stderr)
+        try:
+            libc = ctypes.CDLL(None)
+            c_stderr = ctypes.c_void_p.in_dll(libc, stderr)
+            libc.fflush(c_stderr)
+        except (TypeError, ValueError, OSError, AttributeError):
+            pass
 
-    stderr_fd = sys.stderr.fileno()
-    libc.fflush(c_stderr)
-    sys.stderr.close()
+    try:
+        stderr_fd = sys.stderr.fileno()
+        sys.stderr.flush()
 
-    # make the stderr fd point to the temp_file
-    os.dup2(temp_file.fileno(), stderr_fd)
+        # make the stderr fd point to the temp_file
+        os.dup2(temp_file.fileno(), stderr_fd)
 
-    # overwrite sys.stderr to use our modified fd
-    # - not explicitly necessary for our purposes, since curses does not
-    #   use this field
-    sys.stderr = io.TextIOWrapper(os.fdopen(stderr_fd, "wb"))
+        # overwrite sys.stderr to use our modified fd
+        # - not explicitly necessary for our purposes, since curses does not
+        #   use this field
+        sys.stderr = io.TextIOWrapper(os.fdopen(stderr_fd, "wb"))
+    except (AttributeError, io.UnsupportedOperation, OSError, ValueError):
+        pass
 
     return temp_file.fileno()
 
@@ -146,4 +153,5 @@ def main():
     sys.exit(0)
 
 
-main()
+if __name__ == "__main__":
+    main()
